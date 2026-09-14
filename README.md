@@ -1,12 +1,12 @@
 # Regtech Motos
 
 ## Status atual
-Fundação técnica (Etapa 1/1.1) e modelo de dados V1 no Supabase (Etapa 2) concluídos. Nenhuma funcionalidade de negócio no frontend (catálogo, painel admin, formulário de leads) foi desenvolvida ainda, por instrução explícita.
+Fundação técnica (Etapa 1/1.1), modelo de dados (Etapa 2) e infraestrutura de Storage (Etapa 3) concluídos. Nenhuma funcionalidade de negócio no frontend (catálogo, painel admin, formulário de leads) foi desenvolvida ainda, por instrução explícita.
 
 ## Banco de dados (Supabase)
 Projeto dedicado `regtech-motos` (ref `bjodwjskwnpnqedjasid`, região `sa-east-1`).
 
-Tabelas: `products`, `product_images`, `product_colors`, `product_specs`, `leads`. RLS ativado em todas. Migrations versionadas em `supabase/migrations/`. Detalhes completos no relatório da Etapa 2 enviado no chat.
+Tabelas: `products`, `product_images`, `product_colors`, `product_specs`, `leads`. RLS ativado em todas. Bucket de Storage `product-images` (público, 5MB, JPEG/PNG/WebP). Migrations versionadas em `supabase/migrations/`. Detalhes completos nos relatórios das Etapas 2 e 3 enviados no chat.
 
 ## Stack técnica
 - Next.js (App Router) + TypeScript
@@ -26,7 +26,8 @@ regtech-motos/
 ├── lib/
 │   └── supabase/
 │       ├── client.ts   (cliente para Client Components)
-│       └── server.ts   (cliente para Server Components / Route Handlers)
+│       ├── server.ts   (cliente para Server Components / Route Handlers)
+│       └── storage.ts  (utilitários do bucket product-images)
 ├── supabase/
 │   └── migrations/     (histórico versionado do schema)
 ├── .env.example
