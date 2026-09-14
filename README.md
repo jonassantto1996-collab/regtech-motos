@@ -1,12 +1,15 @@
 # Regtech Motos
 
 ## Status atual
-Fundação técnica (Etapa 1/1.1), modelo de dados (Etapa 2) e infraestrutura de Storage (Etapa 3) concluídos. Nenhuma funcionalidade de negócio no frontend (catálogo, painel admin, formulário de leads) foi desenvolvida ainda, por instrução explícita.
+Fundação técnica (Etapa 1/1.1), modelo de dados (Etapa 2), Storage (Etapa 3/3.1) e autenticação administrativa (Etapa 4.1) concluídos. Nenhuma funcionalidade de negócio (CRUD de produtos, catálogo público, leads) foi desenvolvida ainda, por instrução explícita.
 
 ## Banco de dados (Supabase)
 Projeto dedicado `regtech-motos` (ref `bjodwjskwnpnqedjasid`, região `sa-east-1`).
 
-Tabelas: `products`, `product_images`, `product_colors`, `product_specs`, `leads`. RLS ativado em todas. Bucket de Storage `product-images` (público, 5MB, JPEG/PNG/WebP). Migrations versionadas em `supabase/migrations/`. Detalhes completos nos relatórios das Etapas 2 e 3 enviados no chat.
+Tabelas: `products`, `product_images`, `product_colors`, `product_specs`, `leads`. RLS ativado em todas. Bucket de Storage `product-images` (público, 5MB, JPEG/PNG/WebP). Migrations versionadas em `supabase/migrations/`.
+
+## Autenticação administrativa
+`/admin/login` (público) e `/admin` (protegido) usando Supabase Auth. Sem cadastro público — contas de administrador são criadas manualmente no painel do Supabase (Authentication → Users). Proteção validada no servidor via `proxy.ts` (substitui `middleware.ts` no Next.js 16) + verificação redundante na própria página `/admin`. Detalhes completos nos relatórios enviados no chat.
 
 ## Stack técnica
 - Next.js (App Router) + TypeScript
