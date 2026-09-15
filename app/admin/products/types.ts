@@ -15,6 +15,22 @@ export type Product = {
   updated_at: string;
 };
 
+export type ProductColor = {
+  id: string;
+  product_id: string;
+  color: string;
+  created_at: string;
+};
+
+export type ProductSpec = {
+  id: string;
+  product_id: string;
+  spec_key: string;
+  spec_value: string;
+  created_at: string;
+  updated_at: string;
+};
+
 export const PRODUCT_ERROR_MESSAGES: Record<string, string> = {
   missing_fields: "Preencha todos os campos obrigatórios.",
   invalid_price: "Informe um preço válido (número maior ou igual a zero).",
@@ -22,5 +38,15 @@ export const PRODUCT_ERROR_MESSAGES: Record<string, string> = {
   duplicate_slug: "Já existe um produto com esse slug. Escolha outro.",
   duplicate_sku: "Já existe um produto com esse SKU. Escolha outro.",
   not_found: "Produto não encontrado.",
+  empty_color: "A cor não pode ficar vazia.",
+  duplicate_color: "Há cores repetidas na lista. Remova a duplicata antes de salvar.",
+  invalid_colors: "Não foi possível processar a lista de cores.",
+  empty_spec_key: "O nome da especificação não pode ficar vazio.",
+  empty_spec_value: "O valor da especificação não pode ficar vazio.",
+  duplicate_spec_key:
+    "Há especificações com o mesmo nome na lista. Remova a duplicata antes de salvar.",
+  invalid_specs: "Não foi possível processar a lista de especificações.",
+  sync_failed:
+    "O produto foi salvo, mas houve um erro ao sincronizar cores ou especificações. Confira a lista e tente salvar de novo.",
   server_error: "Não foi possível salvar. Tente novamente.",
 };

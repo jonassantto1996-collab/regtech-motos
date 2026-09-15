@@ -3,7 +3,12 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updateProduct } from "../../actions";
-import { PRODUCT_ERROR_MESSAGES, type Product } from "../../types";
+import {
+  PRODUCT_ERROR_MESSAGES,
+  type Product,
+  type ProductColor,
+  type ProductSpec,
+} from "../../types";
 import { ProductForm } from "../../ProductForm";
 
 export default async function EditProductPage({
@@ -26,6 +31,7 @@ export default async function EditProductPage({
     : null;
 
   const admin = createAdminClient();
+
   const { data: product } = await admin
     .from("products")
     .select(
@@ -52,6 +58,19 @@ export default async function EditProductPage({
     );
   }
 
+  const [{ data: colors }, { data: specs }] = await Promise.all([
+    admin
+      .from("product_colors")
+      .select("id, product_id, color, created_at")
+      .eq("product_id", id)
+      .order("created_at", { ascending: true }),
+    admin
+      .from("product_specs")
+      .select("id, product_id, spec_key, spec_value, created_at, updated_at")
+      .eq("product_id", id)
+      .order("created_at", { ascending: true }),
+  ]);
+
   return (
     <main
       style={{
@@ -69,6 +88,8 @@ export default async function EditProductPage({
         mode="edit"
         action={updateProduct.bind(null, id)}
         defaultValues={product as Product}
+        defaultColors={(colors ?? []) as ProductColor[]}
+        defaultSpecs={(specs ?? []) as ProductSpec[]}
         errorMessage={errorMessage}
       />
     </main>
