@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { logout } from "./actions";
 
 // Verificação em segundo nível (defesa em profundidade): o proxy já
@@ -25,6 +26,9 @@ export default async function AdminPage() {
     >
       <h1>Área administrativa</h1>
       <p>Autenticado como: {data.claims.email ?? "—"}</p>
+      <p>
+        <Link href="/admin/products">Produtos &rarr;</Link>
+      </p>
       <form action={logout}>
         <button type="submit" style={{ padding: "0.5rem 1.5rem" }}>
           Sair
