@@ -30,7 +30,8 @@ export async function login(formData: FormData) {
   });
 
   if (error) {
-    redirect("/admin/login?error=invalid_credentials");
+    // TEMPORÁRIO — diagnóstico. Reverter para "invalid_credentials" depois.
+    redirect(`/admin/login?error=debug&msg=${encodeURIComponent(error.message)}`);
   }
 
   redirect("/admin");

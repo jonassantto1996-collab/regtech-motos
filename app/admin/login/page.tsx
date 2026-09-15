@@ -8,10 +8,15 @@ const ERROR_MESSAGES: Record<string, string> = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; msg?: string }>;
 }) {
   const params = await searchParams;
-  const errorMessage = params.error ? ERROR_MESSAGES[params.error] : null;
+  const errorMessage =
+    params.error === "debug" && params.msg
+      ? `[DEBUG] ${params.msg}`
+      : params.error
+      ? ERROR_MESSAGES[params.error]
+      : null;
 
   return (
     <main
