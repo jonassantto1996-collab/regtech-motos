@@ -105,6 +105,12 @@ export async function uploadProductImage(
  * gravidade, nada mais referencia esse arquivo. A ordem inversa deixaria
  * um registro fantasma apontando pra um arquivo inexistente (quebra a
  * tela e pode travar a troca de imagem principal), por isso foi descartada.
+ *
+ * Se a imagem removida era a principal e ainda restarem outras imagens do
+ * produto, a de menor `display_order` é promovida a principal automaticamente
+ * no mesmo passo — nunca deixa o produto com imagens mas sem nenhuma
+ * principal. Se a promoção falhar, o registro já foi apagado (não é
+ * desfeito por causa disso) e o admin é avisado para definir manualmente.
  */
 export async function deleteProductImage(imageId: string, productId: string) {
   await requireAdminSession();
@@ -112,13 +118,19 @@ export async function deleteProductImage(imageId: string, productId: string) {
 
   const { data: image, error: fetchError } = await admin
     .from("product_images")
-    .select("id, product_id, storage_path")
+    .select("id, product_id, storage_path, is_main")
     .eq("id", imageId)
     .maybeSingle();
 
   if (fetchError || !image || image.product_id !== productId) {
     redirect(`${editPath(productId)}?error=image_not_found`);
   }
+
+  const typedImage = image as {
+    id: string;
+    storage_path: string;
+    is_main: boolean;
+  };
 
   const { error: deleteDbError } = await admin
     .from("product_images")
@@ -129,22 +141,54 @@ export async function deleteProductImage(imageId: string, productId: string) {
     redirect(`${editPath(productId)}?error=delete_failed`);
   }
 
+  let promotionFailed = false;
+
+  if (typedImage.is_main) {
+    const { data: nextMain } = await admin
+      .from("product_images")
+      .select("id")
+      .eq("product_id", productId)
+      .order("display_order", { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    if (nextMain) {
+      const { error: promoteError } = await admin
+        .from("product_images")
+        .update({ is_main: true })
+        .eq("id", nextMain.id);
+
+      if (promoteError) {
+        promotionFailed = true;
+        console.error(
+          `[deleteProductImage] Imagem principal removida, mas falha ao promover a próxima. ` +
+            `product_id=${productId} imagem_removida=${imageId} candidata_a_principal=${nextMain.id} ` +
+            `erro=${JSON.stringify(promoteError)}`
+        );
+      }
+    }
+  }
+
   const { error: deleteStorageError } = await admin.storage
     .from(PRODUCT_IMAGES_BUCKET)
-    .remove([(image as { storage_path: string }).storage_path]);
+    .remove([typedImage.storage_path]);
 
   if (deleteStorageError) {
     console.error(
       `[deleteProductImage] Registro removido do banco, mas falha ao apagar arquivo do Storage. ` +
-        `product_id=${productId} imagem=${imageId} storage_path=${
-          (image as { storage_path: string }).storage_path
-        } erro=${JSON.stringify(deleteStorageError)}`
+        `product_id=${productId} imagem=${imageId} storage_path=${typedImage.storage_path} ` +
+        `erro=${JSON.stringify(deleteStorageError)}`
     );
     // Não bloqueia o fluxo: arquivo órfão é um risco de baixa gravidade,
     // já documentado e aceito na análise da etapa.
   }
 
   revalidatePath(editPath(productId));
+
+  if (promotionFailed) {
+    redirect(`${editPath(productId)}?error=main_image_promotion_failed`);
+  }
+
   redirect(editPath(productId));
 }
 

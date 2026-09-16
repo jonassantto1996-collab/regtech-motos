@@ -73,4 +73,6 @@ export const PRODUCT_ERROR_MESSAGES: Record<string, string> = {
     "Não foi possível trocar a imagem principal. A imagem anterior foi mantida.",
   main_image_switch_critical:
     "Falha crítica ao trocar a imagem principal — nem a antiga nem a nova ficaram marcadas como principal. Contate o suporte técnico informando o ID do produto.",
+  main_image_promotion_failed:
+    "A imagem foi removida, mas não foi possível definir outra como principal automaticamente. Defina uma imagem principal manualmente.",
 };
