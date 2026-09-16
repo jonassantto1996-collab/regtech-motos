@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductGallery from "@/components/catalog/ProductGallery";
+import InterestModal from "@/components/catalog/InterestModal";
 import { getProductBySlug } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { formatPriceBRL } from "@/lib/catalog/format";
@@ -112,6 +113,8 @@ export default async function ProductPage({
           <p className="mt-2 text-2xl font-semibold text-gray-900">
             {formatPriceBRL(product.price)}
           </p>
+
+          <InterestModal productId={product.id} />
 
           <dl className="mt-6 space-y-2 text-sm">
             <div className="flex justify-between border-b border-gray-100 pb-2">

@@ -29,6 +29,9 @@ export default async function AdminPage() {
       <p>
         <Link href="/admin/products">Produtos &rarr;</Link>
       </p>
+      <p>
+        <Link href="/admin/leads">Leads &rarr;</Link>
+      </p>
       <form action={logout}>
         <button type="submit" style={{ padding: "0.5rem 1.5rem" }}>
           Sair
