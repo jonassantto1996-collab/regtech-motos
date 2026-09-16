@@ -8,7 +8,6 @@ import {
   LEAD_STATUSES,
   LEAD_STATUS_LABELS,
   type Lead,
-  type LeadStatus,
 } from "@/lib/leads/types";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -60,19 +59,6 @@ export default async function AdminLeadsPage({
     )
     .order("created_at", { ascending: false });
 
-  const statusCounts: Record<LeadStatus, number> = {
-    NOVO: 0,
-    EM_ATENDIMENTO: 0,
-    INTERESSADO: 0,
-    VENDA_REALIZADA: 0,
-    NAO_CONVERTIDO: 0,
-  };
-  if (!error && leads) {
-    for (const lead of leads as Lead[]) {
-      statusCounts[lead.status] += 1;
-    }
-  }
-
   return (
     <main
       style={{
@@ -98,35 +84,6 @@ export default async function AdminLeadsPage({
         <p role="alert" style={{ color: "#c0392b" }}>
           Não foi possível carregar os leads.
         </p>
-      )}
-
-      {!error && (
-        <div
-          style={{
-            display: "flex",
-            gap: "1rem",
-            flexWrap: "wrap",
-            margin: "1rem 0 1.5rem",
-          }}
-        >
-          {LEAD_STATUSES.map((status) => (
-            <div
-              key={status}
-              style={{
-                border: "1px solid #ddd",
-                borderRadius: 6,
-                padding: "0.5rem 1rem",
-              }}
-            >
-              <div style={{ fontSize: "0.75rem", color: "#666" }}>
-                {LEAD_STATUS_LABELS[status]}
-              </div>
-              <div style={{ fontSize: "1.25rem", fontWeight: 600 }}>
-                {statusCounts[status]}
-              </div>
-            </div>
-          ))}
-        </div>
       )}
 
       {!error && leads && leads.length === 0 && (
