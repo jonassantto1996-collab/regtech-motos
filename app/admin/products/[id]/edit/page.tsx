@@ -8,8 +8,10 @@ import {
   type Product,
   type ProductColor,
   type ProductSpec,
+  type ProductImage,
 } from "../../types";
 import { ProductForm } from "../../ProductForm";
+import { ProductImagesManager } from "../../ProductImagesManager";
 
 export default async function EditProductPage({
   params,
@@ -58,18 +60,26 @@ export default async function EditProductPage({
     );
   }
 
-  const [{ data: colors }, { data: specs }] = await Promise.all([
-    admin
-      .from("product_colors")
-      .select("id, product_id, color, created_at")
-      .eq("product_id", id)
-      .order("created_at", { ascending: true }),
-    admin
-      .from("product_specs")
-      .select("id, product_id, spec_key, spec_value, created_at, updated_at")
-      .eq("product_id", id)
-      .order("created_at", { ascending: true }),
-  ]);
+  const [{ data: colors }, { data: specs }, { data: images }] =
+    await Promise.all([
+      admin
+        .from("product_colors")
+        .select("id, product_id, color, created_at")
+        .eq("product_id", id)
+        .order("created_at", { ascending: true }),
+      admin
+        .from("product_specs")
+        .select("id, product_id, spec_key, spec_value, created_at, updated_at")
+        .eq("product_id", id)
+        .order("created_at", { ascending: true }),
+      admin
+        .from("product_images")
+        .select(
+          "id, product_id, storage_path, display_order, is_main, alt_text, created_at"
+        )
+        .eq("product_id", id)
+        .order("display_order", { ascending: true }),
+    ]);
 
   return (
     <main
@@ -90,6 +100,11 @@ export default async function EditProductPage({
         defaultValues={product as Product}
         defaultColors={(colors ?? []) as ProductColor[]}
         defaultSpecs={(specs ?? []) as ProductSpec[]}
+        errorMessage={errorMessage}
+      />
+      <ProductImagesManager
+        productId={id}
+        images={(images ?? []) as ProductImage[]}
         errorMessage={errorMessage}
       />
     </main>

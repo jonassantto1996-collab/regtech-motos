@@ -195,6 +195,15 @@ export function ProductForm({
         </label>
       </div>
 
+      {mode === "create" && (
+        <div style={{ marginTop: "2rem", marginBottom: "0.5rem" }}>
+          <h2 style={sectionHeading}>Imagens</h2>
+          <p style={{ color: "#666" }}>
+            Salve o produto primeiro para poder adicionar imagens.
+          </p>
+        </div>
+      )}
+
       <h2 style={sectionHeading}>Cores</h2>
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
         <input

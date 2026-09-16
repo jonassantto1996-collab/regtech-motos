@@ -9,7 +9,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * vinda do cliente — getClaims() valida o JWT (assinatura + expiração).
  * Redireciona para o login se não houver sessão válida.
  */
-async function requireAdminSession() {
+export async function requireAdminSession() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) {
