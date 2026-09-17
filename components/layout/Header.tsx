@@ -20,7 +20,7 @@ import Link from "next/link";
 export default function Header() {
   return (
     <header className="border-b border-white/10 bg-blue-950">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
         <Link href="/" className="shrink-0" aria-label="Regtech Motors — início">
           <Image
             src="/logo-regtech-motors.png"

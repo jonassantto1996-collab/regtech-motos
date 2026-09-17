@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/catalog/ProductCard";
+import HeroMedia from "@/components/home/HeroMedia";
 import { listProducts } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 
@@ -29,89 +30,71 @@ export default async function Home() {
 
   return (
     <main>
-      {/* HERO — composição editorial: no mobile a moto vem em bloco
-          grande, logo no início, antes do texto (protagonismo visual
-          imediato). No desktop (lg+) a moto passa a sangrar até a borda
-          direita da viewport, com o texto num bloco mais estreito à
-          esquerda — composição assimétrica, não duas colunas iguais. */}
-      <section className="relative overflow-hidden bg-blue-950 lg:min-h-[38rem]">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -left-32 top-0 h-[28rem] w-[28rem] rounded-full bg-blue-600/20 blur-3xl"
-        />
-
-        {/* Moto em bleed — só existe no desktop; no mobile a moto aparece
-            em bloco próprio logo abaixo. */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 lg:block">
+      {/* HERO — peça de campanha compacta: a foto do produto cobre a
+          seção inteira como camada de fundo (sem container/caixa própria
+          — nada de "card" em volta dela), com o texto sobreposto num
+          bloco curto. Bem mais baixo que a versão anterior; o objetivo é
+          que "REGTECH + MOBILIDADE + PRODUTO" caibam juntos numa única
+          leitura, e a seção Motos comece logo em seguida. */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-900 to-blue-950">
+        {/* Foto do produto: preenche a seção inteira; a posição da moto
+            visível dentro dela é controlada por object-position, não por
+            um container próprio — é isso que evita a leitura de card. */}
+        <div className="pointer-events-none absolute inset-0">
           {heroProduct && heroImage && (
-            <Image
-              src={getPublicImageUrl(heroImage.storage_path)}
-              alt={
+            <HeroMedia
+              imageUrl={getPublicImageUrl(heroImage.storage_path)}
+              imageAlt={
                 heroImage.alt_text ||
                 `${heroProduct.brand} ${heroProduct.model}`
               }
-              fill
-              className="object-contain object-right p-8 xl:p-14"
-              sizes="50vw"
+              priority
+              className="object-contain object-[82%_100%] sm:object-[78%_88%] lg:object-[85%_center]"
             />
           )}
         </div>
 
-        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          {/* Moto — bloco mobile/tablet, grande, antes do texto. */}
-          <div className="relative mt-6 aspect-square w-full sm:aspect-[3/2] md:aspect-[16/9] lg:hidden">
-            {heroProduct && heroImage ? (
-              <Image
-                src={getPublicImageUrl(heroImage.storage_path)}
-                alt={
-                  heroImage.alt_text ||
-                  `${heroProduct.brand} ${heroProduct.model}`
-                }
-                fill
-                priority
-                className="object-contain"
-                sizes="100vw"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center rounded-lg border border-white/10 bg-white/5">
-                <p className="max-w-[16rem] text-center text-sm text-blue-200">
-                  Confira os modelos disponíveis no catálogo da Regtech
-                  Motors.
-                </p>
-              </div>
-            )}
-          </div>
+        {/* Scrim: garante contraste pro texto independente do que
+            estiver por trás (foto ou só o gradiente de fundo). */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/55 to-transparent"
+        />
 
-          <div className="py-8 lg:max-w-sm lg:py-28">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-              Regtech Motors · Mobilidade elétrica
+        <div className="relative mx-auto flex max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:min-h-[26rem] lg:items-center lg:px-8 lg:py-0">
+          <div className="max-w-xs sm:max-w-sm lg:max-w-md">
+            <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">
+              Regtech Motors
             </p>
-            <h1 className="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
-              Mais liberdade para se movimentar
+            <p className="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-blue-200">
+              Mobilidade elétrica
+            </p>
+            <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl">
+              Conheça nossa linha de motos elétricas.
             </h1>
-            <p className="mt-6 max-w-md text-base text-blue-100 sm:text-lg lg:max-w-none">
-              Motos elétricas para uma nova experiência de mobilidade.
-              Conheça os modelos disponíveis na Regtech Motors.
-            </p>
             <Link
               href="/products"
-              className="mt-8 inline-flex items-center gap-2 bg-white px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-blue-950 transition hover:bg-cyan-300"
+              className="mt-6 inline-flex items-center gap-2 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition hover:bg-cyan-300 sm:text-sm"
             >
-              Conhecer motos
+              Conhecer modelos
             </Link>
           </div>
         </div>
       </section>
 
-      {/* MOTOS — primeira vertical da Regtech */}
-      <section className="bg-white px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      {/* MOTOS — primeira vertical da Regtech. Padding de topo reduzido
+          (era py-16/py-24) pra a seção começar logo depois do Hero, que
+          agora é bem mais curto. Título também não repete mais a mesma
+          frase do H1 do Hero — nesta etapa só reposicionamento/pequenos
+          ajustes de entrada, sem redesenhar o ProductCard/grade. */}
+      <section className="bg-white px-4 pb-16 pt-10 sm:px-6 sm:pt-12 lg:px-8 lg:pb-24 lg:pt-16">
         <div className="mx-auto max-w-6xl">
           <div className="max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
               Motos
             </p>
             <h2 className="mt-3 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-              Conheça nossa linha de motos elétricas.
+              Modelos disponíveis
             </h2>
           </div>
 
