@@ -40,6 +40,9 @@ export default function ProductCard({
         <p className="mt-auto text-lg font-semibold text-gray-900">
           {formatPriceBRL(product.price)}
         </p>
+        <span className="text-xs font-medium uppercase tracking-wide text-blue-700 transition group-hover:text-blue-900">
+          Ver detalhes →
+        </span>
       </div>
     </Link>
   );

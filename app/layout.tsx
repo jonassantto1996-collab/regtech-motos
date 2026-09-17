@@ -9,7 +9,8 @@ import "./globals.css";
 // o que é esperado e inofensivo até a variável ser adicionada.
 export const metadata: Metadata = {
   title: "Regtech Motors",
-  description: "Projeto Regtech Motors — Vértice Digital",
+  description:
+    "Motos elétricas da Regtech Motors. Conheça os modelos disponíveis no catálogo e fale com a gente pelo WhatsApp.",
   ...(process.env.NEXT_PUBLIC_SITE_URL
     ? { metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL) }
     : {}),
