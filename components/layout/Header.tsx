@@ -11,6 +11,11 @@ import Link from "next/link";
  * fundo branco o contorno quase desaparece; (2) o azul precisa continuar
  * reconhecível como o azul da marca, não virar um azul-marinho/preto
  * genérico.
+ *
+ * Navegação intencionalmente mínima: hoje só existe um destino real
+ * (Catálogo), então um único link de texto — sem borda, sem "pill", sem
+ * ícone de menu — é a navegação apropriada, tanto no mobile quanto no
+ * desktop. Nada aqui exige um menu hambúrguer.
  */
 export default function Header() {
   return (
@@ -23,13 +28,13 @@ export default function Header() {
             width={201}
             height={96}
             priority
-            className="h-9 w-auto sm:h-10 lg:h-11"
+            className="h-10 w-auto sm:h-11 lg:h-12"
           />
         </Link>
 
         <Link
           href="/products"
-          className="shrink-0 rounded-sm border border-white/25 px-4 py-2 text-xs font-medium uppercase tracking-[0.15em] text-white transition hover:border-cyan-300 hover:text-cyan-300 sm:text-sm"
+          className="shrink-0 text-xs font-medium uppercase tracking-[0.2em] text-white/90 transition hover:text-cyan-300 sm:text-sm"
         >
           Catálogo
         </Link>

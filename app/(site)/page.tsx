@@ -29,22 +29,67 @@ export default async function Home() {
 
   return (
     <main>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-blue-950">
+      {/* HERO — composição editorial: no mobile a moto vem em bloco
+          grande, logo no início, antes do texto (protagonismo visual
+          imediato). No desktop (lg+) a moto passa a sangrar até a borda
+          direita da viewport, com o texto num bloco mais estreito à
+          esquerda — composição assimétrica, não duas colunas iguais. */}
+      <section className="relative overflow-hidden bg-blue-950 lg:min-h-[38rem]">
         <div
           aria-hidden
-          className="pointer-events-none absolute -left-40 top-1/2 h-[36rem] w-[36rem] -translate-y-1/2 rounded-full bg-blue-600/20 blur-3xl"
+          className="pointer-events-none absolute -left-32 top-0 h-[28rem] w-[28rem] rounded-full bg-blue-600/20 blur-3xl"
         />
 
-        <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:items-center lg:gap-16 lg:px-8 lg:py-28">
-          <div>
+        {/* Moto em bleed — só existe no desktop; no mobile a moto aparece
+            em bloco próprio logo abaixo. */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/2 lg:block">
+          {heroProduct && heroImage && (
+            <Image
+              src={getPublicImageUrl(heroImage.storage_path)}
+              alt={
+                heroImage.alt_text ||
+                `${heroProduct.brand} ${heroProduct.model}`
+              }
+              fill
+              className="object-contain object-right p-8 xl:p-14"
+              sizes="50vw"
+            />
+          )}
+        </div>
+
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          {/* Moto — bloco mobile/tablet, grande, antes do texto. */}
+          <div className="relative mt-6 aspect-square w-full sm:aspect-[3/2] md:aspect-[16/9] lg:hidden">
+            {heroProduct && heroImage ? (
+              <Image
+                src={getPublicImageUrl(heroImage.storage_path)}
+                alt={
+                  heroImage.alt_text ||
+                  `${heroProduct.brand} ${heroProduct.model}`
+                }
+                fill
+                priority
+                className="object-contain"
+                sizes="100vw"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center rounded-lg border border-white/10 bg-white/5">
+                <p className="max-w-[16rem] text-center text-sm text-blue-200">
+                  Confira os modelos disponíveis no catálogo da Regtech
+                  Motors.
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="py-8 lg:max-w-sm lg:py-28">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
               Regtech Motors · Mobilidade elétrica
             </p>
             <h1 className="mt-4 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
               Mais liberdade para se movimentar
             </h1>
-            <p className="mt-6 max-w-md text-base text-blue-100 sm:text-lg">
+            <p className="mt-6 max-w-md text-base text-blue-100 sm:text-lg lg:max-w-none">
               Motos elétricas para uma nova experiência de mobilidade.
               Conheça os modelos disponíveis na Regtech Motors.
             </p>
@@ -54,40 +99,6 @@ export default async function Home() {
             >
               Conhecer motos
             </Link>
-          </div>
-
-          <div className="relative">
-            {heroProduct && heroImage ? (
-              <>
-                <div className="relative aspect-[4/3] w-full">
-                  <div
-                    aria-hidden
-                    className="absolute inset-0 -z-10 rounded-full bg-cyan-400/10 blur-3xl"
-                  />
-                  <Image
-                    src={getPublicImageUrl(heroImage.storage_path)}
-                    alt={
-                      heroImage.alt_text ||
-                      `${heroProduct.brand} ${heroProduct.model}`
-                    }
-                    fill
-                    priority
-                    className="object-contain drop-shadow-2xl"
-                    sizes="(max-width: 1024px) 90vw, 45vw"
-                  />
-                </div>
-                <p className="mt-4 text-center text-xs font-medium uppercase tracking-[0.15em] text-blue-300 lg:text-left">
-                  {heroProduct.brand} · {heroProduct.model}
-                </p>
-              </>
-            ) : (
-              <div className="flex aspect-[4/3] w-full items-center justify-center rounded-lg border border-white/10 bg-white/5">
-                <p className="max-w-[16rem] text-center text-sm text-blue-200">
-                  Confira os modelos disponíveis no catálogo da Regtech
-                  Motors.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </section>
