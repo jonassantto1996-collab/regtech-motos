@@ -2,15 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 /**
- * Footer da Home. Inclui apenas links para rotas que realmente existem
- * hoje (Catálogo). Não inclui Contato / Política de Privacidade / Termos
- * porque essas rotas ainda não existem no site — ver relatório da tarefa.
+ * Footer público — mesmo escopo do Header (ver components/layout/Header.tsx).
  *
- * Usado apenas em app/page.tsx (Home), pelo mesmo motivo do Header.
+ * Inclui apenas links para rotas que realmente existem hoje (Catálogo).
+ * Não inclui Contato / Política de Privacidade / Termos porque essas
+ * rotas ainda não existem no site.
  */
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-slate-950">
+    <footer className="border-t border-white/10 bg-blue-950">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-4 py-10 sm:flex-row sm:justify-between sm:px-6 lg:px-8">
         <Image
           src="/logo-regtech-motors.png"
@@ -22,7 +22,7 @@ export default function Footer() {
 
         <Link
           href="/products"
-          className="text-sm font-medium uppercase tracking-[0.15em] text-slate-300 transition hover:text-cyan-300"
+          className="text-sm font-medium uppercase tracking-[0.15em] text-blue-200 transition hover:text-cyan-300"
         >
           Catálogo
         </Link>
