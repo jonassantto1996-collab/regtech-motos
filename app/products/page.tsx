@@ -14,9 +14,9 @@ import {
 } from "@/lib/catalog/queries";
 
 export const metadata: Metadata = {
-  title: "Catálogo de Motos — Regtech Motos",
+  title: "Catálogo de Motos — Regtech Motors",
   description:
-    "Confira as motos elétricas disponíveis no catálogo da Regtech Motos: preços, cores e especificações.",
+    "Confira as motos elétricas disponíveis no catálogo da Regtech Motors: preços, cores e especificações.",
   alternates: { canonical: "/products" },
 };
 

@@ -22,7 +22,7 @@ export default async function LoginPage({
         fontFamily: "system-ui, sans-serif",
       }}
     >
-      <h1>Regtech Motos</h1>
+      <h1>Regtech Motors</h1>
       <form action={login}>
         <div style={{ marginBottom: "1rem" }}>
           <label htmlFor="email">E-mail</label>

@@ -8,8 +8,8 @@ import "./globals.css";
 // fallback próprio (a URL do deploy atual) e emite um aviso no build,
 // o que é esperado e inofensivo até a variável ser adicionada.
 export const metadata: Metadata = {
-  title: "Regtech Motos",
-  description: "Projeto Regtech Motos — Vértice Digital",
+  title: "Regtech Motors",
+  description: "Projeto Regtech Motors — Vértice Digital",
   ...(process.env.NEXT_PUBLIC_SITE_URL
     ? { metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL) }
     : {}),

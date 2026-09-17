@@ -22,10 +22,10 @@ export async function generateMetadata({
 
   if (!product) {
     // Não revela se o slug não existe ou se o produto está inativo.
-    return { title: "Produto não encontrado — Regtech Motos" };
+    return { title: "Produto não encontrado — Regtech Motors" };
   }
 
-  const title = `${product.brand} ${product.model} — Regtech Motos`;
+  const title = `${product.brand} ${product.model} — Regtech Motors`;
   const description =
     (product.description ? product.description.slice(0, 160) : "") ||
     `${product.brand} ${product.model} por ${formatPriceBRL(product.price)}.`;
