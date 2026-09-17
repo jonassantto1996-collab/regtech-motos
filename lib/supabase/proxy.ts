@@ -53,6 +53,15 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Simetria com a regra acima: um admin já autenticado não precisa ver o
+  // formulário de login de novo — evita a pequena inconsistência de
+  // navegação de ficar "preso" na tela de login mesmo já logado.
+  if (isLoginPage && isAuthenticated) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin";
+    return NextResponse.redirect(url);
+  }
+
   // Retornar sempre este objeto (com os cookies já copiados acima) — criar
   // uma nova resposta do zero aqui quebraria a sincronia entre navegador e
   // servidor.

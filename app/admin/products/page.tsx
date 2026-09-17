@@ -76,6 +76,7 @@ export default async function ProductsPage({
       )}
 
       {!error && products && products.length > 0 && (
+        <div style={{ overflowX: "auto" }}>
         <table
           style={{
             width: "100%",
@@ -140,6 +141,7 @@ export default async function ProductsPage({
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </main>
   );

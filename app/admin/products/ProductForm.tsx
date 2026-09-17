@@ -191,7 +191,7 @@ export function ProductForm({
             name="is_active"
             defaultChecked={defaultValues?.is_active ?? true}
           />{" "}
-          Produto ativo (visível quando o catálogo público existir)
+          Produto ativo (visível no catálogo público)
         </label>
       </div>
 

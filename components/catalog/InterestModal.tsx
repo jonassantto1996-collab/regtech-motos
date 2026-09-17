@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, type FormEvent } from "react";
+import { useEffect, useRef, useState, useTransition, type FormEvent } from "react";
 import { createLead } from "@/lib/leads/actions";
 
 type Props = {
@@ -15,6 +15,45 @@ export default function InterestModal({ productId }: Props) {
   const [whatsapp, setWhatsapp] = useState("");
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const openButtonRef = useRef<HTMLButtonElement>(null);
+  const firstFieldRef = useRef<HTMLInputElement>(null);
+  const closeSuccessButtonRef = useRef<HTMLButtonElement>(null);
+  const isFirstRender = useRef(true);
+
+  // Gerenciamento de foco (Etapa 4.7, Seção 9): ao abrir, o foco vai para o
+  // primeiro campo do formulário (ou para o botão "Fechar" quando já chega
+  // direto num estado de sucesso); ao fechar, o foco volta para o botão que
+  // abriu o modal. Pulado na primeira renderização para não roubar o foco
+  // da página assim que ela carrega.
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (modalState === "idle") {
+      firstFieldRef.current?.focus();
+    } else if (modalState === "success") {
+      closeSuccessButtonRef.current?.focus();
+    } else if (modalState === "closed") {
+      openButtonRef.current?.focus();
+    }
+  }, [modalState]);
+
+  // Fecha com Esc, exceto durante o envio (mesma regra de closeModal — não
+  // registra o listener nesse estado, então Esc não tem efeito ali).
+  useEffect(() => {
+    if (modalState === "closed" || modalState === "submitting") return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setModalState("closed");
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [modalState]);
 
   function openModal() {
     setFeedbackMessage(null);
@@ -63,6 +102,7 @@ export default function InterestModal({ productId }: Props) {
   return (
     <>
       <button
+        ref={openButtonRef}
         type="button"
         onClick={openModal}
         className="mt-4 w-full rounded-md bg-green-600 px-6 py-3 text-center text-base font-semibold text-white transition hover:bg-green-700 sm:w-auto"
@@ -86,6 +126,7 @@ export default function InterestModal({ productId }: Props) {
               <div>
                 <p className="text-gray-900">{feedbackMessage}</p>
                 <button
+                  ref={closeSuccessButtonRef}
                   type="button"
                   onClick={closeModal}
                   className="mt-4 rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
@@ -107,6 +148,7 @@ export default function InterestModal({ productId }: Props) {
                     Nome completo
                   </label>
                   <input
+                    ref={firstFieldRef}
                     id="lead-full-name"
                     type="text"
                     value={fullName}

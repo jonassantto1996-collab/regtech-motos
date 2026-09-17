@@ -5,11 +5,9 @@
  * Nenhuma função aqui usa SUPABASE_SERVICE_ROLE_KEY — são seguras para uso
  * em Client Components ou Server Components/Actions.
  *
- * Upload e remoção reais de arquivos ainda não foram implementados aqui de
- * propósito: essas operações precisam de uma verificação de autorização de
- * administrador, que ainda não existe (Etapa 3 não inclui autenticação).
- * Quando o painel admin existir, essas ações devem ser feitas em Server
- * Actions/Route Handlers que validem a sessão antes de usar o service_role.
+ * Upload e remoção reais de arquivos são feitos em Server Actions (ver
+ * app/admin/products/[id]/images/actions.ts), que validam a sessão de
+ * administrador (requireAdminSession) antes de usar o service_role.
  */
 
 export const PRODUCT_IMAGES_BUCKET = "product-images";

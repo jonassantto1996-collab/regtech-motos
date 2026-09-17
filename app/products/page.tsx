@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import SearchForm from "@/components/catalog/SearchForm";
 import FiltersBar from "@/components/catalog/FiltersBar";
@@ -110,9 +111,21 @@ export default async function ProductsPage({
       </form>
 
       {result.products.length === 0 ? (
-        <p className="py-12 text-center text-gray-500">
-          Nenhum produto encontrado com esses critérios.
-        </p>
+        <div className="py-12 text-center text-gray-500">
+          <p>Nenhum produto encontrado com esses critérios.</p>
+          {(sp.q ||
+            sp.brand ||
+            sp.category ||
+            sp.minPrice ||
+            sp.maxPrice) && (
+            <Link
+              href="/products"
+              className="mt-3 inline-block text-sm font-medium text-blue-600 underline hover:text-blue-700"
+            >
+              Limpar filtros
+            </Link>
+          )}
+        </div>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {result.products.map((product) => (

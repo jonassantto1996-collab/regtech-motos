@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import Image from "next/image";
 import type { ProductImage } from "./types";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import {
@@ -67,12 +68,12 @@ export function ProductImagesManager({
                 gap: "0.75rem",
               }}
             >
-              <img
+              <Image
                 src={getPublicImageUrl(image.storage_path)}
                 alt={image.alt_text ?? ""}
+                width={96}
+                height={96}
                 style={{
-                  width: 96,
-                  height: 96,
                   objectFit: "cover",
                   borderRadius: 4,
                   flexShrink: 0,
