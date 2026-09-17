@@ -82,34 +82,37 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* MOTOS — primeira vertical da Regtech. Padding de topo reduzido
-          (era py-16/py-24) pra a seção começar logo depois do Hero, que
-          agora é bem mais curto. Título também não repete mais a mesma
-          frase do H1 do Hero — nesta etapa só reposicionamento/pequenos
-          ajustes de entrada, sem redesenhar o ProductCard/grade. */}
-      <section className="bg-white px-4 pb-16 pt-10 sm:px-6 sm:pt-12 lg:px-8 lg:pb-24 lg:pt-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="max-w-xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
-              Motos
+      {/* LINHA DE MOTOS — composição aberta e editorial. A grade se adapta
+          à quantidade recebida sem regras específicas para os dois modelos
+          que existem hoje. */}
+      <section className="bg-white px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8 lg:pb-28 lg:pt-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between sm:pb-8">
+            <div className="max-w-xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
+                Linha de motos
+              </p>
+              <h2 className="mt-3 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                Modelos disponíveis
+              </h2>
+            </div>
+            <p className="max-w-sm text-sm leading-6 text-gray-600 sm:text-right">
+              Escolha o modelo que combina com a sua forma de se movimentar.
             </p>
-            <h2 className="mt-3 text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-              Modelos disponíveis
-            </h2>
           </div>
 
           {featuredProducts.length > 0 ? (
             <>
-              <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-14 md:grid-cols-2 lg:mt-10 lg:gap-x-12 lg:gap-y-20">
                 {featuredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
 
-              <div className="mt-12 flex justify-center">
+              <div className="mt-14 flex sm:justify-end lg:mt-16">
                 <Link
                   href="/products"
-                  className="border border-gray-300 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-gray-900 transition hover:border-blue-700 hover:text-blue-700"
+                  className="inline-flex min-h-12 w-full items-center justify-center border border-gray-900 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:w-auto"
                 >
                   Ver todas as motos
                 </Link>
