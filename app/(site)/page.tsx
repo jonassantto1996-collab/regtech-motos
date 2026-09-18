@@ -41,25 +41,26 @@ export default async function Home() {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/55 to-transparent"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/60 to-transparent"
         />
 
         <div className="relative mx-auto flex max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:min-h-[26rem] lg:items-center lg:px-8 lg:py-0">
-          <div className="max-w-xs sm:max-w-sm lg:max-w-md">
+          <div className="max-w-xs sm:max-w-sm lg:max-w-lg">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">
               Regtech Motors
             </p>
             <p className="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-blue-200">
               Mobilidade elétrica
             </p>
-            <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl">
+            <h1 className="mt-3 text-2xl font-bold leading-[1.08] tracking-[-0.025em] text-white sm:text-3xl lg:text-[2.75rem]">
               Conheça nossa linha de motos elétricas.
             </h1>
             <Link
               href="/products"
-              className="mt-6 inline-flex items-center gap-2 bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition hover:bg-cyan-300 sm:text-sm"
+              className="mt-7 inline-flex min-h-12 items-center gap-3 border border-white bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition-colors hover:border-cyan-300 hover:bg-cyan-300 sm:text-sm"
             >
               Conhecer modelos
+              <span aria-hidden className="text-base">→</span>
             </Link>
           </div>
         </div>
