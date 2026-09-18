@@ -4,8 +4,8 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="border-t border-blue-900 bg-blue-950 text-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
-        <div className="grid gap-10 border-b border-blue-900 pb-10 sm:grid-cols-[1fr_auto] sm:items-end">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+        <div className="grid gap-10 border-b border-blue-900 pb-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_0.7fr_0.9fr] lg:gap-16 lg:pb-12">
           <div>
             <Link
               href="/"
@@ -21,25 +21,45 @@ export default function Footer() {
               />
             </Link>
             <p className="mt-5 max-w-md text-sm leading-6 text-blue-200">
-              Conheça a linha Regtech Motors e fale com nossa equipe para
-              saber mais sobre os modelos disponíveis.
+              Conheça a linha Regtech Motors e fale com nossa equipe para saber
+              mais sobre os modelos disponíveis.
             </p>
           </div>
 
-          <nav aria-label="Navegação do rodapé" className="flex gap-7">
-            <Link
-              href="/"
-              className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-100 transition-colors hover:text-cyan-300"
+          <div>
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-blue-300">
+              Navegação
+            </p>
+            <nav aria-label="Navegação do rodapé" className="mt-5 flex flex-col items-start gap-3">
+              <Link href="/" className="text-sm text-blue-100 transition-colors hover:text-cyan-300">
+                Início
+              </Link>
+              <Link href="/products" className="text-sm text-blue-100 transition-colors hover:text-cyan-300">
+                Motos elétricas
+              </Link>
+            </nav>
+          </div>
+
+          <div>
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-blue-300">
+              Regtech CellShop
+            </p>
+            <p className="mt-5 text-sm leading-6 text-blue-100">
+              Av. dos Estados, 241
+              <br />
+              Centro, Tucumã — PA
+              <br />
+              CEP 68385-000
+            </p>
+            <a
+              href="https://www.instagram.com/regtechcellshop"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-cyan-300"
             >
-              Início
-            </Link>
-            <Link
-              href="/products"
-              className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-100 transition-colors hover:text-cyan-300"
-            >
-              Catálogo
-            </Link>
-          </nav>
+              @regtechcellshop <span aria-hidden>↗</span>
+            </a>
+          </div>
         </div>
 
         <div className="flex flex-col gap-2 pt-6 text-xs text-blue-300 sm:flex-row sm:items-center sm:justify-between">
