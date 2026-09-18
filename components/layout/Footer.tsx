@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+const STORE_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000";
+
 export default function Footer() {
   return (
     <footer className="border-t border-blue-900 bg-blue-950 text-white">
@@ -44,13 +46,22 @@ export default function Footer() {
             <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-blue-300">
               Regtech CellShop
             </p>
-            <p className="mt-5 text-sm leading-6 text-blue-100">
-              Av. dos Estados, 241
-              <br />
-              Centro, Tucumã — PA
-              <br />
-              CEP 68385-000
-            </p>
+            <a
+              href={STORE_MAP_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="group mt-5 inline-flex items-start gap-3 text-sm leading-6 text-blue-100 transition-colors hover:text-cyan-300"
+              aria-label="Abrir localização da Regtech CellShop no Google Maps"
+            >
+              <span>
+                Av. dos Estados, 241
+                <br />
+                Centro, Tucumã — PA
+                <br />
+                CEP 68385-000
+              </span>
+              <span aria-hidden className="mt-0.5 transition-transform group-hover:translate-x-0.5">↗</span>
+            </a>
             <a
               href="https://www.instagram.com/regtechcellshop"
               target="_blank"
