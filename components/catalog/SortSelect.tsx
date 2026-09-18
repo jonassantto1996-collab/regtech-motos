@@ -1,17 +1,19 @@
 import { SORT_OPTIONS, type SortOption } from "@/lib/catalog/queries";
 
-// Também renderizado dentro do <form> único de app/products/page.tsx.
 export default function SortSelect({ value }: { value: SortOption }) {
   return (
-    <div>
-      <label htmlFor="sort" className="mb-1 block text-sm font-medium text-gray-700">
+    <div className="lg:min-w-64">
+      <label
+        htmlFor="sort"
+        className="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-gray-600"
+      >
         Ordenar por
       </label>
       <select
         id="sort"
         name="sort"
         defaultValue={value}
-        className="w-full rounded border border-gray-300 px-2 py-2 text-sm sm:w-56"
+        className="min-h-12 w-full border-0 border-b border-gray-300 bg-transparent px-0 py-3 text-sm text-gray-950 outline-none focus:border-blue-700 focus:ring-0"
       >
         {SORT_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>
