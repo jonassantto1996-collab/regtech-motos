@@ -56,7 +56,7 @@ export default async function Home() {
               imageUrl={heroImageUrl}
               imageAlt={heroImageAlt}
               priority
-              className="object-contain object-[86%_100%] sm:object-[82%_92%] lg:object-[82%_center]"
+              className="object-cover object-[58%_center] sm:object-[62%_center] lg:object-[68%_center]"
             />
           )}
         </div>
