@@ -11,11 +11,18 @@ import {
 } from "@/lib/supabase/storage";
 
 const HERO_PATH = "/admin/hero";
+const HERO_POSITIONS = new Set(["left", "center", "right"]);
+
+function parseImagePosition(formData: FormData) {
+  const value = String(formData.get("image_position") ?? "center");
+  return HERO_POSITIONS.has(value) ? value : "center";
+}
 
 export async function useProductHero(formData: FormData) {
   await requireAdminSession();
   const rawProductId = String(formData.get("product_id") ?? "").trim();
   const productId = rawProductId || null;
+  const imagePosition = parseImagePosition(formData);
   const admin = createAdminClient();
 
   if (productId) {
@@ -42,6 +49,7 @@ export async function useProductHero(formData: FormData) {
       product_id: productId,
       storage_path: null,
       alt_text: null,
+      image_position: imagePosition,
       updated_at: new Date().toISOString(),
     });
 
@@ -71,6 +79,7 @@ export async function uploadCustomHero(formData: FormData) {
 
   const altTextRaw = String(formData.get("alt_text") ?? "").trim();
   const altText = altTextRaw || "Regtech Motors";
+  const imagePosition = parseImagePosition(formData);
   const admin = createAdminClient();
   const storagePath = buildHeroImagePath(file.type);
 
@@ -93,6 +102,7 @@ export async function uploadCustomHero(formData: FormData) {
       product_id: null,
       storage_path: storagePath,
       alt_text: altText,
+      image_position: imagePosition,
       updated_at: new Date().toISOString(),
     });
 
