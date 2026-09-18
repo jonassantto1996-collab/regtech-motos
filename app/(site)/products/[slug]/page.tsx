@@ -87,7 +87,7 @@ export default async function ProductPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8 lg:pb-28">
+      <div className="mx-auto max-w-7xl px-4 pb-14 pt-4 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8 lg:pb-28">
         <Link
           href="/products"
           className="inline-flex min-h-10 items-center text-xs font-semibold uppercase tracking-[0.16em] text-gray-500 transition-colors hover:text-blue-700"
@@ -95,7 +95,7 @@ export default async function ProductPage({
           ← Voltar ao catálogo
         </Link>
 
-        <div className="mt-5 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 xl:gap-20">
+        <div className="mt-3 grid gap-7 sm:mt-5 sm:gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 xl:gap-20">
           <ProductGallery
             images={product.product_images}
             productName={`${product.brand} ${product.model}`}
@@ -105,14 +105,14 @@ export default async function ProductPage({
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-700">
               {product.brand}
             </p>
-            <h1 className="mt-2 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-950 sm:text-5xl">
               {product.model}
             </h1>
-            <p className="mt-5 text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+            <p className="mt-4 text-2xl font-semibold tracking-tight text-gray-900 sm:mt-5 sm:text-3xl">
               {formatPriceBRL(product.price)}
             </p>
 
-            <div className="mt-8 border-y border-gray-200 py-7">
+            <div className="mt-6 border-y border-gray-200 py-6 sm:mt-8 sm:py-7">
               <InterestModal productId={product.id} />
               <p className="mt-3 text-sm leading-6 text-gray-500">
                 Registre seu interesse para continuar o atendimento pelo WhatsApp.
@@ -142,7 +142,7 @@ export default async function ProductPage({
           </div>
         </div>
 
-        <div className="mt-12 grid gap-10 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-12 lg:mt-16 lg:grid-cols-2 lg:gap-16 lg:pt-14">
+        <div className="mt-10 grid gap-9 border-t border-gray-200 pt-8 sm:mt-16 sm:gap-10 sm:pt-12 lg:mt-16 lg:grid-cols-2 lg:gap-16 lg:pt-14">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
               Detalhes
