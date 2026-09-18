@@ -20,6 +20,9 @@ function buildPageHref(
   return `/products?${params.toString()}`;
 }
 
+const navClass =
+  "inline-flex min-h-11 items-center border-b border-gray-300 px-1 text-xs font-semibold uppercase tracking-[0.12em] transition-colors hover:border-blue-700 hover:text-blue-700";
+
 export default function Pagination({
   currentPage,
   totalPages,
@@ -30,34 +33,34 @@ export default function Pagination({
   return (
     <nav
       aria-label="Paginação do catálogo"
-      className="mt-8 flex items-center justify-center gap-4 text-sm"
+      className="mt-16 flex items-center justify-between border-t border-gray-200 pt-7 text-sm"
     >
       {currentPage > 1 ? (
         <Link
           href={buildPageHref(currentPage - 1, currentSearchParams)}
-          className="rounded border border-gray-300 px-3 py-1.5 hover:bg-gray-50"
+          className={navClass}
         >
           ← Anterior
         </Link>
       ) : (
-        <span className="cursor-not-allowed rounded border border-gray-200 px-3 py-1.5 text-gray-400">
+        <span className="min-h-11 px-1 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-gray-300">
           ← Anterior
         </span>
       )}
 
-      <span className="text-gray-600">
-        Página {currentPage} de {totalPages}
+      <span className="text-xs uppercase tracking-[0.12em] text-gray-500">
+        {currentPage} / {totalPages}
       </span>
 
       {currentPage < totalPages ? (
         <Link
           href={buildPageHref(currentPage + 1, currentSearchParams)}
-          className="rounded border border-gray-300 px-3 py-1.5 hover:bg-gray-50"
+          className={navClass}
         >
           Próxima →
         </Link>
       ) : (
-        <span className="cursor-not-allowed rounded border border-gray-200 px-3 py-1.5 text-gray-400">
+        <span className="min-h-11 px-1 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-gray-300">
           Próxima →
         </span>
       )}
