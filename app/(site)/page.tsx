@@ -330,36 +330,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* REGTECH — fechamento institucional curto, sem repetir fotografia. */}
-      <section className="border-t border-blue-900 bg-blue-950 px-4 py-14 text-white sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end lg:gap-20">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-              Regtech Motors
-            </p>
-            <h2 className="mt-3 max-w-md text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
-              Tecnologia para uma nova forma de se movimentar.
-            </h2>
-          </div>
-
-          <div className="border-t border-blue-800 pt-7 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
-            <p className="max-w-xl text-base leading-7 text-blue-100 sm:text-lg">
-              Conheça nossa linha de motos elétricas, compare os modelos
-              disponíveis e fale diretamente com a equipe Regtech para tirar
-              suas dúvidas.
-            </p>
-            <Link
-              href="/products"
-              className="mt-7 inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:text-cyan-300"
-            >
-              Explorar catálogo
-              <span aria-hidden className="text-lg">
-                →
-              </span>
-            </Link>
-          </div>
-        </div>
-      </section>
     </main>
   );
 }
