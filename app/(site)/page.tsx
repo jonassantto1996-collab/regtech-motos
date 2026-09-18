@@ -148,6 +148,45 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* MOBILIDADE — bloco editorial, sem promessas técnicas não confirmadas. */}
+      <section className="overflow-hidden bg-gray-950 text-white">
+        <div className="mx-auto grid max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+              Mobilidade elétrica
+            </p>
+            <h2 className="mt-4 max-w-xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+              Uma nova experiência para se movimentar.
+            </h2>
+            <p className="mt-6 max-w-xl text-base leading-7 text-gray-300 sm:text-lg">
+              Explore os modelos elétricos disponíveis, conheça os detalhes de
+              cada moto e escolha qual deseja consultar com a equipe Regtech.
+            </p>
+            <Link
+              href="/products"
+              className="mt-8 inline-flex min-h-12 items-center gap-3 border border-white/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-colors hover:border-cyan-300 hover:bg-cyan-300 hover:text-blue-950 sm:text-sm"
+            >
+              Comparar modelos
+              <span aria-hidden className="text-base">→</span>
+            </Link>
+          </div>
+
+          <div className="relative min-h-64 border-t border-white/10 bg-gradient-to-br from-blue-800 via-blue-950 to-gray-950 sm:min-h-80 lg:min-h-full lg:border-l lg:border-t-0">
+            <div aria-hidden className="absolute -right-20 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-blue-500/20 blur-3xl sm:h-96 sm:w-96" />
+            <div className="relative flex h-full min-h-64 items-end p-6 sm:min-h-80 sm:p-8 lg:min-h-full lg:p-10">
+              <div className="w-full border-t border-white/20 pt-5">
+                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-blue-200">
+                  Regtech Motors
+                </p>
+                <p className="mt-2 max-w-sm text-sm leading-6 text-white/80">
+                  Catálogo digital conectado diretamente ao atendimento da loja.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* REGTECH — fechamento institucional curto, sem repetir fotografia. */}
       <section className="border-t border-blue-900 bg-blue-950 px-4 py-14 text-white sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end lg:gap-20">
