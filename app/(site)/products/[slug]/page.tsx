@@ -142,7 +142,7 @@ export default async function ProductPage({
           </div>
         </div>
 
-        <div className="mt-16 grid gap-12 border-t border-gray-200 pt-12 lg:mt-24 lg:grid-cols-2 lg:gap-20 lg:pt-16">
+        <div className="mt-12 grid gap-10 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-12 lg:mt-16 lg:grid-cols-2 lg:gap-16 lg:pt-14">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
               Detalhes
