@@ -15,15 +15,15 @@ export default function ProductCard({
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group flex min-w-0 flex-col border-t border-gray-200 pt-4 outline-none transition-colors focus-visible:border-blue-700 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-4 sm:pt-5"
+      className="group flex min-w-0 flex-col border-t border-gray-200 pt-4 outline-none transition-colors duration-300 hover:border-blue-300 focus-visible:border-blue-700 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-4 sm:pt-5"
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100/70">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100/70 transition-colors duration-500 group-hover:from-blue-50/70 group-hover:to-gray-100/70">
         {mainImage ? (
           <Image
             src={getPublicImageUrl(mainImage.storage_path)}
             alt={mainImage.alt_text || `${product.brand} ${product.model}`}
             fill
-            className="object-contain p-3 transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025] sm:p-5"
+            className="object-contain p-3 transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:scale-[1.025] sm:p-5"
             sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 36rem"
           />
         ) : (
@@ -36,7 +36,7 @@ export default function ProductCard({
         <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-blue-700">
           {product.brand}
         </span>
-        <h3 className="mt-1 text-xl font-semibold tracking-tight text-gray-950 sm:text-2xl">
+        <h3 className="mt-1 text-xl font-semibold tracking-tight text-gray-950 transition-colors duration-300 group-hover:text-blue-800 sm:text-2xl">
           {product.model}
         </h3>
         <p className="mt-3 text-base font-medium text-gray-700 sm:text-lg">
@@ -44,7 +44,7 @@ export default function ProductCard({
         </p>
         <span className="mt-5 inline-flex min-h-11 items-center justify-between border-b border-gray-300 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-gray-900 transition-colors group-hover:border-blue-700 group-hover:text-blue-700">
           Ver modelo
-          <span aria-hidden className="text-lg font-normal transition-transform motion-safe:group-hover:translate-x-1">
+          <span aria-hidden className="text-lg font-normal transition-transform duration-300 motion-safe:group-hover:translate-x-1.5">
             →
           </span>
         </span>
