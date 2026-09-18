@@ -5,6 +5,8 @@ import { getActiveProductListItemById, listProducts } from "@/lib/catalog/querie
 import { createClient } from "@/lib/supabase/server";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 
+const STORE_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000";
+
 // Quantidade de produtos mostrados na seção "Motos".
 const FEATURED_LIMIT = 4;
 
@@ -335,24 +337,26 @@ export default async function Home() {
                   </span>
                 </a>
 
-                <div className="flex min-h-20 items-center justify-between gap-5 py-5">
+                <a
+                  href={STORE_MAP_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex min-h-20 items-center justify-between gap-5 py-5"
+                >
                   <div>
                     <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
                       Loja física
                     </span>
                     <span className="mt-1 block text-base font-semibold text-gray-950">
-                      Centro, Tucumã — PA
+                      Av. dos Estados, 241 — Centro, Tucumã — PA
                     </span>
                   </div>
-                  <span className="text-sm font-medium text-gray-500">
-                    Av. dos Estados, 241
-                  </span>
-                </div>
+                  <span aria-hidden className="text-xl text-blue-700 transition-transform group-hover:translate-x-1">→</span>
+                </a>
               </div>
 
               <p className="mt-8 text-sm leading-6 text-gray-600">
-                A fotografia oficial da fachada será incorporada a esta área
-                assim que o arquivo estiver disponível entre os assets do site.
+                Consulte os modelos pelo catálogo digital ou visite a loja física em Tucumã.
               </p>
             </div>
           </div>
