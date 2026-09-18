@@ -248,6 +248,88 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* LOJA — dados institucionais confirmados pelo cliente. */}
+      <section className="bg-white px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid overflow-hidden border border-gray-200 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="relative flex min-h-[22rem] items-end overflow-hidden bg-gradient-to-br from-blue-700 via-blue-900 to-blue-950 p-7 text-white sm:min-h-[28rem] sm:p-10 lg:min-h-[34rem] lg:p-12">
+              <div aria-hidden className="absolute -right-24 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
+              <div className="relative max-w-lg">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+                  Regtech CellShop
+                </p>
+                <h2 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+                  Conheça a Regtech de perto.
+                </h2>
+                <p className="mt-5 max-w-md text-base leading-7 text-blue-100">
+                  Visite a loja física e conheça os modelos disponíveis com a
+                  equipe Regtech.
+                </p>
+                <p className="mt-8 border-t border-white/20 pt-5 text-sm leading-6 text-white/85">
+                  Av. dos Estados, 241 — Centro, Tucumã — PA
+                  <br />
+                  CEP 68385-000
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-between bg-gray-50 p-7 sm:p-10 lg:p-12">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
+                  Canais oficiais
+                </p>
+                <h3 className="mt-3 max-w-md text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
+                  Continue sua experiência com a Regtech.
+                </h3>
+              </div>
+
+              <div className="mt-10 divide-y divide-gray-300 border-y border-gray-300">
+                <a
+                  href="https://www.instagram.com/regtechcellshop"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex min-h-20 items-center justify-between gap-5 py-5"
+                >
+                  <div>
+                    <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
+                      Instagram
+                    </span>
+                    <span className="mt-1 block text-base font-semibold text-gray-950">
+                      @regtechcellshop
+                    </span>
+                  </div>
+                  <span
+                    aria-hidden
+                    className="text-xl text-blue-700 transition-transform group-hover:translate-x-1"
+                  >
+                    →
+                  </span>
+                </a>
+
+                <div className="flex min-h-20 items-center justify-between gap-5 py-5">
+                  <div>
+                    <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
+                      Loja física
+                    </span>
+                    <span className="mt-1 block text-base font-semibold text-gray-950">
+                      Centro, Tucumã — PA
+                    </span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-500">
+                    Av. dos Estados, 241
+                  </span>
+                </div>
+              </div>
+
+              <p className="mt-8 text-sm leading-6 text-gray-600">
+                A fotografia oficial da fachada será incorporada a esta área
+                assim que o arquivo estiver disponível entre os assets do site.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* REGTECH — fechamento institucional curto, sem repetir fotografia. */}
       <section className="border-t border-blue-900 bg-blue-950 px-4 py-14 text-white sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end lg:gap-20">
