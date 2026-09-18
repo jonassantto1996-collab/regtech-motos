@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import ProductCard from "@/components/catalog/ProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
@@ -22,24 +21,10 @@ export default async function Home() {
   const heroProduct = featuredProducts[0];
   const heroImage = heroProduct?.product_images[0];
 
-  // Seção institucional: usa um segundo produto real (quando existir) como
-  // fotografia de apoio, diferente da foto usada no Hero — sem repetir a
-  // mesma composição duas vezes seguidas na página.
-  const institutionalProduct = featuredProducts[1] ?? featuredProducts[0];
-  const institutionalImage = institutionalProduct?.product_images[0];
-
   return (
     <main>
-      {/* HERO — peça de campanha compacta: a foto do produto cobre a
-          seção inteira como camada de fundo (sem container/caixa própria
-          — nada de "card" em volta dela), com o texto sobreposto num
-          bloco curto. Bem mais baixo que a versão anterior; o objetivo é
-          que "REGTECH + MOBILIDADE + PRODUTO" caibam juntos numa única
-          leitura, e a seção Motos comece logo em seguida. */}
+      {/* HERO — peça de campanha compacta. */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-900 to-blue-950">
-        {/* Foto do produto: preenche a seção inteira; a posição da moto
-            visível dentro dela é controlada por object-position, não por
-            um container próprio — é isso que evita a leitura de card. */}
         <div className="pointer-events-none absolute inset-0">
           {heroProduct && heroImage && (
             <HeroMedia
@@ -54,8 +39,6 @@ export default async function Home() {
           )}
         </div>
 
-        {/* Scrim: garante contraste pro texto independente do que
-            estiver por trás (foto ou só o gradiente de fundo). */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/55 to-transparent"
@@ -82,9 +65,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* LINHA DE MOTOS — composição aberta e editorial. A grade se adapta
-          à quantidade recebida sem regras específicas para os dois modelos
-          que existem hoje. */}
+      {/* LINHA DE MOTOS */}
       <section className="bg-white px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8 lg:pb-28 lg:pt-20">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between sm:pb-8">
@@ -126,55 +107,34 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* APRESENTAÇÃO DA REGTECH — bloco editorial (foto + texto curto) */}
-      <section className="bg-blue-950">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 lg:grid-cols-2 lg:items-center">
-          <div className="relative aspect-[4/3] w-full lg:aspect-auto lg:h-full lg:min-h-[24rem]">
-            {institutionalProduct && institutionalImage ? (
-              <Image
-                src={getPublicImageUrl(institutionalImage.storage_path)}
-                alt={
-                  institutionalImage.alt_text ||
-                  `${institutionalProduct.brand} ${institutionalProduct.model}`
-                }
-                fill
-                className="object-contain p-8 sm:p-12"
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            ) : (
-              <div className="h-full w-full bg-white/5" />
-            )}
-          </div>
-
-          <div className="px-4 py-16 sm:px-6 lg:px-12 lg:py-0">
-            <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-              Uma nova forma de se movimentar.
-            </h2>
-            <p className="mt-4 max-w-md text-blue-100">
-              A Regtech Motors apresenta motos elétricas pensadas para uma
-              nova experiência de mobilidade. Fale com a gente pelo
-              WhatsApp para conhecer o modelo ideal para você.
+      {/* REGTECH — fechamento institucional curto, sem repetir fotografia. */}
+      <section className="border-t border-blue-900 bg-blue-950 px-4 py-14 text-white sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end lg:gap-20">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+              Regtech Motors
             </p>
+            <h2 className="mt-3 max-w-md text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
+              Tecnologia para uma nova forma de se movimentar.
+            </h2>
           </div>
-        </div>
-      </section>
 
-      {/* CTA FINAL */}
-      <section className="bg-gradient-to-br from-blue-700 to-blue-950 px-4 py-16 text-center sm:px-6 lg:px-8 lg:py-24">
-        <div className="mx-auto max-w-2xl">
-          <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Pronto para conhecer as opções?
-          </h2>
-          <p className="mt-4 text-blue-100">
-            Confira nosso catálogo e encontre o modelo que mais combina com
-            você.
-          </p>
-          <Link
-            href="/products"
-            className="mt-8 inline-flex items-center gap-2 bg-white px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-blue-950 transition hover:bg-cyan-300"
-          >
-            Explorar catálogo
-          </Link>
+          <div className="border-t border-blue-800 pt-7 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
+            <p className="max-w-xl text-base leading-7 text-blue-100 sm:text-lg">
+              Conheça nossa linha de motos elétricas, compare os modelos
+              disponíveis e fale diretamente com a equipe Regtech para tirar
+              suas dúvidas.
+            </p>
+            <Link
+              href="/products"
+              className="mt-7 inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:text-cyan-300"
+            >
+              Explorar catálogo
+              <span aria-hidden className="text-lg">
+                →
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
     </main>
