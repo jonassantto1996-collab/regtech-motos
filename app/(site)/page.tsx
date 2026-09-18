@@ -187,6 +187,67 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* JORNADA — diferenciais baseados apenas no fluxo real do produto. */}
+      <section className="border-b border-gray-200 bg-gray-50 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-8 border-b border-gray-300 pb-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
+                Do catálogo ao atendimento
+              </p>
+              <h2 className="mt-3 max-w-lg text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+                Uma jornada simples para conhecer sua próxima moto.
+              </h2>
+            </div>
+            <p className="max-w-xl text-base leading-7 text-gray-600 lg:justify-self-end">
+              Navegue pelos modelos disponíveis, consulte os detalhes e envie
+              seu interesse diretamente para o atendimento da Regtech.
+            </p>
+          </div>
+
+          <div className="grid divide-y divide-gray-300 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+            {[
+              {
+                number: "01",
+                title: "Explore os modelos",
+                text: "Veja as motos elétricas disponíveis no catálogo e acesse cada modelo para conhecer seus detalhes.",
+              },
+              {
+                number: "02",
+                title: "Escolha seu interesse",
+                text: "Ao encontrar uma moto, informe seu nome e WhatsApp para iniciar o contato.",
+              },
+              {
+                number: "03",
+                title: "Fale com a Regtech",
+                text: "Seu interesse é registrado e a conversa continua diretamente pelo WhatsApp.",
+              },
+            ].map((item) => (
+              <div
+                key={item.number}
+                className="group py-8 first:pt-7 lg:px-8 lg:py-9 lg:first:pl-0 lg:last:pr-0"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold tracking-[0.2em] text-blue-700">
+                    {item.number}
+                  </span>
+                  <span
+                    aria-hidden
+                    className="h-px w-10 bg-gray-300 transition-all duration-300 group-hover:w-14 group-hover:bg-blue-600"
+                  />
+                </div>
+                <h3 className="mt-6 text-xl font-semibold tracking-tight text-gray-950">
+                  {item.title}
+                </h3>
+                <p className="mt-3 max-w-sm text-sm leading-6 text-gray-600">
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* REGTECH — fechamento institucional curto, sem repetir fotografia. */}
       <section className="border-t border-blue-900 bg-blue-950 px-4 py-14 text-white sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end lg:gap-20">
