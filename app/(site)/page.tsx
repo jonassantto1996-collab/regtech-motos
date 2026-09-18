@@ -23,8 +23,8 @@ export default async function Home() {
 
   return (
     <main>
-      {/* HERO — peça de campanha compacta. */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-900 to-blue-950">
+      {/* HERO — campanha principal da vertical Motors. */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-900 to-blue-950">
         <div className="hero-media-enter pointer-events-none absolute inset-0">
           {heroProduct && heroImage && (
             <HeroMedia
@@ -34,30 +34,30 @@ export default async function Home() {
                 `${heroProduct.brand} ${heroProduct.model}`
               }
               priority
-              className="object-contain object-[82%_100%] sm:object-[78%_88%] lg:object-[85%_center]"
+              className="object-contain object-[86%_100%] sm:object-[82%_92%] lg:object-[82%_center]"
             />
           )}
         </div>
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/60 to-transparent"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/70 to-blue-900/10"
         />
 
-        <div className="relative mx-auto flex max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:min-h-[26rem] lg:items-center lg:px-8 lg:py-0">
-          <div className="hero-copy-enter max-w-xs sm:max-w-sm lg:max-w-lg">
+        <div className="relative mx-auto flex min-h-[25rem] max-w-7xl items-end px-4 pb-10 pt-20 sm:min-h-[30rem] sm:px-6 sm:pb-14 sm:pt-24 lg:min-h-[34rem] lg:items-center lg:px-8 lg:py-0">
+          <div className="hero-copy-enter max-w-sm sm:max-w-md lg:max-w-xl">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">
               Regtech Motors
             </p>
             <p className="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-blue-200">
               Mobilidade elétrica
             </p>
-            <h1 className="mt-3 text-2xl font-bold leading-[1.08] tracking-[-0.025em] text-white sm:text-3xl lg:text-[2.75rem]">
-              Conheça nossa linha de motos elétricas.
+            <h1 className="mt-4 text-3xl font-bold leading-[1.04] tracking-[-0.035em] text-white sm:text-4xl lg:text-6xl">
+              Mobilidade elétrica para o seu próximo caminho.
             </h1>
             <Link
               href="/products"
-              className="mt-7 inline-flex min-h-12 items-center gap-3 border border-white bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition-colors hover:border-cyan-300 hover:bg-cyan-300 sm:text-sm"
+              className="mt-8 inline-flex min-h-12 items-center gap-3 border border-white bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition-colors hover:border-cyan-300 hover:bg-cyan-300 sm:text-sm"
             >
               Conhecer modelos
               <span aria-hidden className="text-base">→</span>
