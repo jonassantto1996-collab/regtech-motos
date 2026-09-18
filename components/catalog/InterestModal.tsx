@@ -95,7 +95,7 @@ export default function InterestModal({ productId }: Props) {
           onClick={closeModal}
         >
           <div
-            className="w-full bg-white p-6 shadow-2xl sm:max-w-md sm:p-8"
+            className="max-h-[92dvh] w-full overflow-y-auto bg-white px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-5 shadow-2xl sm:max-h-none sm:max-w-md sm:p-8"
             onClick={(e) => e.stopPropagation()}
           >
             {modalState === "success" ? (
@@ -116,14 +116,14 @@ export default function InterestModal({ productId }: Props) {
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
                     Atendimento Regtech
                   </p>
-                  <h2 className="mt-2 text-2xl font-bold tracking-tight text-gray-950">
+                  <h2 className="mt-2 text-[1.375rem] font-bold tracking-tight text-gray-950 sm:text-2xl">
                     Tenho interesse
                   </h2>
                   <p className="mt-2 text-sm leading-6 text-gray-500">
                     Informe seus dados para continuar pelo WhatsApp.
                   </p>
 
-                  <label htmlFor="lead-full-name" className="mt-7 block text-xs font-semibold uppercase tracking-[0.14em] text-gray-600">
+                  <label htmlFor="lead-full-name" className="mt-6 block text-xs font-semibold uppercase tracking-[0.14em] text-gray-600 sm:mt-7">
                     Nome completo
                   </label>
                   <input
@@ -157,7 +157,7 @@ export default function InterestModal({ productId }: Props) {
                     </p>
                   )}
 
-                  <div className="mt-8 grid grid-cols-2 gap-3">
+                  <div className="mt-7 grid grid-cols-1 gap-3 sm:mt-8 sm:grid-cols-2">
                     <button
                       type="button"
                       onClick={closeModal}
