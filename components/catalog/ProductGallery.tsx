@@ -28,19 +28,19 @@ export default function ProductGallery({ images, productName }: Props) {
 
   return (
     <div>
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="relative aspect-[5/4] w-full overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 sm:aspect-[4/3]">
         <Image
           src={getPublicImageUrl(selected.storage_path)}
           alt={selected.alt_text || productName}
           fill
-          className="object-contain p-4 sm:p-8"
+          className="object-contain p-3 sm:p-8"
           sizes="(max-width: 1024px) 100vw, 58vw"
           priority
         />
       </div>
 
       {images.length > 1 && (
-        <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
+        <div className="mt-3 flex snap-x gap-2.5 overflow-x-auto pb-1 sm:mt-4 sm:gap-3">
           {images.map((img, index) => (
             <button
               key={img.id}
@@ -48,7 +48,7 @@ export default function ProductGallery({ images, productName }: Props) {
               onClick={() => setSelectedId(img.id)}
               aria-label={`Ver imagem ${index + 1} de ${productName}`}
               aria-pressed={img.id === selected.id}
-              className={`relative aspect-[4/3] w-24 flex-shrink-0 overflow-hidden border-b-2 bg-gray-50 transition-colors sm:w-28 ${
+              className={`relative aspect-[4/3] w-20 flex-shrink-0 snap-start overflow-hidden border-b-2 bg-gray-50 transition-colors sm:w-28 ${
                 img.id === selected.id
                   ? "border-blue-700"
                   : "border-transparent hover:border-gray-400"
