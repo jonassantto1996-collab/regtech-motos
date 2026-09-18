@@ -5,7 +5,7 @@ export default function Header() {
   return (
     <header className="relative z-30 bg-blue-950 text-white">
       <div className="border-b border-white/10">
-        <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-5 px-4 sm:min-h-24 sm:px-6 lg:px-8">
+        <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:min-h-24 sm:px-6 lg:px-8">
           <Link
             href="/"
             className="shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-4 focus-visible:ring-offset-blue-950"
@@ -17,11 +17,11 @@ export default function Header() {
               width={201}
               height={96}
               priority
-              className="h-10 w-auto sm:h-12"
+              className="h-9 w-auto sm:h-12"
             />
           </Link>
 
-          <nav aria-label="Navegação principal" className="flex items-center gap-6 sm:gap-9">
+          <nav aria-label="Navegação principal" className="flex items-center gap-4 sm:gap-9">
             <Link
               href="/"
               className="hidden text-xs font-semibold uppercase tracking-[0.18em] text-blue-100 transition-colors hover:text-cyan-300 sm:inline"
@@ -30,7 +30,7 @@ export default function Header() {
             </Link>
             <Link
               href="/products"
-              className="text-xs font-semibold uppercase tracking-[0.18em] text-white transition-colors hover:text-cyan-300 sm:text-sm"
+              className="inline-flex min-h-11 items-center text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:text-cyan-300 sm:min-h-0 sm:text-sm sm:tracking-[0.18em]"
             >
               Motos elétricas
             </Link>
