@@ -75,13 +75,13 @@ export default async function ProductsPage({
 
   return (
     <main>
-      <header className="border-b border-blue-900 bg-blue-950 px-4 py-12 text-white sm:px-6 sm:py-16 lg:px-8">
+      <header className="border-b border-blue-900 bg-blue-950 px-4 py-9 text-white sm:px-6 sm:py-16 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
             Regtech Motors
           </p>
           <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <h1 className="max-w-2xl text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="max-w-2xl text-[1.75rem] font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
               Catálogo de motos elétricas
             </h1>
             <p className="max-w-md text-sm leading-6 text-blue-100 sm:text-base">
@@ -92,15 +92,15 @@ export default async function ProductsPage({
         </div>
       </header>
 
-      <section className="bg-white px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
+      <section className="bg-white px-4 py-7 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
         <div className="mx-auto max-w-7xl">
           <form method="GET" action="/products">
-            <div className="grid gap-6 border-b border-gray-200 pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div className="grid gap-5 border-b border-gray-200 pb-6 sm:gap-6 sm:pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
               <SearchForm defaultValue={sp.q} />
               <SortSelect value={sort} />
             </div>
 
-            <div className="border-b border-gray-200 py-7">
+            <div className="border-b border-gray-200 py-6 sm:py-7">
               <FiltersBar
                 brands={brands}
                 categories={categories}
@@ -111,7 +111,7 @@ export default async function ProductsPage({
                 selectedMaxPrice={sp.maxPrice}
               />
 
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="mt-5 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="text-sm text-gray-500">
                   {hasFilters && (
                     <Link
@@ -132,7 +132,7 @@ export default async function ProductsPage({
             </div>
           </form>
 
-          <div className="flex items-end justify-between gap-4 py-8 lg:py-10">
+          <div className="flex items-end justify-between gap-4 py-7 sm:py-8 lg:py-10">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
                 Modelos
@@ -158,7 +158,7 @@ export default async function ProductsPage({
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-x-8 gap-y-14 md:grid-cols-2 lg:gap-x-12 lg:gap-y-20">
+            <div className="grid grid-cols-1 gap-x-8 gap-y-11 sm:gap-y-14 md:grid-cols-2 lg:gap-x-12 lg:gap-y-20">
               {result.products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
