@@ -80,6 +80,13 @@ export function buildProductImagePath(
   return `products/${productId}/${fileName}`;
 }
 
+
+/** Gera um caminho isolado para uma imagem exclusiva do Hero da Home. */
+export function buildHeroImagePath(mimeType: string): string {
+  const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
+  return `home-hero/${crypto.randomUUID()}.${extension}`;
+}
+
 /**
  * Converte um storage_path em URL pública utilizável pelo frontend.
  * O bucket product-images é público — nenhuma credencial é necessária
