@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ProductCard from "@/components/catalog/ProductCard";
+import HomeProductCard from "@/components/home/HomeProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
 import { listProducts } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
@@ -107,7 +107,7 @@ export default async function Home() {
       </section>
 
       {/* LINHA DE MOTOS */}
-      <section className="bg-white px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8 lg:pb-28 lg:pt-20">
+      <section className="bg-white px-4 pb-14 pt-10 sm:px-6 sm:pt-12 lg:px-8 lg:pb-20 lg:pt-14">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between sm:pb-8">
             <div className="max-w-xl">
@@ -125,13 +125,13 @@ export default async function Home() {
 
           {featuredProducts.length > 0 ? (
             <>
-              <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-14 md:grid-cols-2 lg:mt-10 lg:gap-x-12 lg:gap-y-20">
+              <div className="mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 sm:gap-7 lg:grid lg:grid-cols-4 lg:gap-0 lg:overflow-visible lg:pb-0">
                 {featuredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <HomeProductCard key={product.id} product={product} />
                 ))}
               </div>
 
-              <div className="mt-14 flex sm:justify-end lg:mt-16">
+              <div className="mt-10 flex sm:justify-end lg:mt-12">
                 <Link
                   href="/products"
                   className="inline-flex min-h-12 w-full items-center justify-center border border-gray-900 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:w-auto"
