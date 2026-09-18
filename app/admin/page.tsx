@@ -52,6 +52,9 @@ export default async function AdminPage() {
       <p>
         <Link href="/admin/leads">Leads &rarr;</Link>
       </p>
+      <p>
+        <Link href="/admin/hero">Hero da Home &rarr;</Link>
+      </p>
 
       <h2 style={{ marginTop: "2rem", fontSize: "1rem" }}>Leads por status</h2>
       <div
