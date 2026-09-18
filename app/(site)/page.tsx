@@ -44,7 +44,7 @@ export default async function Home() {
           className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/55 to-transparent"
         />
 
-        <div className="relative mx-auto flex max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:min-h-[26rem] lg:items-center lg:px-8 lg:py-0">
+        <div className="relative mx-auto flex max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:min-h-[26rem] lg:items-center lg:px-8 lg:py-0">
           <div className="max-w-xs sm:max-w-sm lg:max-w-md">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">
               Regtech Motors
