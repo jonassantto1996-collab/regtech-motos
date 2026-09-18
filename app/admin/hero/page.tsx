@@ -23,7 +23,7 @@ export default async function AdminHeroPage({ searchParams }: { searchParams: Se
 
   const admin = createAdminClient();
   const [{ data: settings }, { data: products }] = await Promise.all([
-    admin.from("home_hero_settings").select("mode, product_id, storage_path, alt_text").eq("id", true).maybeSingle(),
+    admin.from("home_hero_settings").select("mode, product_id, storage_path, alt_text, image_position").eq("id", true).maybeSingle(),
     admin.from("products").select("id, brand, model").eq("is_active", true).order("brand").order("model"),
   ]);
   const params = await searchParams;
@@ -47,7 +47,7 @@ export default async function AdminHeroPage({ searchParams }: { searchParams: Se
               <option key={product.id} value={product.id}>{product.brand} {product.model}</option>
             ))}
           </select>
-          <button type="submit" style={{ marginTop: "1rem", padding: "0.65rem 1rem" }}>Usar no Hero</button>
+          <label style={{ display: "block", marginTop: "1rem" }}>Enquadramento<select name="image_position" defaultValue={settings?.image_position ?? "center"} style={{ display: "block", width: "100%", marginTop: "0.4rem", padding: "0.65rem" }}><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label><button type="submit" style={{ marginTop: "1rem", padding: "0.65rem 1rem" }}>Usar no Hero</button>
         </form>
       </section>
 
@@ -56,7 +56,7 @@ export default async function AdminHeroPage({ searchParams }: { searchParams: Se
         <p>JPEG, PNG ou WebP, até 5 MB. A imagem será usada apenas no Hero.</p>
         {settings?.mode === "custom" && settings.storage_path && (
           <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 7", marginBottom: "1rem", background: "#f3f4f6" }}>
-            <Image src={getPublicImageUrl(settings.storage_path)} alt={settings.alt_text ?? "Hero atual"} fill style={{ objectFit: "contain" }} />
+            <Image src={getPublicImageUrl(settings.storage_path)} alt={settings.alt_text ?? "Hero atual"} fill style={{ objectFit: "cover", objectPosition: settings.image_position ?? "center" }} />
           </div>
         )}
         <form action={uploadCustomHero}>
@@ -65,7 +65,7 @@ export default async function AdminHeroPage({ searchParams }: { searchParams: Se
             Texto alternativo
             <input name="alt_text" type="text" placeholder="Ex.: Moto elétrica Regtech" style={{ display: "block", width: "100%", marginTop: "0.4rem", padding: "0.65rem" }} />
           </label>
-          <button type="submit" style={{ marginTop: "1rem", padding: "0.65rem 1rem" }}>Enviar e usar no Hero</button>
+          <label style={{ display: "block", marginTop: "1rem" }}>Enquadramento<select name="image_position" defaultValue={settings?.image_position ?? "center"} style={{ display: "block", width: "100%", marginTop: "0.4rem", padding: "0.65rem" }}><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label><button type="submit" style={{ marginTop: "1rem", padding: "0.65rem 1rem" }}>Enviar e usar no Hero</button>
         </form>
       </section>
     </main>
