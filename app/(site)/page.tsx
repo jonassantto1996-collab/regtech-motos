@@ -66,6 +66,46 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* NAVEGAÇÃO DA VERTICAL — baseada apenas em categorias reais do catálogo. */}
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid min-h-24 grid-cols-[1fr_auto] items-center gap-6 py-5 sm:min-h-28">
+            <div>
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-blue-700">
+                Explore a linha
+              </p>
+              <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
+                {Array.from(
+                  new Set(featuredProducts.map((product) => product.category))
+                ).map((category) => (
+                  <Link
+                    key={category}
+                    href={`/products?category=${encodeURIComponent(category)}`}
+                    className="text-sm font-semibold text-gray-900 transition-colors hover:text-blue-700 sm:text-base"
+                  >
+                    {category}
+                  </Link>
+                ))}
+                <Link
+                  href="/products"
+                  className="text-sm font-medium text-gray-500 transition-colors hover:text-blue-700 sm:text-base"
+                >
+                  Todos os modelos
+                </Link>
+              </div>
+            </div>
+
+            <Link
+              href="/products"
+              aria-label="Abrir catálogo de motos elétricas"
+              className="inline-flex h-11 w-11 items-center justify-center border border-gray-300 text-xl text-gray-900 transition-colors hover:border-blue-700 hover:bg-blue-700 hover:text-white"
+            >
+              <span aria-hidden>→</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* LINHA DE MOTOS */}
       <section className="bg-white px-4 pb-16 pt-12 sm:px-6 sm:pt-16 lg:px-8 lg:pb-28 lg:pt-20">
         <div className="mx-auto max-w-7xl">
