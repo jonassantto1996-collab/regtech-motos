@@ -23,7 +23,7 @@ export default async function Home() {
   const supabase = await createClient();
   const { data: heroSettings } = await supabase
     .from("home_hero_settings")
-    .select("mode, product_id, storage_path, alt_text")
+    .select("mode, product_id, storage_path, alt_text, image_position")
     .eq("id", true)
     .maybeSingle();
 
@@ -40,6 +40,13 @@ export default async function Home() {
     : heroImage
       ? getPublicImageUrl(heroImage.storage_path)
       : null;
+  const heroPosition = heroSettings?.image_position ?? "center";
+  const heroPositionClass =
+    heroPosition === "left"
+      ? "object-left"
+      : heroPosition === "right"
+        ? "object-right"
+        : "object-center";
   const heroImageAlt = customHeroPath
     ? heroSettings?.alt_text || "Regtech Motors"
     : heroImage
@@ -56,7 +63,7 @@ export default async function Home() {
               imageUrl={heroImageUrl}
               imageAlt={heroImageAlt}
               priority
-              className="object-cover object-[58%_center] sm:object-[62%_center] lg:object-[68%_center]"
+              className={`object-cover ${heroPositionClass}`}
             />
           )}
         </div>
