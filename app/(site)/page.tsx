@@ -1,7 +1,8 @@
 import Link from "next/link";
 import HomeProductCard from "@/components/home/HomeProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
-import { listProducts } from "@/lib/catalog/queries";
+import { getActiveProductListItemById, listProducts } from "@/lib/catalog/queries";
+import { createClient } from "@/lib/supabase/server";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 
 // Quantidade de produtos mostrados na seção "Motos".
@@ -17,22 +18,43 @@ export default async function Home() {
 
   const featuredProducts = products.slice(0, FEATURED_LIMIT);
 
-  // Hero: produto em destaque (o mais recente).
-  const heroProduct = featuredProducts[0];
+  // Hero configurável pelo painel: imagem exclusiva, produto escolhido
+  // ou fallback automático para o produto mais recente.
+  const supabase = await createClient();
+  const { data: heroSettings } = await supabase
+    .from("home_hero_settings")
+    .select("mode, product_id, storage_path, alt_text")
+    .eq("id", true)
+    .maybeSingle();
+
+  const selectedHeroProduct =
+    heroSettings?.mode === "product" && heroSettings.product_id
+      ? await getActiveProductListItemById(heroSettings.product_id)
+      : null;
+  const heroProduct = selectedHeroProduct ?? featuredProducts[0];
   const heroImage = heroProduct?.product_images[0];
+  const customHeroPath =
+    heroSettings?.mode === "custom" ? heroSettings.storage_path : null;
+  const heroImageUrl = customHeroPath
+    ? getPublicImageUrl(customHeroPath)
+    : heroImage
+      ? getPublicImageUrl(heroImage.storage_path)
+      : null;
+  const heroImageAlt = customHeroPath
+    ? heroSettings?.alt_text || "Regtech Motors"
+    : heroImage
+      ? heroImage.alt_text || `${heroProduct?.brand ?? ""} ${heroProduct?.model ?? ""}`.trim()
+      : "Regtech Motors";
 
   return (
     <main>
       {/* HERO — campanha principal da vertical Motors. */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-900 to-blue-950">
         <div className="hero-media-enter pointer-events-none absolute inset-0">
-          {heroProduct && heroImage && (
+          {heroImageUrl && (
             <HeroMedia
-              imageUrl={getPublicImageUrl(heroImage.storage_path)}
-              imageAlt={
-                heroImage.alt_text ||
-                `${heroProduct.brand} ${heroProduct.model}`
-              }
+              imageUrl={heroImageUrl}
+              imageAlt={heroImageAlt}
               priority
               className="object-contain object-[86%_100%] sm:object-[82%_92%] lg:object-[82%_center]"
             />
