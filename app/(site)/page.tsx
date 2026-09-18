@@ -25,7 +25,7 @@ export default async function Home() {
     <main>
       {/* HERO — peça de campanha compacta. */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-900 to-blue-950">
-        <div className="pointer-events-none absolute inset-0">
+        <div className="hero-media-enter pointer-events-none absolute inset-0">
           {heroProduct && heroImage && (
             <HeroMedia
               imageUrl={getPublicImageUrl(heroImage.storage_path)}
@@ -45,7 +45,7 @@ export default async function Home() {
         />
 
         <div className="relative mx-auto flex max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:min-h-[26rem] lg:items-center lg:px-8 lg:py-0">
-          <div className="max-w-xs sm:max-w-sm lg:max-w-lg">
+          <div className="hero-copy-enter max-w-xs sm:max-w-sm lg:max-w-lg">
             <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">
               Regtech Motors
             </p>
