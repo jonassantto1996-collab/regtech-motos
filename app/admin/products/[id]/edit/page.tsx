@@ -12,6 +12,8 @@ import {
 } from "../../types";
 import { ProductForm } from "../../ProductForm";
 import { ProductImagesManager } from "../../ProductImagesManager";
+import { AdminShell } from "../../../AdminShell";
+import "../../../admin.css";
 
 export default async function EditProductPage({
   params,
@@ -82,31 +84,26 @@ export default async function EditProductPage({
     ]);
 
   return (
-    <main
-      style={{
-        maxWidth: 480,
-        margin: "3rem auto",
-        padding: "0 1rem",
-        fontFamily: "system-ui, sans-serif",
-      }}
-    >
-      <h1>Editar produto</h1>
-      <p>
-        <Link href="/admin/products">&larr; Voltar para a lista</Link>
-      </p>
-      <ProductForm
-        mode="edit"
-        action={updateProduct.bind(null, id)}
-        defaultValues={product as Product}
-        defaultColors={(colors ?? []) as ProductColor[]}
-        defaultSpecs={(specs ?? []) as ProductSpec[]}
-        errorMessage={errorMessage}
-      />
-      <ProductImagesManager
-        productId={id}
-        images={(images ?? []) as ProductImage[]}
-        errorMessage={errorMessage}
-      />
-    </main>
+    <AdminShell active="products" email={claims.claims.email}>
+      <main className="admin-content admin-page">
+        <div className="page-heading">
+          <div><span>CATÁLOGO</span><h1>Editar moto</h1><p>{product.brand} {product.model}</p></div>
+          <Link className="secondary-action" href="/admin/products">Voltar para motos</Link>
+        </div>
+        <section className="panel product-editor-panel">
+          <ProductForm
+            mode="edit"
+            action={updateProduct.bind(null, id)}
+            defaultValues={product as Product}
+            defaultColors={(colors ?? []) as ProductColor[]}
+            defaultSpecs={(specs ?? []) as ProductSpec[]}
+            errorMessage={errorMessage}
+          />
+        </section>
+        <section className="panel product-editor-panel images-editor-panel">
+          <ProductImagesManager productId={id} images={(images ?? []) as ProductImage[]} errorMessage={errorMessage} />
+        </section>
+      </main>
+    </AdminShell>
   );
 }
