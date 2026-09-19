@@ -16,7 +16,7 @@ export default async function AdminPage() {
   const [{data:leadRows},{data:products},{data:recentLeads}]=await Promise.all([
     admin.from("leads").select("status"),
     admin.from("products").select("id,is_active,availability"),
-    admin.from("leads").select("id,name,status,created_at").order("created_at",{ascending:false}).limit(5),
+    admin.from("leads").select("id,full_name,status,created_at").order("created_at",{ascending:false}).limit(5),
   ]);
   const statusCounts:Record<LeadStatus,number>={NOVO:0,EM_ATENDIMENTO:0,INTERESSADO:0,VENDA_REALIZADA:0,NAO_CONVERTIDO:0};
   for(const row of (leadRows??[]) as {status:LeadStatus}[]) if(statusCounts[row.status]!==undefined) statusCounts[row.status]++;
@@ -53,7 +53,7 @@ export default async function AdminPage() {
         <div className="dashboard-grid">
           <article className="panel chart-panel"><h2>Leads dos últimos 7 dias</h2><div className="fake-chart"><div/><div/><div/><div/><div/><div/><div/></div><div className="chart-days"><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span></div></article>
           <article className="panel"><div className="panel-title"><h2>Leads recentes</h2><Link href="/admin/leads">Ver todos →</Link></div>
-          <div className="lead-list">{recentLeads?.length?(recentLeads as any[]).map(l=><div key={l.id}><i>◉</i><span><strong>{l.name??"Lead"}</strong><small>{LEAD_STATUS_LABELS[l.status as LeadStatus]??l.status}</small></span><time>{new Date(l.created_at).toLocaleDateString("pt-BR")}</time></div>):<p>Nenhum lead recebido ainda.</p>}</div></article>
+          <div className="lead-list">{recentLeads?.length?(recentLeads as any[]).map(l=><div key={l.id}><i>◉</i><span><strong>{l.full_name??"Lead"}</strong><small>{LEAD_STATUS_LABELS[l.status as LeadStatus]??l.status}</small></span><time>{new Date(l.created_at).toLocaleDateString("pt-BR")}</time></div>):<p>Nenhum lead recebido ainda.</p>}</div></article>
         </div>
         <div className="status-strip">{LEAD_STATUSES.map(s=><div key={s}><span>{LEAD_STATUS_LABELS[s]}</span><strong>{statusCounts[s]}</strong></div>)}</div>
         <form action={logout}><button className="logout" type="submit">Sair do admin</button></form>
