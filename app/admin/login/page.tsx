@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { login } from "../actions";
+import { PasswordField } from "./PasswordField";
 import "../admin.css";
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -9,10 +11,11 @@ const ERROR_MESSAGES: Record<string, string> = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; reset?: string }>;
 }) {
   const params = await searchParams;
   const errorMessage = params.error ? ERROR_MESSAGES[params.error] : null;
+  const resetSuccess = params.reset === "success";
 
   return (
     <main className="admin-login">
@@ -34,8 +37,9 @@ export default async function LoginPage({
           <form action={login}>
             <label htmlFor="email">E-mail</label>
             <input id="email" name="email" type="email" autoComplete="email" required />
-            <label htmlFor="password">Senha</label>
-            <input id="password" name="password" type="password" autoComplete="current-password" required />
+            <PasswordField id="password" name="password" />
+            <div className="login-helper"><Link href="/admin/forgot-password">Esqueci minha senha</Link></div>
+            {resetSuccess && <p className="login-success" role="status">Senha atualizada. Entre com a nova senha.</p>}
             {errorMessage && <p className="login-error" role="alert">{errorMessage}</p>}
             <button type="submit">Entrar</button>
           </form>
