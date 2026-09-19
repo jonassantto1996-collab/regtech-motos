@@ -7,6 +7,8 @@ import {
   normalizeAndValidateWhatsapp,
 } from "./validation";
 import { buildWhatsappLink } from "./whatsapp";
+import { headers } from "next/headers";
+import { createHash } from "node:crypto";
 
 export type CreateLeadInput = {
   fullName: string;
@@ -28,6 +30,34 @@ export type CreateLeadResult =
 // de service_role porque a RLS pública não permite SELECT em leads.
 const RATE_LIMIT_WINDOW_SECONDS = 60;
 
+function hashRateLimitKey(value: string): string {
+  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "regtech-rate-limit";
+  return createHash("sha256").update(`${secret}:${value}`).digest("hex");
+}
+
+async function consumeRateLimit(key: string, windowSeconds: number, maxRequests: number) {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc("consume_lead_rate_limit", {
+    p_key_hash: hashRateLimitKey(key),
+    p_window_seconds: windowSeconds,
+    p_max_requests: maxRequests,
+  });
+  if (error) {
+    console.error("[leads] erro no rate limiter:", error);
+    return false; // fail closed: não grava lead se a proteção estiver indisponível
+  }
+  return data === true;
+}
+
+async function getRequestOrigin(): Promise<string | null> {
+  const h = await headers();
+  // Na Vercel, x-forwarded-for é definido pela infraestrutura. Usa apenas o
+  // primeiro endereço e nunca persiste o IP bruto: somente hash server-side.
+  const forwarded = h.get("x-forwarded-for");
+  const ip = forwarded?.split(",")[0]?.trim();
+  return ip || null;
+}
+
 export async function createLead(
   input: CreateLeadInput
 ): Promise<CreateLeadResult> {
@@ -47,29 +77,18 @@ export async function createLead(
     return { success: false, error: "Produto inválido." };
   }
 
-  const admin = createAdminClient();
-  const windowStart = new Date(
-    Date.now() - RATE_LIMIT_WINDOW_SECONDS * 1000
-  ).toISOString();
+  // Proteção em camadas: telefone + origem. Os contadores são atualizados
+  // atomicamente no Postgres e não armazenam IP/telefone em texto puro.
+  const origin = await getRequestOrigin();
+  const [phoneAllowed, originAllowed] = await Promise.all([
+    consumeRateLimit(`phone:${whatsappResult.value}`, RATE_LIMIT_WINDOW_SECONDS, 1),
+    origin ? consumeRateLimit(`origin:${origin}`, 60, 8) : Promise.resolve(true),
+  ]);
 
-  const { count: recentCount, error: rateLimitError } = await admin
-    .from("leads")
-    .select("id", { count: "exact", head: true })
-    .eq("whatsapp", whatsappResult.value)
-    .gte("created_at", windowStart);
-
-  if (rateLimitError) {
-    console.error("[leads] erro ao checar rate limit:", rateLimitError);
+  if (!phoneAllowed || !originAllowed) {
     return {
       success: false,
-      error: "Não foi possível processar sua solicitação. Tente novamente.",
-    };
-  }
-
-  if ((recentCount ?? 0) > 0) {
-    return {
-      success: false,
-      error: "Aguarde um momento antes de enviar novamente.",
+      error: "Muitas tentativas em pouco tempo. Aguarde um momento e tente novamente.",
     };
   }
 
