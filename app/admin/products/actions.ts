@@ -70,6 +70,19 @@ function parseProductForm(
   const is_active = formData.get("is_active") === "on";
 
   if (
+    brand.length > 80 ||
+    model.length > 120 ||
+    (skuRaw && skuRaw.length > 80) ||
+    category.length > 80 ||
+    description.length > 5000 ||
+    availability.length > 80 ||
+    warranty.length > 500 ||
+    slugInput.length > 160
+  ) {
+    return { ok: false, error: "field_too_long" };
+  }
+
+  if (
     !brand ||
     !model ||
     !category ||
@@ -156,6 +169,9 @@ function parseColorsInput(formData: FormData): ColorsParseResult {
       return { ok: false, error: "invalid_colors" };
     }
     const color = item.trim();
+    if (color.length > 80) {
+      return { ok: false, error: "field_too_long" };
+    }
     if (!color) {
       return { ok: false, error: "empty_color" };
     }
@@ -199,6 +215,9 @@ function parseSpecsInput(formData: FormData): SpecsParseResult {
     }
     const key = (item as { key: string }).key.trim();
     const value = (item as { value: string }).value.trim();
+    if (key.length > 120 || value.length > 1000) {
+      return { ok: false, error: "field_too_long" };
+    }
     if (!key) {
       return { ok: false, error: "empty_spec_key" };
     }
