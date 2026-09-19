@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminSession } from "../products/actions";
+import { logAdminAction, requireAdminSession } from "../products/actions";
 import {
   PRODUCT_IMAGES_BUCKET,
   validateImageFile,
@@ -20,7 +20,7 @@ function parseImagePosition(formData: FormData) {
 }
 
 export async function useProductHero(formData: FormData) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
   const rawProductId = String(formData.get("product_id") ?? "").trim();
   const productId = rawProductId || null;
   const imagePosition = parseImagePosition(formData);
@@ -63,13 +63,14 @@ export async function useProductHero(formData: FormData) {
     if (removeError) console.error("[useProductHero] Falha ao remover imagem antiga:", removeError);
   }
 
+  await logAdminAction(adminUserId, "hero.use_product", "home_hero", "primary", { product_id: productId, image_position: imagePosition });
   revalidatePath("/");
   revalidatePath(HERO_PATH);
   redirect(`${HERO_PATH}?saved=product`);
 }
 
 export async function uploadCustomHero(formData: FormData) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
     redirect(`${HERO_PATH}?error=missing_file`);
@@ -121,6 +122,7 @@ export async function uploadCustomHero(formData: FormData) {
     if (removeError) console.error("[uploadCustomHero] Falha ao remover imagem antiga:", removeError);
   }
 
+  await logAdminAction(adminUserId, "hero.upload_custom", "home_hero", "primary", { storage_path: storagePath, image_position: imagePosition });
   revalidatePath("/");
   revalidatePath(HERO_PATH);
   redirect(`${HERO_PATH}?saved=custom`);
