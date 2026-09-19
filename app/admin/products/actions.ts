@@ -12,8 +12,25 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export async function requireAdminSession() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
-  if (!data?.claims) {
+  const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+  if (!userId) {
     redirect("/admin/login");
+  }
+
+  // Autenticação e autorização são fronteiras diferentes: uma sessão válida
+  // só ganha acesso administrativo se estiver explicitamente habilitada.
+  const admin = createAdminClient();
+  const { data: adminUser, error } = await admin
+    .from("admin_users")
+    .select("role,is_active")
+    .eq("user_id", userId)
+    .eq("role", "ADMIN")
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error || !adminUser) {
+    await supabase.auth.signOut();
+    redirect("/admin/login?error=not_authorized");
   }
 }
 
