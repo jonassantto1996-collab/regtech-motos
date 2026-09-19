@@ -1,4 +1,5 @@
 import { login } from "../actions";
+import "../admin.css";
 
 const ERROR_MESSAGES: Record<string, string> = {
   missing_fields: "Preencha e-mail e senha.",
@@ -14,49 +15,32 @@ export default async function LoginPage({
   const errorMessage = params.error ? ERROR_MESSAGES[params.error] : null;
 
   return (
-    <main
-      style={{
-        maxWidth: 360,
-        margin: "4rem auto",
-        padding: "0 1rem",
-        fontFamily: "system-ui, sans-serif",
-      }}
-    >
-      <h1>Regtech Motors</h1>
-      <form action={login}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="email">E-mail</label>
-          <br />
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
+    <main className="admin-login">
+      <section className="login-brand">
+        <div className="login-logo">REGTECH <span>MOTORS</span></div>
+        <div>
+          <span className="login-kicker">PAINEL ADMINISTRATIVO</span>
+          <h1>Gestão do catálogo<br />Regtech Motors.</h1>
+          <p>Acesso reservado para administração de produtos, leads e conteúdo da Home.</p>
         </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="password">Senha</label>
-          <br />
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
+        <small>Regtech Motors</small>
+      </section>
+
+      <section className="login-form-area">
+        <div className="login-card">
+          <span className="login-kicker">ACESSO SEGURO</span>
+          <h2>Entrar no Admin</h2>
+          <p>Use suas credenciais administrativas.</p>
+          <form action={login}>
+            <label htmlFor="email">E-mail</label>
+            <input id="email" name="email" type="email" autoComplete="email" required />
+            <label htmlFor="password">Senha</label>
+            <input id="password" name="password" type="password" autoComplete="current-password" required />
+            {errorMessage && <p className="login-error" role="alert">{errorMessage}</p>}
+            <button type="submit">Entrar</button>
+          </form>
         </div>
-        {errorMessage && (
-          <p role="alert" style={{ color: "#c0392b" }}>
-            {errorMessage}
-          </p>
-        )}
-        <button type="submit" style={{ padding: "0.5rem 1.5rem" }}>
-          Entrar
-        </button>
-      </form>
+      </section>
     </main>
   );
 }
