@@ -100,7 +100,6 @@ export async function uploadProductImage(
   }
 
   await logAdminAction(adminUserId, "product_image.upload", "product", productId, { storage_path: storagePath, is_main: isFirstImage });
-  await logAdminAction(adminUserId, "product_image.alt_text_update", "product", productId, { image_id: imageId, has_alt_text: Boolean(altText) });
   revalidatePath(editPath(productId));
   redirect(editPath(productId));
 }
@@ -386,6 +385,7 @@ export async function updateImageAltText(
     redirect(`${editPath(productId)}?error=alt_text_update_failed`);
   }
 
+  await logAdminAction(adminUserId, "product_image.alt_text_update", "product", productId, { image_id: imageId, has_alt_text: Boolean(altText) });
   revalidatePath(editPath(productId));
   redirect(editPath(productId));
 }
