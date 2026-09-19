@@ -7,6 +7,7 @@ import { requireAdminSession } from "../products/actions";
 import {
   PRODUCT_IMAGES_BUCKET,
   validateImageFile,
+  validateImageSignature,
   buildHeroImagePath,
 } from "@/lib/supabase/storage";
 
@@ -76,6 +77,8 @@ export async function uploadCustomHero(formData: FormData) {
 
   const validation = validateImageFile({ type: file.type, size: file.size });
   if (!validation.valid) redirect(`${HERO_PATH}?error=invalid_image`);
+  const signatureValidation = await validateImageSignature(file);
+  if (!signatureValidation.valid) redirect(`${HERO_PATH}?error=invalid_image`);
 
   const altTextRaw = String(formData.get("alt_text") ?? "").trim();
   const altText = altTextRaw || "Regtech Motors";
