@@ -34,40 +34,37 @@ export default async function AdminHeroPage({ searchParams }: { searchParams: Se
     <AdminShell active="hero" email={data.claims.email}><main className="admin-content admin-page hero-admin">
       
       <div className="page-heading"><div><span>HOME</span><h1>Hero da Home</h1></div></div>
-      <p>Defina a mídia principal da página inicial sem alterar as imagens do catálogo.</p>
+      <p className="page-description">Defina a mídia principal da página inicial sem alterar as imagens do catálogo.</p>
 
-      {params.error && <p style={{ padding: "0.75rem", background: "#fee2e2" }}>{errors[params.error] ?? "Ocorreu um erro."}</p>}
-      {params.saved && <p style={{ padding: "0.75rem", background: "#dcfce7" }}>Hero atualizado com sucesso.</p>}
+      {params.error && <p className="admin-alert error">{errors[params.error] ?? "Ocorreu um erro."}</p>}
+      {params.saved && <p className="admin-alert success">Hero atualizado com sucesso.</p>}
 
       <section className="panel hero-settings-card">
-        <h2 style={{ marginTop: 0 }}>Usar uma moto cadastrada</h2>
+        <h2>Usar uma moto cadastrada</h2>
         <p>Se nenhum modelo for escolhido, a Home volta a usar automaticamente o produto mais recente.</p>
         <form action={useProductHero}>
-          <select name="product_id" defaultValue={settings?.mode === "product" ? settings.product_id ?? "" : ""} style={{ width: "100%", padding: "0.65rem" }}>
+          <select name="product_id" defaultValue={settings?.mode === "product" ? settings.product_id ?? "" : ""} className="admin-control">
             <option value="">Automático — produto mais recente</option>
             {(products ?? []).map((product) => (
               <option key={product.id} value={product.id}>{product.brand} {product.model}</option>
             ))}
           </select>
-          <label style={{ display: "block", marginTop: "1rem" }}>Enquadramento<select name="image_position" defaultValue={settings?.image_position ?? "center"} style={{ display: "block", width: "100%", marginTop: "0.4rem", padding: "0.65rem" }}><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label><button type="submit" style={{ marginTop: "1rem", padding: "0.65rem 1rem" }}>Usar no Hero</button>
+          <label className="admin-field">Enquadramento<select name="image_position" defaultValue={settings?.image_position ?? "center"} className="admin-control"><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label><button type="submit" className="admin-primary-button">Usar no Hero</button>
         </form>
       </section>
 
       <section className="panel hero-settings-card">
-        <h2 style={{ marginTop: 0 }}>Enviar imagem exclusiva</h2>
+        <h2>Enviar imagem exclusiva</h2>
         <p>JPEG, PNG ou WebP, até 5 MB. A imagem será usada apenas no Hero.</p>
         {settings?.mode === "custom" && settings.storage_path && (
-          <div style={{ position: "relative", width: "100%", aspectRatio: "16 / 7", marginBottom: "1rem", background: "#f3f4f6" }}>
+          <div className="hero-preview">
             <Image src={getPublicImageUrl(settings.storage_path)} alt={settings.alt_text ?? "Hero atual"} fill style={{ objectFit: "cover", objectPosition: settings.image_position ?? "center" }} />
           </div>
         )}
         <form action={uploadCustomHero}>
-          <input name="file" type="file" accept="image/jpeg,image/png,image/webp" required />
-          <label style={{ display: "block", marginTop: "1rem" }}>
-            Texto alternativo
-            <input name="alt_text" type="text" placeholder="Ex.: Moto elétrica Regtech" style={{ display: "block", width: "100%", marginTop: "0.4rem", padding: "0.65rem" }} />
-          </label>
-          <label style={{ display: "block", marginTop: "1rem" }}>Enquadramento<select name="image_position" defaultValue={settings?.image_position ?? "center"} style={{ display: "block", width: "100%", marginTop: "0.4rem", padding: "0.65rem" }}><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label><button type="submit" style={{ marginTop: "1rem", padding: "0.65rem 1rem" }}>Enviar e usar no Hero</button>
+          <label className="admin-file"><span>Selecionar imagem</span><input name="file" type="file" accept="image/jpeg,image/png,image/webp" required /></label>
+          <label className="admin-field">Texto alternativo<input name="alt_text" type="text" placeholder="Descreva a imagem para acessibilidade" className="admin-control" /></label>
+          <label className="admin-field">Enquadramento<select name="image_position" defaultValue={settings?.image_position ?? "center"} className="admin-control"><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label><button type="submit" className="admin-primary-button">Enviar e usar no Hero</button>
         </form>
       </section>
     </main></AdminShell>
