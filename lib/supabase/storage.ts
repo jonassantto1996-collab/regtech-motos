@@ -96,3 +96,28 @@ export function getPublicImageUrl(storagePath: string): string {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   return `${supabaseUrl}/storage/v1/object/public/${PRODUCT_IMAGES_BUCKET}/${storagePath}`;
 }
+
+
+/**
+ * Defesa adicional server-side: confirma a assinatura binária real do arquivo.
+ * O MIME enviado pelo navegador não é uma fronteira de segurança.
+ */
+export async function validateImageSignature(file: File): Promise<ImageValidationResult> {
+  const header = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+  const isJpeg = header.length >= 3 && header[0] === 0xff && header[1] === 0xd8 && header[2] === 0xff;
+  const isPng = header.length >= 8 &&
+    header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4e && header[3] === 0x47 &&
+    header[4] === 0x0d && header[5] === 0x0a && header[6] === 0x1a && header[7] === 0x0a;
+  const isWebp = header.length >= 12 &&
+    header[0] === 0x52 && header[1] === 0x49 && header[2] === 0x46 && header[3] === 0x46 &&
+    header[8] === 0x57 && header[9] === 0x45 && header[10] === 0x42 && header[11] === 0x50;
+
+  const matches =
+    (file.type === "image/jpeg" && isJpeg) ||
+    (file.type === "image/png" && isPng) ||
+    (file.type === "image/webp" && isWebp);
+
+  return matches
+    ? { valid: true }
+    : { valid: false, reason: "O conteúdo do arquivo não corresponde ao formato de imagem declarado." };
+}
