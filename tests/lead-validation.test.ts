@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { normalizeAndValidateName, normalizeAndValidateWhatsapp } from "../lib/leads/validation";
+import { normalizeAndValidateName, normalizeAndValidateWhatsapp } from "../lib/leads/validation.ts";
 
 test("normaliza nome completo", () => {
   assert.deepEqual(normalizeAndValidateName("  Jonas   Santos "), { valid: true, value: "Jonas Santos" });
