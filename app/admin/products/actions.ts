@@ -9,7 +9,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * vinda do cliente — getClaims() valida o JWT (assinatura + expiração).
  * Redireciona para o login se não houver sessão válida.
  */
-export async function requireAdminSession() {
+export async function requireAdminSession(): Promise<string> {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
@@ -32,6 +32,19 @@ export async function requireAdminSession() {
     await supabase.auth.signOut();
     redirect("/admin/login?error=not_authorized");
   }
+  return userId;
+}
+
+async function logAdminAction(userId: string, action: string, entityType: string, entityId?: string, metadata: Record<string, unknown> = {}) {
+  const admin = createAdminClient();
+  const { error } = await admin.rpc("log_admin_action", {
+    p_admin_user_id: userId,
+    p_action: action,
+    p_entity_type: entityType,
+    p_entity_id: entityId ?? null,
+    p_metadata: metadata,
+  });
+  if (error) console.error("[audit] falha ao registrar ação administrativa:", error);
 }
 
 function slugify(text: string): string {
@@ -253,7 +266,7 @@ function parseSpecsInput(formData: FormData): SpecsParseResult {
 }
 
 export async function createProduct(formData: FormData) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
 
   const parsedProduct = parseProductForm(formData, "create");
   if (!parsedProduct.ok) {
@@ -280,12 +293,13 @@ export async function createProduct(formData: FormData) {
   if (error) {
     redirect(`/admin/products/new?error=${mapDbError(error)}`);
   }
+  await logAdminAction(adminUserId, "product.create", "product", undefined, { slug: parsedProduct.data.slug });
 
   redirect("/admin/products");
 }
 
 export async function updateProduct(id: string, formData: FormData) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
 
   const parsedProduct = parseProductForm(formData, "edit");
   if (!parsedProduct.ok) {
@@ -316,12 +330,13 @@ export async function updateProduct(id: string, formData: FormData) {
       : mapDbError(error);
     redirect(`/admin/products/${id}/edit?error=${mapped}`);
   }
+  await logAdminAction(adminUserId, "product.update", "product", id, { slug: parsedProduct.data.slug });
 
   redirect("/admin/products");
 }
 
 export async function toggleProductActive(id: string, nextValue: boolean) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
 
   const admin = createAdminClient();
   const { error } = await admin
@@ -332,6 +347,7 @@ export async function toggleProductActive(id: string, nextValue: boolean) {
   if (error) {
     redirect("/admin/products?error=server_error");
   }
+  await logAdminAction(adminUserId, nextValue ? "product.activate" : "product.deactivate", "product", id);
 
   redirect("/admin/products");
 }
