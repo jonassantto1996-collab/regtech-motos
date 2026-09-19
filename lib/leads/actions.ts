@@ -31,8 +31,22 @@ export type CreateLeadResult =
 const RATE_LIMIT_WINDOW_SECONDS = 60;
 
 function hashRateLimitKey(value: string): string {
-  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "regtech-rate-limit";
+  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!secret) {
+    throw new Error("SUPABASE_SERVICE_ROLE_KEY ausente para rate limiting");
+  }
   return createHash("sha256").update(`${secret}:${value}`).digest("hex");
+}
+
+function reportLeadError(stage: string, error: unknown, context: Record<string, unknown> = {}) {
+  console.error(JSON.stringify({
+    level: "error",
+    scope: "lead_intake",
+    stage,
+    context,
+    error: error instanceof Error ? error.message : String(error),
+    at: new Date().toISOString(),
+  }));
 }
 
 async function consumeRateLimit(key: string, windowSeconds: number, maxRequests: number) {
@@ -43,7 +57,7 @@ async function consumeRateLimit(key: string, windowSeconds: number, maxRequests:
     p_max_requests: maxRequests,
   });
   if (error) {
-    console.error("[leads] erro no rate limiter:", error);
+    reportLeadError("rate_limit", error);
     return false; // fail closed: não grava lead se a proteção estiver indisponível
   }
   return data === true;
@@ -106,7 +120,7 @@ export async function createLead(
     .maybeSingle();
 
   if (productError) {
-    console.error("[leads] erro ao confirmar produto:", productError);
+    reportLeadError("product_lookup", productError, { productId: input.productId });
     return {
       success: false,
       error: "Não foi possível confirmar o produto. Tente novamente.",
@@ -145,7 +159,7 @@ export async function createLead(
     .insert(leadRecord);
 
   if (insertError) {
-    console.error("[leads] erro ao criar lead:", insertError);
+    reportLeadError("lead_insert", insertError, { productId: input.productId });
     return {
       success: false,
       error: "Não foi possível registrar seu interesse. Tente novamente.",
