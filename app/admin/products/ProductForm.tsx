@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import type { Product, ProductColor, ProductSpec } from "./types";
 
 type SpecEntry = { key: string; value: string };
@@ -58,13 +58,13 @@ export function ProductForm({
   }
 
   return (
-    <form action={action} style={{ maxWidth: 480 }}>
+    <form action={action} className="product-form">
       {/* Cores e specs vao pro servidor como JSON num campo escondido —
           evita depender de indices alinhados entre multiplos inputs. */}
       <input type="hidden" name="colors_json" value={JSON.stringify(colors)} />
       <input type="hidden" name="specs_json" value={JSON.stringify(specs)} />
 
-      <h2 style={sectionHeading}>Dados básicos</h2>
+      <h2 className="form-section-title">Dados básicos</h2>
 
       <Field label="Marca" htmlFor="brand" required>
         <input
@@ -73,7 +73,7 @@ export function ProductForm({
           type="text"
           required
           defaultValue={defaultValues?.brand}
-          style={inputStyle}
+          className="admin-control"
         />
       </Field>
 
@@ -84,7 +84,7 @@ export function ProductForm({
           type="text"
           required
           defaultValue={defaultValues?.model}
-          style={inputStyle}
+          className="admin-control"
         />
       </Field>
 
@@ -102,7 +102,7 @@ export function ProductForm({
           name="slug"
           type="text"
           defaultValue={defaultValues?.slug}
-          style={inputStyle}
+          className="admin-control"
         />
       </Field>
 
@@ -112,7 +112,7 @@ export function ProductForm({
           name="sku"
           type="text"
           defaultValue={defaultValues?.sku ?? ""}
-          style={inputStyle}
+          className="admin-control"
         />
       </Field>
 
@@ -123,7 +123,7 @@ export function ProductForm({
           type="text"
           required
           defaultValue={defaultValues?.category}
-          style={inputStyle}
+          className="admin-control"
         />
       </Field>
 
@@ -134,7 +134,7 @@ export function ProductForm({
           required
           rows={4}
           defaultValue={defaultValues?.description}
-          style={{ ...inputStyle, resize: "vertical" as const }}
+          className="admin-control admin-textarea"
         />
       </Field>
 
@@ -147,7 +147,7 @@ export function ProductForm({
           min="0"
           required
           defaultValue={defaultValues?.price}
-          style={inputStyle}
+          className="admin-control"
         />
       </Field>
 
@@ -158,7 +158,7 @@ export function ProductForm({
           type="text"
           required
           defaultValue={defaultValues?.availability}
-          style={inputStyle}
+          className="admin-control"
         />
       </Field>
 
@@ -169,11 +169,11 @@ export function ProductForm({
           type="text"
           required
           defaultValue={defaultValues?.warranty}
-          style={inputStyle}
+          className="admin-control"
         />
       </Field>
 
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="form-check">
         <label>
           <input
             type="checkbox"
@@ -184,7 +184,7 @@ export function ProductForm({
         </label>
       </div>
 
-      <div style={{ marginBottom: "1.5rem" }}>
+      <div className="form-check">
         <label>
           <input
             type="checkbox"
@@ -196,16 +196,16 @@ export function ProductForm({
       </div>
 
       {mode === "create" && (
-        <div style={{ marginTop: "2rem", marginBottom: "0.5rem" }}>
-          <h2 style={sectionHeading}>Imagens</h2>
-          <p style={{ color: "#666" }}>
+        <div className="form-info">
+          <h2 className="form-section-title">Imagens</h2>
+          <p className="form-muted">
             Salve o produto primeiro para poder adicionar imagens.
           </p>
         </div>
       )}
 
-      <h2 style={sectionHeading}>Cores</h2>
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+      <h2 className="form-section-title">Cores</h2>
+      <div className="form-inline">
         <input
           type="text"
           value={colorInput}
@@ -217,26 +217,26 @@ export function ProductForm({
             }
           }}
           placeholder="Ex: Preto"
-          style={inputStyle}
+          className="admin-control"
         />
-        <button type="button" onClick={addColor} style={secondaryButtonStyle}>
+        <button type="button" onClick={addColor} className="admin-secondary-button">
           Adicionar
         </button>
       </div>
       {colors.length === 0 && (
-        <p style={{ color: "#666", marginBottom: "1.5rem" }}>
+        <p className="form-muted">
           Nenhuma cor adicionada.
         </p>
       )}
       {colors.length > 0 && (
-        <ul style={{ paddingLeft: "1.2rem", marginBottom: "1.5rem" }}>
+        <ul className="form-token-list">
           {colors.map((color) => (
-            <li key={color} style={{ marginBottom: "0.25rem" }}>
+            <li key={color}>
               {color}{" "}
               <button
                 type="button"
                 onClick={() => removeColor(color)}
-                style={linkButtonStyle}
+                className="form-remove"
               >
                 Remover
               </button>
@@ -245,40 +245,40 @@ export function ProductForm({
         </ul>
       )}
 
-      <h2 style={sectionHeading}>Especificações técnicas</h2>
-      <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.75rem" }}>
+      <h2 className="form-section-title">Especificações técnicas</h2>
+      <div className="form-inline">
         <input
           type="text"
           value={specKeyInput}
           onChange={(e) => setSpecKeyInput(e.target.value)}
           placeholder="Ex: Potência"
-          style={inputStyle}
+          className="admin-control"
         />
         <input
           type="text"
           value={specValueInput}
           onChange={(e) => setSpecValueInput(e.target.value)}
           placeholder="Ex: 3000 W"
-          style={inputStyle}
+          className="admin-control"
         />
-        <button type="button" onClick={addSpec} style={secondaryButtonStyle}>
+        <button type="button" onClick={addSpec} className="admin-secondary-button">
           Adicionar
         </button>
       </div>
       {specs.length === 0 && (
-        <p style={{ color: "#666", marginBottom: "1.5rem" }}>
+        <p className="form-muted">
           Nenhuma especificação adicionada.
         </p>
       )}
       {specs.length > 0 && (
-        <ul style={{ paddingLeft: "1.2rem", marginBottom: "1.5rem" }}>
+        <ul className="form-token-list">
           {specs.map((spec) => (
-            <li key={spec.key} style={{ marginBottom: "0.25rem" }}>
+            <li key={spec.key}>
               <strong>{spec.key}:</strong> {spec.value}{" "}
               <button
                 type="button"
                 onClick={() => removeSpec(spec.key)}
-                style={linkButtonStyle}
+                className="form-remove"
               >
                 Remover
               </button>
@@ -288,12 +288,12 @@ export function ProductForm({
       )}
 
       {errorMessage && (
-        <p role="alert" style={{ color: "#c0392b", marginBottom: "1rem" }}>
+        <p role="alert" className="admin-alert error">
           {errorMessage}
         </p>
       )}
 
-      <button type="submit" style={{ padding: "0.5rem 1.5rem" }}>
+      <button type="submit" className="admin-primary-button">
         {mode === "create" ? "Criar produto" : "Salvar alterações"}
       </button>
     </form>
@@ -314,15 +314,14 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div style={{ marginBottom: "1rem" }}>
+    <div className="form-check">
       <label htmlFor={htmlFor}>
         {label}
         {required && " *"}
       </label>
-      <br />
       {children}
       {hint && (
-        <small style={{ display: "block", color: "#666", marginTop: "0.25rem" }}>
+        <small className="field-hint">
           {hint}
         </small>
       )}
@@ -330,32 +329,3 @@ function Field({
   );
 }
 
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "0.5rem",
-  fontFamily: "inherit",
-  fontSize: "1rem",
-};
-
-const secondaryButtonStyle: CSSProperties = {
-  padding: "0.5rem 1rem",
-  whiteSpace: "nowrap",
-};
-
-const linkButtonStyle: CSSProperties = {
-  background: "none",
-  border: "none",
-  color: "#2563eb",
-  cursor: "pointer",
-  padding: 0,
-  font: "inherit",
-  textDecoration: "underline",
-};
-
-const sectionHeading: CSSProperties = {
-  fontSize: "1.1rem",
-  marginTop: "2rem",
-  marginBottom: "1rem",
-  borderTop: "1px solid #ddd",
-  paddingTop: "1rem",
-};
