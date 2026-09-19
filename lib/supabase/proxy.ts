@@ -46,8 +46,9 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAdminArea = pathname.startsWith("/admin");
   const isLoginPage = pathname === "/admin/login";
+  const isPublicAuthPage = isLoginPage || pathname === "/admin/forgot-password" || pathname === "/admin/reset-password";
 
-  if (isAdminArea && !isLoginPage && !isAuthenticated) {
+  if (isAdminArea && !isPublicAuthPage && !isAuthenticated) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     return NextResponse.redirect(url);
@@ -56,7 +57,7 @@ export async function updateSession(request: NextRequest) {
   // Simetria com a regra acima: um admin já autenticado não precisa ver o
   // formulário de login de novo — evita a pequena inconsistência de
   // navegação de ficar "preso" na tela de login mesmo já logado.
-  if (isLoginPage && isAuthenticated) {
+  if ((isLoginPage || pathname === "/admin/forgot-password") && isAuthenticated) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
     return NextResponse.redirect(url);
