@@ -271,51 +271,14 @@ export async function createProduct(formData: FormData) {
   }
 
   const admin = createAdminClient();
+  const { error } = await admin.rpc("admin_create_product_atomic", {
+    p_product: parsedProduct.data,
+    p_colors: parsedColors.colors,
+    p_specs: parsedSpecs.specs,
+  });
 
-  // 1) Cria o produto.
-  const { data: product, error: productError } = await admin
-    .from("products")
-    .insert(parsedProduct.data)
-    .select("id")
-    .single();
-
-  if (productError || !product) {
-    redirect(`/admin/products/new?error=${mapDbError(productError)}`);
-  }
-
-  const productId = product.id as string;
-
-  // 2) Cores, se houver. Uma unica instrucao INSERT com varias linhas e
-  // atomica no Postgres: ou todas entram, ou nenhuma entra.
-  if (parsedColors.colors.length > 0) {
-    const { error: colorsError } = await admin
-      .from("product_colors")
-      .insert(parsedColors.colors.map((color) => ({ product_id: productId, color })));
-
-    if (colorsError) {
-      // Rollback compensatorio: nada de cor foi salvo (insert unico falhou
-      // por completo), so precisa desfazer o produto.
-      await admin.from("products").delete().eq("id", productId);
-      redirect(`/admin/products/new?error=${mapDbError(colorsError)}`);
-    }
-  }
-
-  // 3) Especificacoes, se houver.
-  if (parsedSpecs.specs.length > 0) {
-    const { error: specsError } = await admin.from("product_specs").insert(
-      parsedSpecs.specs.map((s) => ({
-        product_id: productId,
-        spec_key: s.key,
-        spec_value: s.value,
-      }))
-    );
-
-    if (specsError) {
-      // Rollback compensatorio: desfaz cores (se tinham sido salvas) e o produto.
-      await admin.from("product_colors").delete().eq("product_id", productId);
-      await admin.from("products").delete().eq("id", productId);
-      redirect(`/admin/products/new?error=${mapDbError(specsError)}`);
-    }
+  if (error) {
+    redirect(`/admin/products/new?error=${mapDbError(error)}`);
   }
 
   redirect("/admin/products");
@@ -340,112 +303,18 @@ export async function updateProduct(id: string, formData: FormData) {
   }
 
   const admin = createAdminClient();
-
-  // 1) Atualiza os campos basicos do produto.
-  const { error: productError } = await admin
-    .from("products")
-    .update(parsedProduct.data)
-    .eq("id", id);
-
-  if (productError) {
-    redirect(`/admin/products/${id}/edit?error=${mapDbError(productError)}`);
-  }
-
-  // 2) Sincroniza cores por delta: so mexe no que mudou.
-  const { data: currentColorRows, error: readColorsError } = await admin
-    .from("product_colors")
-    .select("color")
-    .eq("product_id", id);
-
-  if (readColorsError) {
-    redirect(`/admin/products/${id}/edit?error=sync_failed`);
-  }
-
-  const currentColors = (currentColorRows ?? []).map((r) => r.color as string);
-  const desiredColors = parsedColors.colors;
-  const colorsToRemove = currentColors.filter((c) => !desiredColors.includes(c));
-  const colorsToAdd = desiredColors.filter((c) => !currentColors.includes(c));
-
-  if (colorsToRemove.length > 0) {
-    const { error } = await admin
-      .from("product_colors")
-      .delete()
-      .eq("product_id", id)
-      .in("color", colorsToRemove);
-    if (error) {
-      redirect(`/admin/products/${id}/edit?error=sync_failed`);
-    }
-  }
-
-  if (colorsToAdd.length > 0) {
-    const { error } = await admin
-      .from("product_colors")
-      .insert(colorsToAdd.map((color) => ({ product_id: id, color })));
-    if (error) {
-      redirect(`/admin/products/${id}/edit?error=${mapDbError(error)}`);
-    }
-  }
-
-  // 3) Sincroniza especificacoes por delta: remove chaves que sairam,
-  // insere chaves novas, atualiza valor de chaves que mudaram de valor.
-  const { data: currentSpecRows, error: readSpecsError } = await admin
-    .from("product_specs")
-    .select("spec_key, spec_value")
-    .eq("product_id", id);
-
-  if (readSpecsError) {
-    redirect(`/admin/products/${id}/edit?error=sync_failed`);
-  }
-
-  const currentSpecs = (currentSpecRows ?? []) as {
-    spec_key: string;
-    spec_value: string;
-  }[];
-  const desiredSpecs = parsedSpecs.specs;
-
-  const currentKeys = currentSpecs.map((s) => s.spec_key);
-  const desiredKeys = desiredSpecs.map((s) => s.key);
-
-  const keysToRemove = currentKeys.filter((k) => !desiredKeys.includes(k));
-  const specsToAdd = desiredSpecs.filter((s) => !currentKeys.includes(s.key));
-  const specsToUpdate = desiredSpecs.filter((s) => {
-    const existing = currentSpecs.find((c) => c.spec_key === s.key);
-    return existing !== undefined && existing.spec_value !== s.value;
+  const { error } = await admin.rpc("admin_update_product_atomic", {
+    p_id: id,
+    p_product: parsedProduct.data,
+    p_colors: parsedColors.colors,
+    p_specs: parsedSpecs.specs,
   });
 
-  if (keysToRemove.length > 0) {
-    const { error } = await admin
-      .from("product_specs")
-      .delete()
-      .eq("product_id", id)
-      .in("spec_key", keysToRemove);
-    if (error) {
-      redirect(`/admin/products/${id}/edit?error=sync_failed`);
-    }
-  }
-
-  if (specsToAdd.length > 0) {
-    const { error } = await admin.from("product_specs").insert(
-      specsToAdd.map((s) => ({
-        product_id: id,
-        spec_key: s.key,
-        spec_value: s.value,
-      }))
-    );
-    if (error) {
-      redirect(`/admin/products/${id}/edit?error=${mapDbError(error)}`);
-    }
-  }
-
-  for (const s of specsToUpdate) {
-    const { error } = await admin
-      .from("product_specs")
-      .update({ spec_value: s.value })
-      .eq("product_id", id)
-      .eq("spec_key", s.key);
-    if (error) {
-      redirect(`/admin/products/${id}/edit?error=sync_failed`);
-    }
+  if (error) {
+    const mapped = error.message.includes("product_not_found")
+      ? "not_found"
+      : mapDbError(error);
+    redirect(`/admin/products/${id}/edit?error=${mapped}`);
   }
 
   redirect("/admin/products");
