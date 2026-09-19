@@ -7,6 +7,7 @@ import { requireAdminSession } from "../../actions";
 import {
   PRODUCT_IMAGES_BUCKET,
   validateImageFile,
+  validateImageSignature,
   buildProductImagePath,
 } from "@/lib/supabase/storage";
 
@@ -38,6 +39,11 @@ export async function uploadProductImage(
     size: (file as File).size,
   });
   if (!validation.valid) {
+    redirect(`${editPath(productId)}?error=invalid_image`);
+  }
+
+  const signatureValidation = await validateImageSignature(file as File);
+  if (!signatureValidation.valid) {
     redirect(`${editPath(productId)}?error=invalid_image`);
   }
 
