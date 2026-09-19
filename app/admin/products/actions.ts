@@ -35,7 +35,7 @@ export async function requireAdminSession(): Promise<string> {
   return userId;
 }
 
-async function logAdminAction(userId: string, action: string, entityType: string, entityId?: string, metadata: Record<string, unknown> = {}) {
+export async function logAdminAction(userId: string, action: string, entityType: string, entityId?: string, metadata: Record<string, unknown> = {}) {
   const admin = createAdminClient();
   const { error } = await admin.rpc("log_admin_action", {
     p_admin_user_id: userId,
@@ -284,7 +284,7 @@ export async function createProduct(formData: FormData) {
   }
 
   const admin = createAdminClient();
-  const { error } = await admin.rpc("admin_create_product_atomic", {
+  const { data: createdProductId, error } = await admin.rpc("admin_create_product_atomic", {
     p_product: parsedProduct.data,
     p_colors: parsedColors.colors,
     p_specs: parsedSpecs.specs,
@@ -293,7 +293,7 @@ export async function createProduct(formData: FormData) {
   if (error) {
     redirect(`/admin/products/new?error=${mapDbError(error)}`);
   }
-  await logAdminAction(adminUserId, "product.create", "product", undefined, { slug: parsedProduct.data.slug });
+  await logAdminAction(adminUserId, "product.create", "product", typeof createdProductId === "string" ? createdProductId : undefined, { slug: parsedProduct.data.slug });
 
   redirect("/admin/products");
 }
