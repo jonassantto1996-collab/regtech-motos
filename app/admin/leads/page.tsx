@@ -9,6 +9,8 @@ import {
   LEAD_STATUS_LABELS,
   type Lead,
 } from "@/lib/leads/types";
+import { AdminShell } from "../AdminShell";
+import "../admin.css";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -60,95 +62,43 @@ export default async function AdminLeadsPage({
     .order("created_at", { ascending: false });
 
   return (
-    <main
-      style={{
-        maxWidth: 960,
-        margin: "3rem auto",
-        padding: "0 1rem",
-        fontFamily: "system-ui, sans-serif",
-      }}
-    >
-      <h1>Leads</h1>
-
-      <p>
-        <Link href="/admin">&larr; Voltar para área administrativa</Link>
-      </p>
-
-      {errorMessage && (
-        <p role="alert" style={{ color: "#c0392b" }}>
-          {errorMessage}
-        </p>
-      )}
-
-      {error && (
-        <p role="alert" style={{ color: "#c0392b" }}>
-          Não foi possível carregar os leads.
-        </p>
-      )}
-
-      {!error && leads && leads.length === 0 && (
-        <p>Nenhum lead registrado ainda.</p>
-      )}
-
-      {!error && leads && leads.length > 0 && (
-        <div style={{ overflowX: "auto" }}>
-        <table
-          style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}
-        >
-          <thead>
-            <tr style={{ textAlign: "left", borderBottom: "2px solid #ddd" }}>
-              <th style={thStyle}>Data</th>
-              <th style={thStyle}>Nome</th>
-              <th style={thStyle}>WhatsApp</th>
-              <th style={thStyle}>Produto</th>
-              <th style={thStyle}>Preço</th>
-              <th style={thStyle}>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(leads as Lead[]).map((lead) => (
-              <tr key={lead.id} style={{ borderBottom: "1px solid #eee" }}>
-                <td style={tdStyle}>
-                  {dateFormatter.format(new Date(lead.created_at))}
-                </td>
-                <td style={tdStyle}>{lead.full_name}</td>
-                <td style={tdStyle}>
-                  {formatWhatsappDisplay(lead.whatsapp)}
-                </td>
-                <td style={tdStyle}>{lead.product_name_snapshot}</td>
-                <td style={tdStyle}>
-                  {currencyFormatter.format(Number(lead.price_snapshot))}
-                </td>
-                <td style={tdStyle}>
-                  <form
-                    action={updateLeadStatus.bind(null, lead.id)}
-                    style={{ display: "flex", gap: "0.5rem" }}
-                  >
-                    <select
-                      name="status"
-                      defaultValue={lead.status}
-                      style={{ padding: "0.25rem" }}
-                    >
-                      {LEAD_STATUSES.map((status) => (
-                        <option key={status} value={status}>
-                          {LEAD_STATUS_LABELS[status]}
-                        </option>
-                      ))}
-                    </select>
-                    <button type="submit" style={{ padding: "0.25rem 0.75rem" }}>
-                      Salvar
-                    </button>
-                  </form>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <AdminShell active="leads" email={claims.claims.email}>
+      <section className="admin-content admin-page">
+        <div className="page-heading">
+          <div><span>COMERCIAL</span><h1>Leads</h1><p>Acompanhe os contatos gerados pelo catálogo e atualize o estágio de atendimento.</p></div>
         </div>
-      )}
-    </main>
-  );
-}
 
-const thStyle = { padding: "0.5rem" };
-const tdStyle = { padding: "0.5rem" };
+        {errorMessage && <p className="admin-alert error" role="alert">{errorMessage}</p>}
+        {error && <p className="admin-alert error" role="alert">Não foi possível carregar os leads.</p>}
+        {!error && leads && leads.length === 0 && <div className="panel empty-state">Nenhum lead registrado ainda.</div>}
+
+        {!error && leads && leads.length > 0 && (
+          <div className="panel admin-table-wrap">
+            <table className="admin-table">
+              <thead><tr><th>Data</th><th>Nome</th><th>WhatsApp</th><th>Produto</th><th>Preço</th><th>Status</th></tr></thead>
+              <tbody>
+                {(leads as Lead[]).map((lead) => (
+                  <tr key={lead.id}>
+                    <td>{dateFormatter.format(new Date(lead.created_at))}</td>
+                    <td><strong>{lead.full_name}</strong></td>
+                    <td>{formatWhatsappDisplay(lead.whatsapp)}</td>
+                    <td>{lead.product_name_snapshot}</td>
+                    <td>{currencyFormatter.format(Number(lead.price_snapshot))}</td>
+                    <td>
+                      <form action={updateLeadStatus.bind(null, lead.id)} className="status-form">
+                        <select name="status" defaultValue={lead.status}>
+                          {LEAD_STATUSES.map((status) => <option key={status} value={status}>{LEAD_STATUS_LABELS[status]}</option>)}
+                        </select>
+                        <button type="submit">Salvar</button>
+                      </form>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+    </AdminShell>
+  );}
+
