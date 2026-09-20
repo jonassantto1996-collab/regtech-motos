@@ -116,3 +116,46 @@
 .lead-list i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#edf7f2;color:#18a95d;flex:0 0 30px}
 .lead-list i svg{width:15px;height:15px}
 @media(max-width:800px){.nav-icon{width:21px;height:21px}.nav-icon svg{width:19px;height:19px}.metric-grid em{width:34px;height:34px;border-radius:9px}}
+
+
+/* Store product form polish — same Regtech visual system */
+.product-editor-panel{max-width:1040px;border-radius:12px;border-color:#dfe6ee;box-shadow:0 5px 18px #10243a08}
+.store-product-form{max-width:none}
+.store-form-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid #e8edf3}
+.store-form-heading>div>span{font-size:9px;font-weight:800;letter-spacing:.16em;color:#087cff}
+.store-form-heading h2{font-size:17px;margin:5px 0 5px;color:#172436;letter-spacing:-.2px}
+.store-form-heading p{font-size:11px;color:#758397;line-height:1.55;margin:0}
+.store-form-required{font-size:9px;color:#8a96a6;white-space:nowrap;padding-top:4px}
+.store-form-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:18px;row-gap:2px}
+.store-form-grid .admin-field{margin-bottom:15px}
+.store-field-wide{grid-column:1/-1}
+.store-product-form .admin-field{font-size:11px;color:#263548}
+.store-product-form .admin-control{min-height:46px;border-radius:8px;border-color:#d6dee8;background:#fff;font-size:12px}
+.store-product-form .admin-control::placeholder{color:#a3adba}
+.store-product-form .admin-textarea{min-height:122px;line-height:1.5}
+.store-select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,#7a8796 50%),linear-gradient(135deg,#7a8796 50%,transparent 50%);background-position:calc(100% - 17px) calc(50% - 2px),calc(100% - 12px) calc(50% - 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:34px}
+.store-form-status{margin-top:4px;padding:15px 16px;border:1px solid #e1e7ee;border-radius:9px;background:#f8fafc}
+.store-toggle-row{display:flex;align-items:center;gap:11px;cursor:pointer}
+.store-toggle-row>input{position:absolute;opacity:0;pointer-events:none}
+.store-toggle{width:38px;height:22px;border-radius:99px;background:#cbd4df;position:relative;transition:background .18s ease;flex:0 0 38px}
+.store-toggle:after{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;border-radius:50%;background:#fff;box-shadow:0 1px 4px #0002;transition:transform .18s ease}
+.store-toggle-row>input:checked+.store-toggle{background:#075ad7}
+.store-toggle-row>input:checked+.store-toggle:after{transform:translateX(16px)}
+.store-toggle-row>span:last-child{display:grid;gap:2px}
+.store-toggle-row strong{font-size:11px;color:#263548}
+.store-toggle-row small{font-size:9px;color:#7b8796}
+.store-form-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;padding-top:18px;border-top:1px solid #e8edf3}
+.store-form-actions .secondary-action,.store-form-actions .admin-primary-button{min-width:145px;min-height:44px}
+.store-form-actions .admin-primary-button{justify-self:auto}
+@media(max-width:800px){
+ .product-editor-panel{padding:16px}
+ .store-form-heading{display:grid;gap:9px;margin-bottom:18px;padding-bottom:15px}
+ .store-form-required{padding:0}
+ .store-form-grid{grid-template-columns:1fr;gap:0}
+ .store-field-wide{grid-column:auto}
+ .store-product-form .admin-control{min-height:45px}
+ .store-form-status{padding:14px}
+ .store-form-actions{display:grid;grid-template-columns:1fr;gap:9px}
+ .store-form-actions .secondary-action,.store-form-actions .admin-primary-button{width:100%;min-width:0}
+ .store-form-actions .secondary-action{order:2}
+}
