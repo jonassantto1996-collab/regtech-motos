@@ -25,9 +25,9 @@ export default async function Home() {
     featuredProducts.length === 1
       ? "lg:grid-cols-1 lg:max-w-2xl lg:mx-auto"
       : featuredProducts.length === 2
-        ? "lg:grid-cols-2 lg:max-w-5xl lg:mx-auto lg:gap-8"
+        ? "lg:grid-cols-2 lg:max-w-6xl lg:mx-auto lg:gap-12"
         : featuredProducts.length === 3
-          ? "lg:grid-cols-3 lg:max-w-6xl lg:mx-auto lg:gap-7"
+          ? "lg:grid-cols-3 lg:max-w-7xl lg:mx-auto lg:gap-8"
           : "lg:grid-cols-4 lg:gap-7";
 
   // Hero configurável pelo painel: imagem exclusiva, produto escolhido
@@ -61,7 +61,7 @@ export default async function Home() {
       : socialProof?.length === 2
         ? "sm:grid-cols-2 lg:max-w-3xl lg:mx-auto"
         : socialProof?.length === 3
-          ? "sm:grid-cols-2 lg:grid-cols-3 lg:max-w-5xl lg:mx-auto"
+          ? "sm:grid-cols-2 lg:grid-cols-3 lg:max-w-6xl lg:mx-auto lg:gap-7"
           : socialProof?.length === 4
             ? "sm:grid-cols-2 lg:grid-cols-4"
             : "sm:grid-cols-2 lg:grid-cols-5";
@@ -182,7 +182,7 @@ export default async function Home() {
       {/* LINHA DE MOTOS */}
       <section className="bg-white px-4 pb-12 pt-8 sm:px-6 sm:pb-14 sm:pt-12 lg:px-8 lg:pb-20 lg:pt-14">
         <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between sm:pb-8">
+          <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between sm:pb-8 lg:pb-10">
             <div className="max-w-xl">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
                 Linha de motos
@@ -204,7 +204,7 @@ export default async function Home() {
                 ))}
               </div>
 
-              <div className="mt-10 flex sm:justify-end lg:mt-12">
+              <div className="mt-10 flex sm:justify-end lg:mt-10">
                 <Link
                   href="/products"
                   className="inline-flex min-h-12 w-full items-center justify-center border border-gray-900 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:w-auto"
@@ -223,8 +223,8 @@ export default async function Home() {
 
       {editorialSettings && (
         <section className="overflow-hidden bg-gray-950 text-white">
-          <div className="mx-auto grid max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+          <div className="mx-auto grid max-w-7xl lg:min-h-[34rem] lg:grid-cols-[0.92fr_1.08fr]">
+            <div className="px-4 py-12 sm:px-6 sm:py-16 lg:flex lg:flex-col lg:justify-center lg:px-12 lg:py-24">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
                 {editorialSettings.eyebrow}
               </p>
@@ -243,7 +243,7 @@ export default async function Home() {
               </Link>
             </div>
 
-            <div className="relative min-h-[26rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-full lg:border-l lg:border-t-0">
+            <div className="relative min-h-[26rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-[34rem] lg:border-l lg:border-t-0">
               <Image
                 src={editorialSettings.storage_path ? getHomeMediaUrl(editorialSettings.storage_path) : "/regtech-entrega-home.webp"}
                 alt={editorialSettings.alt_text}
@@ -272,7 +272,7 @@ export default async function Home() {
       {/* JORNADA — diferenciais baseados apenas no fluxo real do produto. */}
       <section className="border-b border-gray-200 bg-gray-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 border-b border-gray-300 pb-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+          <div className="grid gap-8 border-b border-gray-300 pb-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:pb-10">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
                 Do catálogo ao atendimento
@@ -307,7 +307,7 @@ export default async function Home() {
             ].map((item) => (
               <div
                 key={item.number}
-                className="group py-8 first:pt-7 lg:px-8 lg:py-9 lg:first:pl-0 lg:last:pr-0"
+                className="group py-8 first:pt-7 lg:px-10 lg:py-11 lg:first:pl-0 lg:last:pr-0"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold tracking-[0.2em] text-blue-700">
@@ -333,7 +333,7 @@ export default async function Home() {
       {socialProof && socialProof.length > 0 && (
         <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           <div className="mx-auto max-w-7xl">
-            <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between lg:pb-10">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
                   Prova social
@@ -362,7 +362,7 @@ export default async function Home() {
                       sizes="(max-width: 639px) 84vw, (max-width: 1023px) 50vw, 20vw"
                     />
                   </div>
-                  <div className="p-4">
+                  <div className="p-4 lg:p-5">
                     <p className="text-sm font-semibold text-gray-950">{item.customer_name}</p>
                     <p className="mt-1 text-[0.6875rem] uppercase tracking-[0.14em] text-blue-700">
                       {[item.product_name, item.city].filter(Boolean).join(" · ")}
@@ -381,7 +381,7 @@ export default async function Home() {
       {/* LOJA — dados institucionais confirmados pelo cliente. */}
       <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-7xl">
-          <div className="grid overflow-hidden border border-gray-200 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid overflow-hidden border border-gray-200 lg:grid-cols-[1fr_1fr]">
             <div className="relative flex min-h-[24rem] items-end overflow-hidden bg-gradient-to-br from-blue-700 via-blue-900 to-blue-950 p-6 text-white sm:min-h-[28rem] sm:p-10 lg:min-h-[34rem] lg:p-12">
               <div aria-hidden className="absolute -right-24 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
               <div className="relative max-w-lg">
