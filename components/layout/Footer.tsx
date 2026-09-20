@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { InstagramIcon } from "@/components/icons/InstagramIcon";
+import { ExternalLinkIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 
 const STORE_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000";
 
@@ -53,6 +55,9 @@ export default function Footer() {
               className="group mt-5 inline-flex items-start gap-3 text-sm leading-6 text-blue-100 transition-colors hover:text-cyan-300"
               aria-label="Abrir localização da Regtech CellShop no Google Maps"
             >
+              <span className="mt-0.5 inline-grid h-7 w-7 flex-none place-items-center rounded-full border border-blue-800 text-blue-200">
+                <MapPinIcon className="h-4 w-4" />
+              </span>
               <span>
                 Av. dos Estados, 241
                 <br />
@@ -60,15 +65,19 @@ export default function Footer() {
                 <br />
                 CEP 68385-000
               </span>
-              <span aria-hidden className="mt-0.5 transition-transform group-hover:translate-x-0.5">↗</span>
+              <ExternalLinkIcon className="mt-0.5 h-4 w-4 flex-none transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
             <a
               href="https://www.instagram.com/regtechcellshop"
               target="_blank"
               rel="noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-cyan-300"
+              className="group mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-cyan-300"
             >
-              @regtechcellshop <span aria-hidden>↗</span>
+              <span className="inline-grid h-7 w-7 place-items-center rounded-full border border-blue-800 text-blue-200">
+                <InstagramIcon className="h-4 w-4" />
+              </span>
+              @regtechcellshop
+              <ExternalLinkIcon className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
           </div>
         </div>

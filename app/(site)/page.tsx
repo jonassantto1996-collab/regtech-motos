@@ -3,6 +3,7 @@ import Link from "next/link";
 import HomeProductCard from "@/components/home/HomeProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
+import { ExternalLinkIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 import { getActiveProductListItemById, listProducts } from "@/lib/catalog/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
@@ -434,9 +435,9 @@ export default async function Home() {
                   </div>
                   <span
                     aria-hidden
-                    className="text-xl text-blue-700 transition-transform group-hover:translate-x-1"
+                    className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                   >
-                    →
+                    <ExternalLinkIcon className="h-4 w-4" />
                   </span>
                 </a>
 
@@ -450,11 +451,16 @@ export default async function Home() {
                     <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
                       Loja física
                     </span>
-                    <span className="mt-1 block text-base font-semibold text-gray-950">
+                    <span className="mt-1 flex items-center gap-2 text-base font-semibold text-gray-950">
+                      <span className="inline-grid h-7 w-7 place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
+                        <MapPinIcon className="h-4 w-4" />
+                      </span>
                       Av. dos Estados, 241 — Centro, Tucumã — PA
                     </span>
                   </div>
-                  <span aria-hidden className="text-xl text-blue-700 transition-transform group-hover:translate-x-1">→</span>
+                  <span aria-hidden className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+                    <ExternalLinkIcon className="h-4 w-4" />
+                  </span>
                 </a>
               </div>
 
