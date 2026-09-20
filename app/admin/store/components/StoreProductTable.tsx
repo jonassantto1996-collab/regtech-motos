@@ -11,6 +11,6 @@ export function StoreProductTable({products}:{products:Product[]}){
    <td>{product.availability}</td>
    <td><span className={`status-badge ${product.is_active?"active":""}`}>{product.is_active?"Ativo":"Inativo"}</span></td>
    <td><div className="table-actions"><Link href={`/admin/store/${product.id}/edit`}>Editar</Link><form action={toggleStoreProduct.bind(null,product.id,!product.is_active)}><button type="submit">{product.is_active?"Desativar":"Ativar"}</button></form></div></td>
-  </tr>)}</tbody></table>:<div className="empty-state">Nenhum produto cadastrado ainda.</div>}
+  </tr>)}</tbody></table>:<div className="store-empty-state"><div className="store-empty-icon">▦</div><div><h3>Seu catálogo começa aqui</h3><p>Cadastre o primeiro produto da Loja Completa. Depois você poderá criar variantes, controlar estoque e acompanhar movimentações.</p></div><Link href="/admin/store/new" className="secondary-action">Cadastrar primeiro produto</Link></div>}
  </article>;
 }
