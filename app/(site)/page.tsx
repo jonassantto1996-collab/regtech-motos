@@ -97,7 +97,7 @@ export default async function Home() {
               className="h-12 w-auto sm:h-14 lg:h-16"
             />
             <p className="mt-5 text-xs font-medium uppercase tracking-[0.2em] text-blue-200">
-              Mobilidade elétrica
+              Motos · Mobilidade elétrica
             </p>
             <h1 className="mt-4 text-3xl font-bold leading-[1.04] tracking-[-0.035em] text-white sm:text-4xl lg:text-6xl">
               Mobilidade elétrica para o seu próximo caminho.
