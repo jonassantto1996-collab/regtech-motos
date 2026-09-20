@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 
-type AdminSection = "dashboard" | "products" | "leads" | "hero";
+type AdminSection = "dashboard" | "products" | "leads" | "hero" | "store";
 
 const NavContent = ({ active, close }: { active: AdminSection; close?: () => void }) => (
   <nav>
@@ -14,7 +14,7 @@ const NavContent = ({ active, close }: { active: AdminSection; close?: () => voi
     <small>COMERCIAL</small>
     <Link onClick={close} className={active === "leads" ? "nav-active" : ""} href="/admin/leads">● <span>Leads</span></Link>
     <small>LOJA</small>
-    <div className="nav-soon"><span>Loja completa</span><b>Em breve</b></div>
+    <Link onClick={close} className={active === "store" ? "nav-active" : ""} href="/admin/store">▦ <span>Loja completa</span></Link>
     <small>SISTEMA</small>
     <div className="nav-muted"><span>Atendimentos</span></div>
     <div className="nav-muted"><span>Configurações</span></div>
