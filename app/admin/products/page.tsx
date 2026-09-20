@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { toggleProductActive } from "./actions";
+import { requireAdminSession, toggleProductActive } from "./actions";
 import { PRODUCT_ERROR_MESSAGES, type Product } from "./types";
 import { AdminShell } from "../AdminShell";
 import "../admin.css";
@@ -17,6 +17,7 @@ export default async function ProductsPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
+  await requireAdminSession();
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims) {

@@ -3,14 +3,15 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { LEAD_STATUSES, LEAD_STATUS_LABELS, type LeadStatus } from "@/lib/leads/types";
-import { logout } from "./actions";
 import { AdminShell } from "./AdminShell";
 import {PackageIcon,CheckCircleIcon,AlertCircleIcon,UsersIcon,UserIcon} from "./icons";
+import { requireAdminSession } from "./products/actions";
 import "./admin.css";
 
 const dayFormatter = new Intl.DateTimeFormat("pt-BR", { weekday: "short" });
 
 export default async function AdminPage() {
+  await requireAdminSession();
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) redirect("/admin/login");
@@ -102,7 +103,6 @@ export default async function AdminPage() {
         <div className="status-strip">
           {LEAD_STATUSES.map((status) => <div key={status}><span>{LEAD_STATUS_LABELS[status]}</span><strong>{statusCounts[status]}</strong></div>)}
         </div>
-        <form action={logout}><button className="logout" type="submit">Sair do admin</button></form>
       </section>
     </AdminShell>
   );

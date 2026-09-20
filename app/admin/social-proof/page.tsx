@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { AdminShell } from "../AdminShell";
 import { createSocialProof, deleteSocialProof, updateSocialProof } from "./actions";
+import { requireAdminSession } from "../products/actions";
 import "../admin.css";
 import "./social-proof.css";
 
@@ -23,6 +24,7 @@ export default async function SocialProofPage({
 }: {
   searchParams: Promise<{ error?: string; saved?: string }>;
 }) {
+  await requireAdminSession();
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) redirect("/admin/login");

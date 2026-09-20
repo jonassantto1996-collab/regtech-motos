@@ -174,3 +174,21 @@
 }
 
 .page-heading-actions{display:flex;gap:8px;align-items:center}@media(max-width:800px){.page-heading-actions{width:100%;display:grid;grid-template-columns:1fr}.page-heading-actions .secondary-action{width:100%}}
+
+
+/* Final admin polish — preserves the approved layout and brand palette. */
+.admin-side a,.drawer-panel a,.primary-action,.admin-primary-button,.admin-secondary-button,.secondary-action,.status-form button,.table-actions a,.table-actions button,.logout,.sidebar-logout,.drawer-close,.mobile-menu-button,.panel-title a{transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease,transform .18s ease}
+.admin-side a:focus-visible,.drawer-panel a:focus-visible,.primary-action:focus-visible,.admin-primary-button:focus-visible,.admin-secondary-button:focus-visible,.secondary-action:focus-visible,.status-form button:focus-visible,.table-actions a:focus-visible,.table-actions button:focus-visible,.sidebar-logout:focus-visible,.drawer-close:focus-visible,.mobile-menu-button:focus-visible,.panel-title a:focus-visible{outline:2px solid #1590ff;outline-offset:2px}
+.primary-action:hover,.admin-primary-button:hover,.admin-secondary-button:hover,.secondary-action:hover,.status-form button:hover{transform:translateY(-1px)}
+.primary-action:active,.admin-primary-button:active,.admin-secondary-button:active,.secondary-action:active,.status-form button:active{transform:translateY(0)}
+.admin-secondary-button:hover,.secondary-action:hover{border-color:#8fb5e8;background:#f6faff}
+.admin-table tbody tr{transition:background-color .16s ease}.admin-table tbody tr:hover{background:#f8fbff}
+.table-actions a:hover,.table-actions button:hover,.panel-title a:hover{color:#043f9f}
+.admin-file{transition:border-color .18s ease,background-color .18s ease}.admin-file:focus-within{border-color:#087cff;background:#f5f9ff;box-shadow:0 0 0 3px #087cff12}
+.form-check{display:flex;align-items:flex-start;gap:8px;line-height:1.45}.form-check input{margin-top:1px;min-width:15px;min-height:15px}
+.page-heading-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.sidebar-logout-form{margin-top:auto!important;padding:18px 8px 0}.sidebar-logout{width:100%;min-height:40px;border:1px solid #24445f;border-radius:7px;background:#071827;color:#d9e4ef;font-size:11px;font-weight:800;cursor:pointer}.sidebar-logout:hover{border-color:#087cff;background:#0a2540;color:#fff}
+.side-message{margin-top:14px}.admin-side nav+.sidebar-logout-form{margin-top:auto!important}.drawer-panel nav+.sidebar-logout-form{margin-top:22px!important}
+.admin-control:focus-visible{outline:none}.status-form select:focus-visible{outline:2px solid #087cff;outline-offset:2px}
+@media(max-width:800px){.admin-content{padding:16px}.admin-page{padding-top:22px}.page-heading{gap:14px;margin-bottom:18px}.page-heading h1{font-size:25px}.page-heading p{line-height:1.5}.page-heading-actions{width:100%;display:grid;grid-template-columns:1fr}.panel{border-radius:10px}.admin-table th,.admin-table td{padding-left:13px;padding-right:13px}.sidebar-logout-form{padding:16px 5px 0}.sidebar-logout{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.admin-side a,.drawer-panel a,.primary-action,.admin-primary-button,.admin-secondary-button,.secondary-action,.status-form button,.table-actions a,.table-actions button,.sidebar-logout,.drawer-close,.mobile-menu-button,.panel-title a{transition:none}}

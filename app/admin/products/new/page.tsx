@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { createProduct } from "../actions";
+import { createProduct, requireAdminSession } from "../actions";
 import { PRODUCT_ERROR_MESSAGES } from "../types";
 import { ProductForm } from "../ProductForm";
 import { AdminShell } from "../../AdminShell";
 import "../../admin.css";
 
 export default async function NewProductPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  await requireAdminSession();
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims) redirect("/admin/login");

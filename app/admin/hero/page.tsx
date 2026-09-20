@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { uploadCustomHero, useProductHero } from "./actions";
+import { requireAdminSession } from "../products/actions";
 import { AdminShell } from "../AdminShell";
 import "../admin.css";
 
@@ -19,6 +20,7 @@ const errors: Record<string, string> = {
 };
 
 export default async function AdminHeroPage({ searchParams }: { searchParams: SearchParams }) {
+  await requireAdminSession();
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) redirect("/admin/login");

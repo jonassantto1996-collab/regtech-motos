@@ -10,6 +10,7 @@ import {
   type Lead,
 } from "@/lib/leads/types";
 import { AdminShell } from "../AdminShell";
+import { requireAdminSession } from "../products/actions";
 import "../admin.css";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -44,6 +45,7 @@ export default async function AdminLeadsPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
+  await requireAdminSession();
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims) {

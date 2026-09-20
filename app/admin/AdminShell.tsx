@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import {DashboardIcon,BikeIcon,ImageIcon,UsersIcon,StoreIcon,HeadsetIcon,SettingsIcon} from "./icons";
+import { logout } from "./actions";
 
 type AdminSection = "dashboard" | "products" | "leads" | "hero" | "editorial" | "store" | "social-proof";
 
@@ -33,6 +34,7 @@ export function AdminShell({ active, email, children }: { active: AdminSection; 
       <aside className="admin-side">
         <div className="admin-logo">REGTECH <span>MOTORS</span></div>
         <NavContent active={active} />
+        <form action={logout} className="sidebar-logout-form"><button className="sidebar-logout" type="submit">Sair do admin</button></form>
         <div className="side-message"><strong>Regtech Motors</strong><br />Gestão do catálogo e atendimento.</div>
       </aside>
 
@@ -44,6 +46,7 @@ export function AdminShell({ active, email, children }: { active: AdminSection; 
             <button className="drawer-close" aria-label="Fechar menu" onClick={() => setMenuOpen(false)}>×</button>
           </div>
           <NavContent active={active} close={() => setMenuOpen(false)} />
+          <form action={logout} className="sidebar-logout-form"><button className="sidebar-logout" type="submit">Sair do admin</button></form>
           <div className="side-message"><strong>Regtech Motors</strong><br />Gestão do catálogo e atendimento.</div>
         </aside>
       </div>
