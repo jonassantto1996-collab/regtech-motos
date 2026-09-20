@@ -25,7 +25,7 @@ export default async function StoreAdminPage() {
 
   const activeVariants=(variants??[]).filter(v=>v.is_active); const totalStock=activeVariants.reduce((sum,v)=>sum+v.stock_quantity,0); const lowStock=activeVariants.filter(v=>v.stock_quantity>0&&v.stock_quantity<=v.low_stock_threshold); const outOfStock=activeVariants.filter(v=>v.stock_quantity===0); const productsWithoutVariants=(products??[]).filter(p=>!activeVariants.some(v=>v.product_id===p.id)).length;
 
-  return <AdminShell active="store" email={user.email ?? data.claims.email}>
+  return <AdminShell active="store" email={typeof data.claims.email === "string" ? data.claims.email : undefined}>
     <section className="admin-content admin-page">
       <div className="page-heading"><div><span>CATÁLOGO GERAL</span><h1>Loja completa</h1><p>Estrutura separada das motos para celulares, áudio, TVs, Starlink e outros produtos.</p></div><Link href="/admin/store/new" className="primary-action">+ Cadastrar produto</Link></div>
       <div className="store-inventory-metrics"><article><span>Estoque total</span><strong>{totalStock}</strong><small>unidades nas variantes</small></article><article><span>Estoque baixo</span><strong>{lowStock.length}</strong><small>variantes no limite</small></article><article><span>Sem estoque</span><strong>{outOfStock.length}</strong><small>variantes zeradas</small></article><article><span>Sem variantes</span><strong>{productsWithoutVariants}</strong><small>produtos a configurar</small></article></div>
