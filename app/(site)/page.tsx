@@ -4,7 +4,7 @@ import HomeProductCard from "@/components/home/HomeProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
 import { getActiveProductListItemById, listProducts } from "@/lib/catalog/queries";
 import { createClient } from "@/lib/supabase/server";
-import { getPublicImageUrl } from "@/lib/supabase/storage";
+import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
 
 const STORE_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000";
 
@@ -33,7 +33,7 @@ export default async function Home() {
   // Hero configurável pelo painel: imagem exclusiva, produto escolhido
   // ou fallback automático para o produto mais recente.
   const supabase = await createClient();
-  const [{ data: heroSettings }, { data: socialProof }] = await Promise.all([
+  const [{ data: heroSettings }, { data: socialProof }, { data: editorialSettings }] = await Promise.all([
     supabase
       .from("home_hero_settings")
       .select("mode, product_id, storage_path, alt_text, image_position")
@@ -47,6 +47,12 @@ export default async function Home() {
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false })
       .limit(5),
+    supabase
+      .from("home_editorial_settings")
+      .select("eyebrow,title,description,cta_label,cta_href,storage_path,alt_text,image_position,is_active")
+      .eq("id", true)
+      .eq("is_active", true)
+      .maybeSingle(),
   ]);
 
   const socialProofGridClass =
@@ -215,51 +221,58 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* MOBILIDADE — bloco editorial, sem promessas técnicas não confirmadas. */}
-      <section className="overflow-hidden bg-gray-950 text-white">
-        <div className="mx-auto grid max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-              Mobilidade elétrica
-            </p>
-            <h2 className="mt-4 max-w-xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-              Uma nova experiência para se movimentar.
-            </h2>
-            <p className="mt-6 max-w-xl text-base leading-7 text-gray-300 sm:text-lg">
-              Explore os modelos elétricos disponíveis, conheça os detalhes de
-              cada moto e escolha qual deseja consultar com a equipe Regtech.
-            </p>
-            <Link
-              href="/products"
-              className="mt-8 inline-flex min-h-12 items-center gap-3 border border-white/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-colors hover:border-cyan-300 hover:bg-cyan-300 hover:text-blue-950 sm:text-sm"
-            >
-              Comparar modelos
-              <span aria-hidden className="text-base">→</span>
-            </Link>
-          </div>
+      {editorialSettings && (
+        <section className="overflow-hidden bg-gray-950 text-white">
+          <div className="mx-auto grid max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
+                {editorialSettings.eyebrow}
+              </p>
+              <h2 className="mt-4 max-w-xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+                {editorialSettings.title}
+              </h2>
+              <p className="mt-6 max-w-xl text-base leading-7 text-gray-300 sm:text-lg">
+                {editorialSettings.description}
+              </p>
+              <Link
+                href={editorialSettings.cta_href}
+                className="mt-8 inline-flex min-h-12 items-center gap-3 border border-white/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-colors hover:border-cyan-300 hover:bg-cyan-300 hover:text-blue-950 sm:text-sm"
+              >
+                {editorialSettings.cta_label}
+                <span aria-hidden className="text-base">→</span>
+              </Link>
+            </div>
 
-          <div className="relative min-h-[22rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-full lg:border-l lg:border-t-0">
-            <Image
-              src="/regtech-entrega-home.webp"
-              alt="Entrega de uma moto elétrica a cliente na Regtech Motors"
-              fill
-              className="object-cover object-center"
-              sizes="(max-width: 1023px) 100vw, 48vw"
-            />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-blue-950/70 via-transparent to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
-              <div className="border-t border-white/30 pt-4">
-                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-white">
-                  Entrega real · Regtech Motors
-                </p>
-                <p className="mt-2 max-w-sm text-sm leading-6 text-white/80">
-                  Clientes que já escolheram a mobilidade elétrica.
-                </p>
+            <div className="relative min-h-[22rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-full lg:border-l lg:border-t-0">
+              <Image
+                src={editorialSettings.storage_path ? getHomeMediaUrl(editorialSettings.storage_path) : "/regtech-entrega-home.webp"}
+                alt={editorialSettings.alt_text}
+                fill
+                quality={95}
+                className={
+                  editorialSettings.image_position === "left"
+                    ? "object-cover object-left"
+                    : editorialSettings.image_position === "right"
+                      ? "object-cover object-right"
+                      : "object-cover object-center"
+                }
+                sizes="(max-width: 1023px) 100vw, 48vw"
+              />
+              <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-blue-950/55 via-transparent to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
+                <div className="border-t border-white/30 pt-4">
+                  <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-white">
+                    Entrega real · Regtech Motors
+                  </p>
+                  <p className="mt-2 max-w-sm text-sm leading-6 text-white/80">
+                    Clientes que já escolheram a mobilidade elétrica.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* JORNADA — diferenciais baseados apenas no fluxo real do produto. */}
       <section className="border-b border-gray-200 bg-gray-50 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">

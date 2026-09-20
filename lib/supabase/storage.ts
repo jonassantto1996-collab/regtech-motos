@@ -11,6 +11,7 @@
  */
 
 export const PRODUCT_IMAGES_BUCKET = "product-images";
+export const HOME_MEDIA_BUCKET = "home-media";
 
 // Espelha exatamente a configuração aplicada em storage.buckets (migration
 // create_product_images_bucket). Mudar aqui não muda o banco — os dois
@@ -22,6 +23,7 @@ export const ALLOWED_IMAGE_MIME_TYPES = [
 ] as const;
 
 export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+export const MAX_HOME_MEDIA_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB
 
 const MIME_TO_EXTENSION: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -126,4 +128,35 @@ export async function validateImageSignature(file: File): Promise<ImageValidatio
   return matches
     ? { valid: true }
     : { valid: false, reason: "O conteúdo do arquivo não corresponde ao formato de imagem declarado." };
+}
+
+
+/** Validação dedicada às imagens editoriais da Home (arquivos maiores). */
+export function validateHomeMediaFile(file: {
+  type: string;
+  size: number;
+}): ImageValidationResult {
+  if (
+    !ALLOWED_IMAGE_MIME_TYPES.includes(
+      file.type as (typeof ALLOWED_IMAGE_MIME_TYPES)[number]
+    )
+  ) {
+    return { valid: false, reason: "Use JPEG, PNG ou WebP." };
+  }
+
+  if (file.size > MAX_HOME_MEDIA_SIZE_BYTES) {
+    return { valid: false, reason: "Arquivo maior que 15 MB." };
+  }
+
+  return { valid: true };
+}
+
+export function buildHomeEditorialImagePath(mimeType: string): string {
+  const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
+  return `home-editorial/${crypto.randomUUID()}.${extension}`;
+}
+
+export function getHomeMediaUrl(storagePath: string): string {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/${HOME_MEDIA_BUCKET}/${storagePath}`;
 }
