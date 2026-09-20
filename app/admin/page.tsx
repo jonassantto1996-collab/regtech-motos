@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { LEAD_STATUSES, LEAD_STATUS_LABELS, type LeadStatus } from "@/lib/leads/types";
 import { logout } from "./actions";
 import { AdminShell } from "./AdminShell";
+import {PackageIcon,CheckCircleIcon,AlertCircleIcon,UsersIcon,UserIcon} from "./icons";
 import "./admin.css";
 
 const dayFormatter = new Intl.DateTimeFormat("pt-BR", { weekday: "short" });
@@ -64,10 +65,10 @@ export default async function AdminPage() {
         </div>
 
         <div className="metric-grid">
-          <article><em>◉</em><div><strong>{totalProducts}</strong><span>Produtos</span></div></article>
-          <article><em className="green">●</em><div><strong>{active}</strong><span>Disponíveis</span></div></article>
-          <article><em className="red">●</em><div><strong>{inactive}</strong><span>Indisponíveis</span></div></article>
-          <article><em className="cyan">●</em><div><strong>{totalLeads}</strong><span>Leads</span></div></article>
+          <article><em><PackageIcon /></em><div><strong>{totalProducts}</strong><span>Produtos</span></div></article>
+          <article><em className="green"><CheckCircleIcon /></em><div><strong>{active}</strong><span>Disponíveis</span></div></article>
+          <article><em className="red"><AlertCircleIcon /></em><div><strong>{inactive}</strong><span>Indisponíveis</span></div></article>
+          <article><em className="cyan"><UsersIcon /></em><div><strong>{totalLeads}</strong><span>Leads</span></div></article>
         </div>
 
         <div className="dashboard-grid">
@@ -89,7 +90,7 @@ export default async function AdminPage() {
             <div className="lead-list">
               {recentLeads?.length ? recentLeads.map((lead) => (
                 <div key={lead.id}>
-                  <i>◉</i>
+                  <i><UserIcon /></i>
                   <span><strong>{lead.full_name ?? "Lead"}</strong><small>{LEAD_STATUS_LABELS[lead.status as LeadStatus] ?? lead.status}</small></span>
                   <time>{new Date(lead.created_at).toLocaleDateString("pt-BR")}</time>
                 </div>

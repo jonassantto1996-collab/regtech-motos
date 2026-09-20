@@ -2,22 +2,23 @@
 
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
+import {DashboardIcon,BikeIcon,ImageIcon,UsersIcon,StoreIcon,HeadsetIcon,SettingsIcon} from "./icons";
 
 type AdminSection = "dashboard" | "products" | "leads" | "hero" | "store";
 
 const NavContent = ({ active, close }: { active: AdminSection; close?: () => void }) => (
   <nav>
-    <Link onClick={close} className={active === "dashboard" ? "nav-active" : ""} href="/admin">⌂ <span>Dashboard</span></Link>
+    <Link onClick={close} className={active === "dashboard" ? "nav-active" : ""} href="/admin"><span className="nav-icon"><DashboardIcon /></span><span>Dashboard</span></Link>
     <small>CATÁLOGO</small>
-    <Link onClick={close} className={active === "products" ? "nav-active" : ""} href="/admin/products">◈ <span>Motos</span></Link>
-    <Link onClick={close} className={active === "hero" ? "nav-active" : ""} href="/admin/hero">▣ <span>Hero da Home</span></Link>
+    <Link onClick={close} className={active === "products" ? "nav-active" : ""} href="/admin/products"><span className="nav-icon"><BikeIcon /></span><span>Motos</span></Link>
+    <Link onClick={close} className={active === "hero" ? "nav-active" : ""} href="/admin/hero"><span className="nav-icon"><ImageIcon /></span><span>Hero da Home</span></Link>
     <small>COMERCIAL</small>
-    <Link onClick={close} className={active === "leads" ? "nav-active" : ""} href="/admin/leads">● <span>Leads</span></Link>
+    <Link onClick={close} className={active === "leads" ? "nav-active" : ""} href="/admin/leads"><span className="nav-icon"><UsersIcon /></span><span>Leads</span></Link>
     <small>LOJA</small>
-    <Link onClick={close} className={active === "store" ? "nav-active" : ""} href="/admin/store">▦ <span>Loja completa</span></Link>
+    <Link onClick={close} className={active === "store" ? "nav-active" : ""} href="/admin/store"><span className="nav-icon"><StoreIcon /></span><span>Loja completa</span></Link>
     <small>SISTEMA</small>
-    <div className="nav-muted"><span>Atendimentos</span></div>
-    <div className="nav-muted"><span>Configurações</span></div>
+    <div className="nav-muted"><span className="nav-icon"><HeadsetIcon /></span><span>Atendimentos</span></div>
+    <div className="nav-muted"><span className="nav-icon"><SettingsIcon /></span><span>Configurações</span></div>
   </nav>
 );
 

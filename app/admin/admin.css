@@ -100,3 +100,19 @@
  .store-empty-state{min-height:0;padding:24px 18px;display:grid;grid-template-columns:auto 1fr;gap:14px}
  .store-empty-state .secondary-action{grid-column:1/-1;margin-left:0;width:100%}
 }
+
+
+/* Polished admin icon system — preserves existing Regtech palette */
+.nav-icon{width:20px;height:20px;display:inline-grid;place-items:center;flex:0 0 20px;color:currentColor}
+.nav-icon svg{width:18px;height:18px;display:block}
+.admin-side a,.drawer-panel a{transition:background .18s ease,color .18s ease,transform .18s ease}
+.admin-side a:hover .nav-icon,.drawer-panel a:hover .nav-icon,.nav-active .nav-icon{transform:translateY(-.5px)}
+.nav-muted .nav-icon{opacity:.86}
+.metric-grid em{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:#eef5ff;color:#087cff}
+.metric-grid em svg{width:19px;height:19px}
+.metric-grid em.green{background:#ebf9f2;color:#14a866}
+.metric-grid em.red{background:#fff0f0;color:#e24444}
+.metric-grid em.cyan{background:#eaf9fc;color:#159fb8}
+.lead-list i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#edf7f2;color:#18a95d;flex:0 0 30px}
+.lead-list i svg{width:15px;height:15px}
+@media(max-width:800px){.nav-icon{width:21px;height:21px}.nav-icon svg{width:19px;height:19px}.metric-grid em{width:34px;height:34px;border-radius:9px}}
