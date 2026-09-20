@@ -73,10 +73,6 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 pt-6 text-xs text-blue-300 sm:flex-row sm:items-center sm:justify-between">
-          <p>Regtech Motors</p>
-          <p>Mobilidade elétrica</p>
-        </div>
       </div>
     </footer>
   );
