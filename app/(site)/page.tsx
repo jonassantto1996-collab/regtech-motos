@@ -49,7 +49,7 @@ export default async function Home() {
       .limit(5),
     supabase
       .from("home_editorial_settings")
-      .select("eyebrow,title,description,cta_label,cta_href,storage_path,alt_text,image_position,is_active")
+      .select("eyebrow,title,description,cta_label,cta_href,storage_path,alt_text,image_position,image_position_x,image_position_y,is_active")
       .eq("id", true)
       .eq("is_active", true)
       .maybeSingle(),
@@ -249,13 +249,8 @@ export default async function Home() {
                 alt={editorialSettings.alt_text}
                 fill
                 quality={95}
-                className={
-                  editorialSettings.image_position === "left"
-                    ? "object-cover object-left"
-                    : editorialSettings.image_position === "right"
-                      ? "object-cover object-right"
-                      : "object-cover object-center"
-                }
+                className="object-cover"
+                style={{ objectPosition: `${editorialSettings.image_position_x ?? 50}% ${editorialSettings.image_position_y ?? 50}%` }}
                 sizes="(max-width: 1023px) 100vw, 48vw"
               />
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-blue-950/55 via-transparent to-transparent" />

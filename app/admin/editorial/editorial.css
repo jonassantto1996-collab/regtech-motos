@@ -7,3 +7,5 @@
 .editorial-wide{grid-column:1/-1}
 @media(max-width:900px){.editorial-admin-card{grid-template-columns:1fr}.editorial-preview{min-height:420px}}
 @media(max-width:800px){.editorial-admin-card{padding:16px}.editorial-preview{min-height:340px}.editorial-grid{grid-template-columns:1fr}.editorial-wide{grid-column:auto}}
+.editorial-range{width:100%;accent-color:#075ad7}
+.editorial-admin-form .admin-field small{font-size:9px;color:#758397;font-weight:400;line-height:1.4}

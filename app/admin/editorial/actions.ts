@@ -10,7 +10,7 @@ import {
   validateHomeMediaFile,
   validateImageSignature,
 } from "@/lib/supabase/storage";
-import { hasEditorialResolution, readImageDimensions } from "@/lib/images/dimensions";
+import { readImageDimensions } from "@/lib/images/dimensions";
 
 const PATH = "/admin/editorial";
 const POSITIONS = new Set(["left", "center", "right"]);
@@ -31,9 +31,16 @@ export async function saveHomeEditorial(formData: FormData) {
   const ctaHref = requiredText(formData, "cta_href", 300);
   const altText = requiredText(formData, "alt_text", 180);
   const imagePosition = String(formData.get("image_position") ?? "center");
+  const imagePositionX = Number(String(formData.get("image_position_x") ?? "50"));
+  const imagePositionY = Number(String(formData.get("image_position_y") ?? "50"));
   const isActive = formData.get("is_active") === "on";
 
-  if (!eyebrow || !title || !description || !ctaLabel || !ctaHref || !altText || !POSITIONS.has(imagePosition)) {
+  if (
+    !eyebrow || !title || !description || !ctaLabel || !ctaHref || !altText ||
+    !POSITIONS.has(imagePosition) ||
+    !Number.isInteger(imagePositionX) || imagePositionX < 0 || imagePositionX > 100 ||
+    !Number.isInteger(imagePositionY) || imagePositionY < 0 || imagePositionY > 100
+  ) {
     redirect(PATH + "?error=invalid_fields");
   }
   if (!ctaHref.startsWith("/")) redirect(PATH + "?error=invalid_link");
@@ -58,8 +65,6 @@ export async function saveHomeEditorial(formData: FormData) {
     if (!signature.valid) redirect(PATH + "?error=invalid_image");
 
     const dimensions = await readImageDimensions(file);
-    if (!dimensions) redirect(PATH + "?error=dimensions_unknown");
-    if (!hasEditorialResolution(dimensions)) redirect(PATH + "?error=resolution_too_low");
 
     const nextPath = buildHomeEditorialImagePath(file.type);
     const { error: uploadError } = await admin.storage
@@ -72,8 +77,8 @@ export async function saveHomeEditorial(formData: FormData) {
     if (uploadError) redirect(PATH + "?error=upload_failed");
 
     storagePath = nextPath;
-    imageWidth = dimensions.width;
-    imageHeight = dimensions.height;
+    imageWidth = dimensions?.width ?? null;
+    imageHeight = dimensions?.height ?? null;
   }
 
   const { error } = await admin
@@ -88,6 +93,8 @@ export async function saveHomeEditorial(formData: FormData) {
       storage_path: storagePath,
       alt_text: altText,
       image_position: imagePosition,
+      image_position_x: imagePositionX,
+      image_position_y: imagePositionY,
       is_active: isActive,
       image_width: imageWidth,
       image_height: imageHeight,
@@ -112,6 +119,8 @@ export async function saveHomeEditorial(formData: FormData) {
     storage_path: storagePath,
     image_width: imageWidth,
     image_height: imageHeight,
+    image_position_x: imagePositionX,
+    image_position_y: imagePositionY,
   });
 
   revalidatePath("/");
