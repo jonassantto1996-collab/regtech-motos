@@ -22,6 +22,10 @@ export async function createStoreVariant(productId:string,formData:FormData){
 }
 export async function updateVariantStock(productId:string,variantId:string,formData:FormData){
  const user=await requireAdminSession();const parsed=parseStockQuantity(formData);if(!parsed.ok)redirect("/admin/store/"+productId+"/edit?error="+parsed.error);const stock=parsed.stock;
- const admin=createAdminClient();const {error}=await admin.from("store_product_variants").update({stock_quantity:stock}).eq("id",variantId).eq("product_id",productId);if(error)redirect("/admin/store/"+productId+"/edit?error=server_error");
- await logAdminAction(user,"store_variant.stock_update","store_product_variant",variantId,{product_id:productId,stock_quantity:stock});redirect("/admin/store/"+productId+"/edit");
+ const note=String(formData.get("note")??"").trim();if(note.length>200)redirect("/admin/store/"+productId+"/edit?error=note_too_long");
+ const admin=createAdminClient();const {data,error}=await admin.rpc("adjust_store_variant_stock",{p_product_id:productId,p_variant_id:variantId,p_new_quantity:stock,p_actor_user_id:user,p_note:note||null});
+ if(error)redirect("/admin/store/"+productId+"/edit?error=server_error");
+ const movement=Array.isArray(data)?data[0]:null;
+ await logAdminAction(user,"store_variant.stock_update","store_product_variant",variantId,{product_id:productId,previous_quantity:movement?.previous_quantity,current_quantity:stock,movement_id:movement?.movement_id??null});
+ redirect("/admin/store/"+productId+"/edit");
 }
