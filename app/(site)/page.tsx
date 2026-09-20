@@ -132,7 +132,7 @@ export default async function Home() {
             </h1>
             <Link
               href="/products"
-              className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-white bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition-colors hover:border-cyan-300 hover:bg-cyan-300 sm:mt-8 sm:w-auto sm:text-sm"
+              className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-white bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan-300 hover:bg-cyan-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-950 active:translate-y-0 sm:mt-8 sm:w-auto sm:text-sm"
             >
               Conhecer modelos
               <span aria-hidden className="text-base">→</span>
@@ -173,7 +173,7 @@ export default async function Home() {
             <Link
               href="/products"
               aria-label="Abrir catálogo de motos elétricas"
-              className="inline-flex h-10 w-10 items-center justify-center border border-gray-300 text-lg text-gray-900 transition-colors hover:border-blue-700 hover:bg-blue-700 hover:text-white sm:h-11 sm:w-11 sm:text-xl"
+              className="inline-flex h-10 w-10 items-center justify-center border border-gray-300 text-lg text-gray-900 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-700 hover:bg-blue-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 active:translate-y-0 sm:h-11 sm:w-11 sm:text-xl"
             >
               <span aria-hidden>→</span>
             </Link>
@@ -209,7 +209,7 @@ export default async function Home() {
               <div className="mt-10 flex sm:justify-end lg:mt-10">
                 <Link
                   href="/products"
-                  className="inline-flex min-h-12 w-full items-center justify-center border border-gray-900 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-gray-900 transition-colors hover:bg-gray-900 hover:text-white sm:w-auto"
+                  className="inline-flex min-h-12 w-full items-center justify-center border border-gray-900 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.1em] text-gray-900 transition-all duration-200 hover:-translate-y-0.5 hover:bg-gray-900 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 active:translate-y-0 sm:w-auto"
                 >
                   Ver todas as motos
                 </Link>
@@ -238,7 +238,7 @@ export default async function Home() {
               </p>
               <Link
                 href={editorialSettings.cta_href}
-                className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-white/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-colors hover:border-cyan-300 hover:bg-cyan-300 hover:text-blue-950 sm:mt-8 sm:w-auto sm:text-sm"
+                className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-white/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan-300 hover:bg-cyan-300 hover:text-blue-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-950 active:translate-y-0 sm:mt-8 sm:w-auto sm:text-sm"
               >
                 {editorialSettings.cta_label}
                 <span aria-hidden className="text-base">→</span>

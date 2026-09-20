@@ -81,7 +81,7 @@ export default function InterestModal({ productId }: Props) {
         ref={openButtonRef}
         type="button"
         onClick={openModal}
-        className="min-h-14 w-full bg-blue-700 px-7 py-4 text-center text-sm font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:bg-blue-800"
+        className="min-h-14 w-full bg-blue-700 px-7 py-4 text-center text-sm font-semibold uppercase tracking-[0.14em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 active:translate-y-0"
       >
         Tenho interesse
       </button>
@@ -105,7 +105,7 @@ export default function InterestModal({ productId }: Props) {
                   ref={closeSuccessButtonRef}
                   type="button"
                   onClick={closeModal}
-                  className="mt-6 min-h-12 w-full bg-gray-950 px-5 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-white"
+                  className="mt-6 min-h-12 w-full bg-gray-950 px-5 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 active:translate-y-0"
                 >
                   Fechar
                 </button>
@@ -162,14 +162,14 @@ export default function InterestModal({ productId }: Props) {
                       type="button"
                       onClick={closeModal}
                       disabled={modalState === "submitting"}
-                      className="min-h-12 border border-gray-300 px-4 py-3 text-sm font-semibold uppercase tracking-[0.1em] text-gray-700 disabled:opacity-50"
+                      className="min-h-12 border border-gray-300 px-4 py-3 text-sm font-semibold uppercase tracking-[0.1em] text-gray-700 transition-all duration-200 hover:border-gray-500 hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Cancelar
                     </button>
                     <button
                       type="submit"
                       disabled={modalState === "submitting"}
-                      className="min-h-12 bg-gray-950 px-4 py-3 text-sm font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+                      className="min-h-12 bg-gray-950 px-4 py-3 text-sm font-semibold uppercase tracking-[0.1em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 active:translate-y-0 disabled:cursor-not-allowed disabled:translate-y-0 disabled:opacity-50"
                     >
                       {modalState === "submitting" ? "Enviando..." : "Continuar"}
                     </button>
