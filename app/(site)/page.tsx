@@ -21,6 +21,15 @@ export default async function Home() {
 
   const featuredProducts = products.slice(0, FEATURED_LIMIT);
 
+  const featuredGridClass =
+    featuredProducts.length === 1
+      ? "lg:grid-cols-1 lg:max-w-2xl lg:mx-auto"
+      : featuredProducts.length === 2
+        ? "lg:grid-cols-2 lg:max-w-5xl lg:mx-auto lg:gap-8"
+        : featuredProducts.length === 3
+          ? "lg:grid-cols-3 lg:max-w-6xl lg:mx-auto lg:gap-7"
+          : "lg:grid-cols-4 lg:gap-7";
+
   // Hero configurável pelo painel: imagem exclusiva, produto escolhido
   // ou fallback automático para o produto mais recente.
   const supabase = await createClient();
@@ -39,6 +48,17 @@ export default async function Home() {
       .order("created_at", { ascending: false })
       .limit(5),
   ]);
+
+  const socialProofGridClass =
+    socialProof?.length === 1
+      ? "sm:grid-cols-1 sm:max-w-sm sm:mx-auto"
+      : socialProof?.length === 2
+        ? "sm:grid-cols-2 lg:max-w-3xl lg:mx-auto"
+        : socialProof?.length === 3
+          ? "sm:grid-cols-2 lg:grid-cols-3 lg:max-w-5xl lg:mx-auto"
+          : socialProof?.length === 4
+            ? "sm:grid-cols-2 lg:grid-cols-4"
+            : "sm:grid-cols-2 lg:grid-cols-5";
 
   const selectedHeroProduct =
     heroSettings?.mode === "product" && heroSettings.product_id
@@ -172,7 +192,7 @@ export default async function Home() {
 
           {featuredProducts.length > 0 ? (
             <>
-              <div className="mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 sm:gap-7 lg:grid lg:grid-cols-4 lg:gap-0 lg:overflow-visible lg:pb-0">
+              <div className={`mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 sm:gap-7 lg:grid lg:overflow-visible lg:pb-0 ${featuredGridClass}`}>
                 {featuredProducts.map((product) => (
                   <HomeProductCard key={product.id} product={product} />
                 ))}
@@ -218,15 +238,22 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="relative min-h-64 border-t border-white/10 bg-gradient-to-br from-blue-800 via-blue-950 to-gray-950 sm:min-h-80 lg:min-h-full lg:border-l lg:border-t-0">
-            <div aria-hidden className="absolute -right-20 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-blue-500/20 blur-3xl sm:h-96 sm:w-96" />
-            <div className="relative flex h-full min-h-64 items-end p-6 sm:min-h-80 sm:p-8 lg:min-h-full lg:p-10">
-              <div className="w-full border-t border-white/20 pt-5">
-                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-blue-200">
-                  Regtech Motors
+          <div className="relative min-h-[22rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-full lg:border-l lg:border-t-0">
+            <Image
+              src="/regtech-entrega-home.webp"
+              alt="Entrega de uma moto elétrica a cliente na Regtech Motors"
+              fill
+              className="object-cover object-center"
+              sizes="(max-width: 1023px) 100vw, 48vw"
+            />
+            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-blue-950/70 via-transparent to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
+              <div className="border-t border-white/30 pt-4">
+                <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-white">
+                  Entrega real · Regtech Motors
                 </p>
                 <p className="mt-2 max-w-sm text-sm leading-6 text-white/80">
-                  Catálogo digital conectado diretamente ao atendimento da loja.
+                  Clientes que já escolheram a mobilidade elétrica.
                 </p>
               </div>
             </div>
@@ -312,18 +339,18 @@ export default async function Home() {
               </p>
             </div>
 
-            <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible lg:grid-cols-5">
+            <div className={`mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:grid sm:gap-5 sm:overflow-visible ${socialProofGridClass}`}>
               {socialProof.map((item) => (
                 <article
                   key={item.id}
-                  className="min-w-[78vw] snap-start overflow-hidden border border-gray-200 bg-white sm:min-w-0"
+                  className="group min-w-[78vw] snap-start overflow-hidden border border-gray-200 bg-white transition-shadow duration-300 hover:shadow-lg sm:min-w-0"
                 >
                   <div className="relative aspect-[4/5] bg-gray-100">
                     <Image
                       src={getPublicImageUrl(item.storage_path)}
                       alt={item.alt_text}
                       fill
-                      className="object-cover"
+                      className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.025]"
                       sizes="(max-width: 639px) 78vw, (max-width: 1023px) 50vw, 20vw"
                     />
                   </div>

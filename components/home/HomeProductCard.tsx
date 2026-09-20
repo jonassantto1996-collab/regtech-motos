@@ -10,7 +10,7 @@ export default function HomeProductCard({ product }: { product: CatalogProductLi
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group min-w-[72vw] snap-start border-r border-gray-200 pr-5 outline-none last:border-r-0 focus-visible:ring-2 focus-visible:ring-blue-700 sm:min-w-[18rem] sm:pr-7 lg:min-w-0 lg:pr-7"
+      className="group min-w-[72vw] snap-start border-r border-gray-200 pr-5 outline-none last:border-r-0 focus-visible:ring-2 focus-visible:ring-blue-700 sm:min-w-[18rem] sm:pr-7 lg:min-w-0 lg:border-r-0 lg:pr-0"
     >
       <div className="relative aspect-[5/4] overflow-hidden bg-gray-50">
         <span className="absolute left-3 top-3 z-10 inline-flex min-h-6 items-center rounded-full border border-emerald-200 bg-white/95 px-2.5 text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm">
