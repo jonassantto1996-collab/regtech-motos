@@ -10,9 +10,9 @@ export default function HomeProductCard({ product }: { product: CatalogProductLi
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group min-w-[72vw] snap-start border-r border-gray-200 pr-5 outline-none last:border-r-0 focus-visible:ring-2 focus-visible:ring-blue-700 sm:min-w-[18rem] sm:pr-7 lg:min-w-0 lg:border-r-0 lg:pr-0"
+      className="group min-w-[84vw] snap-center border-r border-gray-200 pr-4 outline-none last:border-r-0 focus-visible:ring-2 focus-visible:ring-blue-700 sm:min-w-[18rem] sm:snap-start sm:pr-7 lg:min-w-0 lg:border-r-0 lg:pr-0"
     >
-      <div className="relative aspect-[5/4] overflow-hidden bg-gray-50">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 sm:aspect-[5/4]">
         <span className="absolute left-3 top-3 z-10 inline-flex min-h-6 items-center rounded-full border border-emerald-200 bg-white/95 px-2.5 text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm">
           <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
           <span className="capitalize">{product.availability}</span>
@@ -24,14 +24,14 @@ export default function HomeProductCard({ product }: { product: CatalogProductLi
             alt={mainImage.alt_text || `${product.brand} ${product.model}`}
             fill
             className="object-contain p-5 transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:scale-[1.03] lg:p-6"
-            sizes="(max-width: 639px) 72vw, (max-width: 1023px) 18rem, 25vw"
+            sizes="(max-width: 639px) 84vw, (max-width: 1023px) 18rem, 25vw"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">Sem imagem</div>
         )}
       </div>
 
-      <div className="pt-4">
+      <div className="pt-4 pb-1">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <p className="text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-blue-700">{product.brand}</p>
           <span className="text-[0.5625rem] uppercase tracking-[0.14em] text-gray-400">{product.category}</span>

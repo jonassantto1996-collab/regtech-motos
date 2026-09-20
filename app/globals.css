@@ -26,3 +26,19 @@
     animation: none;
   }
 }
+
+
+@media (max-width: 639px) {
+  .mobile-snap-row {
+    margin-left: -1rem;
+    margin-right: -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    scroll-padding-left: 1rem;
+    scrollbar-width: none;
+  }
+
+  .mobile-snap-row::-webkit-scrollbar {
+    display: none;
+  }
+}

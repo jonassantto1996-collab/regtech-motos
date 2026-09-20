@@ -109,10 +109,10 @@ export default async function Home() {
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-blue-950 via-blue-950/70 to-blue-900/10"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-blue-950 via-blue-950/75 to-blue-900/10 sm:bg-gradient-to-r sm:from-blue-950 sm:via-blue-950/70 sm:to-blue-900/10"
         />
 
-        <div className="relative mx-auto flex min-h-[25rem] max-w-7xl items-end px-4 pb-10 pt-20 sm:min-h-[30rem] sm:px-6 sm:pb-14 sm:pt-24 lg:min-h-[34rem] lg:items-center lg:px-8 lg:py-0">
+        <div className="relative mx-auto flex min-h-[34rem] max-w-7xl items-end px-4 pb-8 pt-24 sm:min-h-[30rem] sm:px-6 sm:pb-14 sm:pt-24 lg:min-h-[34rem] lg:items-center lg:px-8 lg:py-0">
           <div className="hero-copy-enter max-w-sm sm:max-w-md lg:max-w-xl">
             <Image
               src="/logo-regtech-motors.png"
@@ -120,17 +120,17 @@ export default async function Home() {
               width={201}
               height={96}
               priority
-              className="h-12 w-auto sm:h-14 lg:h-16"
+              className="h-10 w-auto sm:h-14 lg:h-16"
             />
-            <p className="mt-5 text-xs font-medium uppercase tracking-[0.2em] text-blue-200">
+            <p className="mt-4 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-blue-200 sm:mt-5 sm:text-xs sm:tracking-[0.2em]">
               Motos · Mobilidade elétrica
             </p>
-            <h1 className="mt-4 text-3xl font-bold leading-[1.04] tracking-[-0.035em] text-white sm:text-4xl lg:text-6xl">
+            <h1 className="mt-4 text-[2.15rem] font-bold leading-[1.02] tracking-[-0.035em] text-white sm:text-4xl lg:text-6xl">
               Mobilidade elétrica para o seu próximo caminho.
             </h1>
             <Link
               href="/products"
-              className="mt-8 inline-flex min-h-12 items-center gap-3 border border-white bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition-colors hover:border-cyan-300 hover:bg-cyan-300 sm:text-sm"
+              className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-white bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-blue-950 transition-colors hover:border-cyan-300 hover:bg-cyan-300 sm:mt-8 sm:w-auto sm:text-sm"
             >
               Conhecer modelos
               <span aria-hidden className="text-base">→</span>
@@ -142,7 +142,7 @@ export default async function Home() {
       {/* NAVEGAÇÃO DA VERTICAL — baseada apenas em categorias reais do catálogo. */}
       <section className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid min-h-24 grid-cols-[1fr_auto] items-center gap-6 py-5 sm:min-h-28">
+          <div className="grid min-h-20 grid-cols-[1fr_auto] items-center gap-4 py-4 sm:min-h-28 sm:gap-6 sm:py-5">
             <div>
               <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-blue-700">
                 Explore a linha
@@ -171,7 +171,7 @@ export default async function Home() {
             <Link
               href="/products"
               aria-label="Abrir catálogo de motos elétricas"
-              className="inline-flex h-11 w-11 items-center justify-center border border-gray-300 text-xl text-gray-900 transition-colors hover:border-blue-700 hover:bg-blue-700 hover:text-white"
+              className="inline-flex h-10 w-10 items-center justify-center border border-gray-300 text-lg text-gray-900 transition-colors hover:border-blue-700 hover:bg-blue-700 hover:text-white sm:h-11 sm:w-11 sm:text-xl"
             >
               <span aria-hidden>→</span>
             </Link>
@@ -180,7 +180,7 @@ export default async function Home() {
       </section>
 
       {/* LINHA DE MOTOS */}
-      <section className="bg-white px-4 pb-14 pt-10 sm:px-6 sm:pt-12 lg:px-8 lg:pb-20 lg:pt-14">
+      <section className="bg-white px-4 pb-12 pt-8 sm:px-6 sm:pb-14 sm:pt-12 lg:px-8 lg:pb-20 lg:pt-14">
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between sm:pb-8">
             <div className="max-w-xl">
@@ -198,7 +198,7 @@ export default async function Home() {
 
           {featuredProducts.length > 0 ? (
             <>
-              <div className={`mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-3 sm:gap-7 lg:grid lg:overflow-visible lg:pb-0 ${featuredGridClass}`}>
+              <div className={`mobile-snap-row mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:mt-8 sm:gap-7 lg:grid lg:overflow-visible lg:pb-0 ${featuredGridClass}`}>
                 {featuredProducts.map((product) => (
                   <HomeProductCard key={product.id} product={product} />
                 ))}
@@ -224,26 +224,26 @@ export default async function Home() {
       {editorialSettings && (
         <section className="overflow-hidden bg-gray-950 text-white">
           <div className="mx-auto grid max-w-7xl lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+            <div className="px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
                 {editorialSettings.eyebrow}
               </p>
-              <h2 className="mt-4 max-w-xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+              <h2 className="mt-4 max-w-xl text-[2rem] font-bold leading-[1.08] tracking-tight sm:text-4xl lg:text-5xl">
                 {editorialSettings.title}
               </h2>
-              <p className="mt-6 max-w-xl text-base leading-7 text-gray-300 sm:text-lg">
+              <p className="mt-5 max-w-xl text-[0.9375rem] leading-7 text-gray-300 sm:mt-6 sm:text-lg">
                 {editorialSettings.description}
               </p>
               <Link
                 href={editorialSettings.cta_href}
-                className="mt-8 inline-flex min-h-12 items-center gap-3 border border-white/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-colors hover:border-cyan-300 hover:bg-cyan-300 hover:text-blue-950 sm:text-sm"
+                className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-3 border border-white/30 px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] text-white transition-colors hover:border-cyan-300 hover:bg-cyan-300 hover:text-blue-950 sm:mt-8 sm:w-auto sm:text-sm"
               >
                 {editorialSettings.cta_label}
                 <span aria-hidden className="text-base">→</span>
               </Link>
             </div>
 
-            <div className="relative min-h-[22rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-full lg:border-l lg:border-t-0">
+            <div className="relative min-h-[26rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-full lg:border-l lg:border-t-0">
               <Image
                 src={editorialSettings.storage_path ? getHomeMediaUrl(editorialSettings.storage_path) : "/regtech-entrega-home.webp"}
                 alt={editorialSettings.alt_text}
@@ -254,7 +254,7 @@ export default async function Home() {
                 sizes="(max-width: 1023px) 100vw, 48vw"
               />
               <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-blue-950/55 via-transparent to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8 lg:p-10">
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8 lg:p-10">
                 <div className="border-t border-white/30 pt-4">
                   <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-white">
                     Entrega real · Regtech Motors
@@ -270,14 +270,14 @@ export default async function Home() {
       )}
 
       {/* JORNADA — diferenciais baseados apenas no fluxo real do produto. */}
-      <section className="border-b border-gray-200 bg-gray-50 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <section className="border-b border-gray-200 bg-gray-50 px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-8 border-b border-gray-300 pb-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
                 Do catálogo ao atendimento
               </p>
-              <h2 className="mt-3 max-w-lg text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+              <h2 className="mt-3 max-w-lg text-[2rem] font-bold leading-[1.08] tracking-tight text-gray-950 sm:text-4xl">
                 Uma jornada simples para conhecer sua próxima moto.
               </h2>
             </div>
@@ -331,14 +331,14 @@ export default async function Home() {
       </section>
 
       {socialProof && socialProof.length > 0 && (
-        <section className="bg-white px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
                   Prova social
                 </p>
-                <h2 className="mt-3 text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+                <h2 className="mt-3 text-[2rem] font-bold leading-[1.08] tracking-tight text-gray-950 sm:text-4xl">
                   Quem já escolheu a Regtech Motors.
                 </h2>
               </div>
@@ -347,11 +347,11 @@ export default async function Home() {
               </p>
             </div>
 
-            <div className={`mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:grid sm:gap-5 sm:overflow-visible ${socialProofGridClass}`}>
+            <div className={`mobile-snap-row mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:mt-8 sm:grid sm:gap-5 sm:overflow-visible ${socialProofGridClass}`}>
               {socialProof.map((item) => (
                 <article
                   key={item.id}
-                  className="group min-w-[78vw] snap-start overflow-hidden border border-gray-200 bg-white transition-shadow duration-300 hover:shadow-lg sm:min-w-0"
+                  className="group min-w-[84vw] snap-center overflow-hidden border border-gray-200 bg-white transition-shadow duration-300 hover:shadow-lg sm:min-w-0 sm:snap-start"
                 >
                   <div className="relative aspect-[4/5] bg-gray-100">
                     <Image
@@ -359,7 +359,7 @@ export default async function Home() {
                       alt={item.alt_text}
                       fill
                       className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.025]"
-                      sizes="(max-width: 639px) 78vw, (max-width: 1023px) 50vw, 20vw"
+                      sizes="(max-width: 639px) 84vw, (max-width: 1023px) 50vw, 20vw"
                     />
                   </div>
                   <div className="p-4">
@@ -379,10 +379,10 @@ export default async function Home() {
       )}
 
       {/* LOJA — dados institucionais confirmados pelo cliente. */}
-      <section className="bg-white px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-7xl">
           <div className="grid overflow-hidden border border-gray-200 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="relative flex min-h-[22rem] items-end overflow-hidden bg-gradient-to-br from-blue-700 via-blue-900 to-blue-950 p-7 text-white sm:min-h-[28rem] sm:p-10 lg:min-h-[34rem] lg:p-12">
+            <div className="relative flex min-h-[24rem] items-end overflow-hidden bg-gradient-to-br from-blue-700 via-blue-900 to-blue-950 p-6 text-white sm:min-h-[28rem] sm:p-10 lg:min-h-[34rem] lg:p-12">
               <div aria-hidden className="absolute -right-24 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
               <div className="relative max-w-lg">
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
@@ -403,7 +403,7 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between bg-gray-50 p-7 sm:p-10 lg:p-12">
+            <div className="flex flex-col justify-between bg-gray-50 p-6 sm:p-10 lg:p-12">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
                   Canais oficiais
