@@ -7,13 +7,28 @@ import { getActiveProductListItemById, listProducts } from "@/lib/catalog/querie
 import { createClient } from "@/lib/supabase/server";
 import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
 
-const STORE_WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\\D/g, "") ?? "";
+const STORE_WHATSAPP_CONTACTS = [
+  {
+    label: "Assistência técnica",
+    phone: "+55 94 99298-9833",
+    href: "https://wa.me/5594992989833",
+  },
+  {
+    label: "Atendimento Ourilândia",
+    phone: "+55 94 99297-5433",
+    href: "https://wa.me/5594992975433",
+  },
+  {
+    label: "Atendimento Tucumã",
+    phone: "+55 94 99286-7788",
+    href: "https://wa.me/5594992867788",
+  },
+] as const;
 
 // Quantidade de produtos mostrados na seção "Motos".
 const FEATURED_LIMIT = 4;
 
 export default async function Home() {
-  const storeWhatsappUrl = STORE_WHATSAPP_NUMBER ? `https://wa.me/${STORE_WHATSAPP_NUMBER}` : null;
   // Mesma consulta usada pelo catálogo público (lib/catalog/queries.ts) —
   // sem criar uma consulta nova. Página 1, ordenado pelos mais recentes.
   const { products } = await listProducts({
@@ -410,61 +425,36 @@ export default async function Home() {
                 </h3>
               </div>
 
-              <div className="mt-10 border-y border-gray-300">
-                {storeWhatsappUrl ? (
+              <div className="mt-10 divide-y divide-gray-300 border-y border-gray-300">
+                {STORE_WHATSAPP_CONTACTS.map((contact) => (
                   <a
-                    href={storeWhatsappUrl}
+                    key={contact.label}
+                    href={contact.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex min-h-24 items-center justify-between gap-5 py-6"
+                    className="group flex min-h-24 items-center justify-between gap-5 py-5"
+                    aria-label={`Abrir WhatsApp — ${contact.label}`}
                   >
-                    <div>
+                    <div className="min-w-0">
                       <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
-                        WhatsApp
+                        {contact.label}
                       </span>
                       <span className="mt-2 flex items-center gap-3 text-base font-semibold text-gray-950">
-                        <span className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
+                        <span className="inline-grid h-9 w-9 flex-none place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
                           <WhatsAppIcon className="h-5 w-5" />
                         </span>
-                        Conversar com a equipe
+                        <span>{contact.phone}</span>
                       </span>
                     </div>
                     <span
                       aria-hidden
-                      className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      className="inline-grid h-9 w-9 flex-none place-items-center rounded-full border border-gray-200 bg-white text-blue-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                     >
                       <ExternalLinkIcon className="h-4 w-4" />
                     </span>
                   </a>
-                ) : (
-                  <Link
-                    href="/products"
-                    className="group flex min-h-24 items-center justify-between gap-5 py-6"
-                  >
-                    <div>
-                      <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
-                        Atendimento
-                      </span>
-                      <span className="mt-2 flex items-center gap-3 text-base font-semibold text-gray-950">
-                        <span className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
-                          <WhatsAppIcon className="h-5 w-5" />
-                        </span>
-                        Escolher uma moto para falar com a equipe
-                      </span>
-                    </div>
-                    <span
-                      aria-hidden
-                      className="text-xl text-blue-700 transition-transform group-hover:translate-x-1"
-                    >
-                      →
-                    </span>
-                  </Link>
-                )}
+                ))}
               </div>
-
-              <p className="mt-8 text-sm leading-6 text-gray-600">
-                Endereço e Instagram continuam disponíveis nos canais oficiais do rodapé.
-              </p>
             </div>
           </div>
         </div>
