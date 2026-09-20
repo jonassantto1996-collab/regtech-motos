@@ -5,10 +5,11 @@ import Link from "next/link";
 import { AdminShell } from "../AdminShell";
 import { toggleStoreProduct } from "./actions";
 import { requireAdminSession } from "../products/actions";
+import { InventoryAlerts } from "./components/InventoryAlerts";
 import "../admin.css";
 
 export default async function StoreAdminPage() {
-  const user = await requireAdminSession();
+  await requireAdminSession();
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) redirect("/admin/login");
@@ -35,7 +36,7 @@ export default async function StoreAdminPage() {
           <strong>{counts.get(category.id) ?? 0}</strong><span>produtos</span>
         </article>)}
       </div>
-      {(outOfStock.length>0||lowStock.length>0||productsWithoutVariants>0)&&<article className="panel store-attention"><div className="panel-title"><h2>Atenção de estoque</h2><span className="status-badge">{outOfStock.length+lowStock.length+productsWithoutVariants} pendências</span></div><div className="store-attention-list">{outOfStock.slice(0,4).map(v=><Link key={v.id} href={"/admin/store/"+v.product_id+"/edit"}><div><strong>{v.name}</strong><small>{v.sku||"Sem SKU"} · Sem estoque</small></div><span className="stock-pill low">0 un.</span></Link>)}{lowStock.slice(0,4).map(v=><Link key={v.id} href={"/admin/store/"+v.product_id+"/edit"}><div><strong>{v.name}</strong><small>{v.sku||"Sem SKU"} · Estoque baixo</small></div><span className="stock-pill low">{v.stock_quantity} un.</span></Link>)}{(products??[]).filter(p=>!activeVariants.some(v=>v.product_id===p.id)).slice(0,4).map(p=><Link key={p.id} href={"/admin/store/"+p.id+"/edit"}><div><strong>{p.brand} {p.name}</strong><small>Sem variante/estoque configurado</small></div><span className="status-badge">Configurar</span></Link>)}</div></article>}
+      <InventoryAlerts products={products ?? []} activeVariants={activeVariants} />
       <article className="panel admin-table-wrap"><div className="panel-title store-table-title"><h2>Produtos da loja</h2><span className="status-badge active">{products?.length ?? 0} cadastrados</span></div>{products?.length ? <table className="admin-table"><thead><tr><th>Produto</th><th>Preço</th><th>Disponibilidade</th><th>Status</th><th>Ações</th></tr></thead><tbody>{products.map(product=><tr key={product.id}><td><strong>{product.brand} {product.name}</strong></td><td>{Number(product.price).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</td><td>{product.availability}</td><td><span className={`status-badge ${product.is_active?"active":""}`}>{product.is_active?"Ativo":"Inativo"}</span></td><td><div className="table-actions"><Link href={`/admin/store/${product.id}/edit`}>Editar</Link><form action={toggleStoreProduct.bind(null,product.id,!product.is_active)}><button type="submit">{product.is_active?"Desativar":"Ativar"}</button></form></div></td></tr>)}</tbody></table>:<div className="empty-state">Nenhum produto cadastrado ainda.</div>}</article>
     </section>
   </AdminShell>;
