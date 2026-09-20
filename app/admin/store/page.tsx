@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import Link from "next/link";
 import { AdminShell } from "../AdminShell";
+import { toggleStoreProduct } from "./actions";
 import "../admin.css";
 
 export default async function StoreAdminPage() {
@@ -20,18 +22,14 @@ export default async function StoreAdminPage() {
 
   return <AdminShell active="store" email={data.claims.email}>
     <section className="admin-content admin-page">
-      <div className="page-heading"><div><span>CATÁLOGO GERAL</span><h1>Loja completa</h1><p>Estrutura separada das motos para celulares, áudio, TVs, Starlink e outros produtos.</p></div></div>
+      <div className="page-heading"><div><span>CATÁLOGO GERAL</span><h1>Loja completa</h1><p>Estrutura separada das motos para celulares, áudio, TVs, Starlink e outros produtos.</p></div><Link href="/admin/store/new" className="primary-action">+ Cadastrar produto</Link></div>
       <div className="store-category-grid">
         {(categories ?? []).map(category => <article className="panel store-category-card" key={category.id}>
           <div><small>{category.is_active ? "ATIVA" : "INATIVA"}</small><h2>{category.name}</h2></div>
           <strong>{counts.get(category.id) ?? 0}</strong><span>produtos</span>
         </article>)}
       </div>
-      <article className="panel store-foundation">
-        <div className="panel-title"><h2>Catálogo da loja</h2><span className="status-badge active">Base criada</span></div>
-        <p>A base de dados já está preparada para receber os produtos gerais sem misturar especificações técnicas das motos.</p>
-        <div className="store-roadmap"><span>1. Categorias ✓</span><span>2. Produtos ✓</span><span>3. Cadastro e edição — próximo</span><span>4. Imagens e estoque — depois</span></div>
-      </article>
+      <article className="panel admin-table-wrap"><div className="panel-title store-table-title"><h2>Produtos da loja</h2><span className="status-badge active">{products?.length ?? 0} cadastrados</span></div>{products?.length ? <table className="admin-table"><thead><tr><th>Produto</th><th>Preço</th><th>Disponibilidade</th><th>Status</th><th>Ações</th></tr></thead><tbody>{products.map(product=><tr key={product.id}><td><strong>{product.brand} {product.name}</strong></td><td>{Number(product.price).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}</td><td>{product.availability}</td><td><span className={`status-badge ${product.is_active?"active":""}`}>{product.is_active?"Ativo":"Inativo"}</span></td><td><div className="table-actions"><Link href={`/admin/store/${product.id}/edit`}>Editar</Link><form action={toggleStoreProduct.bind(null,product.id,!product.is_active)}><button type="submit">{product.is_active?"Desativar":"Ativar"}</button></form></div></td></tr>)}</tbody></table>:<div className="empty-state">Nenhum produto cadastrado ainda.</div>}</article>
     </section>
   </AdminShell>;
 }
