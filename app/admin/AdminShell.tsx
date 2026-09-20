@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import {DashboardIcon,BikeIcon,ImageIcon,UsersIcon,StoreIcon,HeadsetIcon,SettingsIcon} from "./icons";
 
-type AdminSection = "dashboard" | "products" | "leads" | "hero" | "store";
+type AdminSection = "dashboard" | "products" | "leads" | "hero" | "store" | "social-proof";
 
 const NavContent = ({ active, close }: { active: AdminSection; close?: () => void }) => (
   <nav>
@@ -12,6 +12,7 @@ const NavContent = ({ active, close }: { active: AdminSection; close?: () => voi
     <small>CATÁLOGO</small>
     <Link onClick={close} className={active === "products" ? "nav-active" : ""} href="/admin/products"><span className="nav-icon"><BikeIcon /></span><span>Motos</span></Link>
     <Link onClick={close} className={active === "hero" ? "nav-active" : ""} href="/admin/hero"><span className="nav-icon"><ImageIcon /></span><span>Hero da Home</span></Link>
+    <Link onClick={close} className={active === "social-proof" ? "nav-active" : ""} href="/admin/social-proof"><span className="nav-icon"><UsersIcon /></span><span>Prova social</span></Link>
     <small>COMERCIAL</small>
     <Link onClick={close} className={active === "leads" ? "nav-active" : ""} href="/admin/leads"><span className="nav-icon"><UsersIcon /></span><span>Leads</span></Link>
     <small>LOJA</small>

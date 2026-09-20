@@ -87,6 +87,12 @@ export function buildHeroImagePath(mimeType: string): string {
   return `home-hero/${crypto.randomUUID()}.${extension}`;
 }
 
+/** Gera caminho isolado para fotos da seção de prova social da Home. */
+export function buildSocialProofImagePath(mimeType: string): string {
+  const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
+  return `home-social-proof/${crypto.randomUUID()}.${extension}`;
+}
+
 /**
  * Converte um storage_path em URL pública utilizável pelo frontend.
  * O bucket product-images é público — nenhuma credencial é necessária

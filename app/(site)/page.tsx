@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import HomeProductCard from "@/components/home/HomeProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
@@ -23,11 +24,21 @@ export default async function Home() {
   // Hero configurável pelo painel: imagem exclusiva, produto escolhido
   // ou fallback automático para o produto mais recente.
   const supabase = await createClient();
-  const { data: heroSettings } = await supabase
-    .from("home_hero_settings")
-    .select("mode, product_id, storage_path, alt_text, image_position")
-    .eq("id", true)
-    .maybeSingle();
+  const [{ data: heroSettings }, { data: socialProof }] = await Promise.all([
+    supabase
+      .from("home_hero_settings")
+      .select("mode, product_id, storage_path, alt_text, image_position")
+      .eq("id", true)
+      .maybeSingle(),
+    supabase
+      .from("home_social_proof")
+      .select("id,customer_name,city,product_name,testimonial,storage_path,alt_text")
+      .eq("is_active", true)
+      .eq("publication_authorized", true)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: false })
+      .limit(5),
+  ]);
 
   const selectedHeroProduct =
     heroSettings?.mode === "product" && heroSettings.product_id
@@ -77,10 +88,15 @@ export default async function Home() {
 
         <div className="relative mx-auto flex min-h-[25rem] max-w-7xl items-end px-4 pb-10 pt-20 sm:min-h-[30rem] sm:px-6 sm:pb-14 sm:pt-24 lg:min-h-[34rem] lg:items-center lg:px-8 lg:py-0">
           <div className="hero-copy-enter max-w-sm sm:max-w-md lg:max-w-xl">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-cyan-300">
-              Regtech Motors
-            </p>
-            <p className="mt-1 text-xs font-medium uppercase tracking-[0.2em] text-blue-200">
+            <Image
+              src="/logo-regtech-motors.png"
+              alt="Regtech Motors"
+              width={201}
+              height={96}
+              priority
+              className="h-12 w-auto sm:h-14 lg:h-16"
+            />
+            <p className="mt-5 text-xs font-medium uppercase tracking-[0.2em] text-blue-200">
               Mobilidade elétrica
             </p>
             <h1 className="mt-4 text-3xl font-bold leading-[1.04] tracking-[-0.035em] text-white sm:text-4xl lg:text-6xl">
@@ -278,6 +294,54 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      {socialProof && socialProof.length > 0 && (
+        <section className="bg-white px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+          <div className="mx-auto max-w-7xl">
+            <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
+                  Prova social
+                </p>
+                <h2 className="mt-3 text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+                  Quem já escolheu a Regtech Motors.
+                </h2>
+              </div>
+              <p className="max-w-md text-sm leading-6 text-gray-600 sm:text-right">
+                Entregas reais e clientes que já fazem parte da experiência Regtech.
+              </p>
+            </div>
+
+            <div className="mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible lg:grid-cols-5">
+              {socialProof.map((item) => (
+                <article
+                  key={item.id}
+                  className="min-w-[78vw] snap-start overflow-hidden border border-gray-200 bg-white sm:min-w-0"
+                >
+                  <div className="relative aspect-[4/5] bg-gray-100">
+                    <Image
+                      src={getPublicImageUrl(item.storage_path)}
+                      alt={item.alt_text}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 639px) 78vw, (max-width: 1023px) 50vw, 20vw"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <p className="text-sm font-semibold text-gray-950">{item.customer_name}</p>
+                    <p className="mt-1 text-[0.6875rem] uppercase tracking-[0.14em] text-blue-700">
+                      {[item.product_name, item.city].filter(Boolean).join(" · ")}
+                    </p>
+                    {item.testimonial && (
+                      <p className="mt-3 text-sm leading-6 text-gray-600">“{item.testimonial}”</p>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* LOJA — dados institucionais confirmados pelo cliente. */}
       <section className="bg-white px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
