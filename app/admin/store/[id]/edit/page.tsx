@@ -1,3 +1,96 @@
-import {redirect,notFound} from "next/navigation";import {createClient} from "@/lib/supabase/server";import {createAdminClient} from "@/lib/supabase/admin";import {AdminShell} from "../../../AdminShell";import {StoreProductForm} from "../../StoreProductForm";import {updateStoreProduct} from "../../actions";import {VariantInventoryPanel} from "../../components/VariantInventoryPanel";import {InventoryHistory} from "../../components/InventoryHistory";import {requireAdminSession} from "../../../products/actions";import "../../../admin.css";
-const errors:Record<string,string>={missing_fields:"Preencha os campos obrigatórios.",field_too_long:"Um dos campos excede o limite.",invalid_slug:"URL inválida.",invalid_price:"Preço inválido.",invalid_variant:"Variante inválida.",invalid_stock:"Quantidade de estoque inválida.",note_too_long:"O motivo do ajuste excede 200 caracteres.",duplicate:"Slug ou SKU já cadastrado.",not_found:"Produto não encontrado.",server_error:"Não foi possível salvar."};
-export default async function EditStoreProduct({params,searchParams}:{params:Promise<{id:string}>;searchParams:Promise<{error?:string}>}){const {id}=await params;await requireAdminSession();const supabase=await createClient();const {data}=await supabase.auth.getClaims();if(!data?.claims)redirect("/admin/login");const admin=createAdminClient();const [{data:categories},{data:product}]=await Promise.all([admin.from("store_categories").select("id,name").eq("is_active",true).order("sort_order"),admin.from("store_products").select("category_id,brand,name,slug,sku,description,price,availability,is_active").eq("id",id).maybeSingle()]);if(!product)notFound();const [{data:variants},{data:movements}]=await Promise.all([admin.from("store_product_variants").select("id,name,sku,price,stock_quantity,low_stock_threshold,is_active").eq("product_id",id).order("created_at"),admin.from("store_inventory_movements").select("id,variant_id,movement_type,quantity_before,quantity_after,delta,note,created_at").eq("product_id",id).order("created_at",{ascending:false}).limit(30)]);const {error}=await searchParams;return <AdminShell active="store" email={data.claims.email}><section className="admin-content admin-page"><div className="page-heading"><div><span>LOJA COMPLETA</span><h1>Editar produto</h1><p>{product.brand} {product.name}</p></div></div><article className="panel product-editor-panel"><StoreProductForm mode="edit" action={updateStoreProduct.bind(null,id)} categories={categories??[]} product={product} errorMessage={error?errors[error]??"Erro ao salvar.":null}/></article><VariantInventoryPanel productId={id} variants={variants??[]}/><InventoryHistory variants={variants??[]} movements={movements??[]}/></section></AdminShell>}
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { AdminShell } from "../../../AdminShell";
+import { requireAdminSession } from "../../../products/actions";
+import { updateStoreProduct } from "../../actions";
+import { InventoryHistory } from "../../components/InventoryHistory";
+import { VariantInventoryPanel } from "../../components/VariantInventoryPanel";
+import { StoreProductForm } from "../../StoreProductForm";
+import "../../../admin.css";
+import "../../store.css";
+
+const errors: Record<string, string> = {
+  missing_fields: "Preencha os campos obrigatórios.",
+  field_too_long: "Um dos campos excede o limite.",
+  invalid_slug: "URL inválida.",
+  invalid_price: "Preço inválido.",
+  invalid_variant: "Variante inválida.",
+  invalid_stock: "Quantidade de estoque inválida.",
+  note_too_long: "O motivo do ajuste excede 200 caracteres.",
+  duplicate: "Slug ou SKU já cadastrado.",
+  not_found: "Produto não encontrado.",
+  server_error: "Não foi possível salvar.",
+};
+
+export default async function EditStoreProduct({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { id } = await params;
+  await requireAdminSession();
+
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  if (!data?.claims) redirect("/admin/login");
+
+  const admin = createAdminClient();
+  const [{ data: categories }, { data: product }] = await Promise.all([
+    admin.from("store_categories").select("id,name").eq("is_active", true).order("sort_order"),
+    admin
+      .from("store_products")
+      .select("category_id,brand,name,slug,sku,description,price,availability,is_active")
+      .eq("id", id)
+      .maybeSingle(),
+  ]);
+
+  if (!product) notFound();
+
+  const [{ data: variants }, { data: movements }] = await Promise.all([
+    admin
+      .from("store_product_variants")
+      .select("id,name,sku,price,stock_quantity,low_stock_threshold,is_active")
+      .eq("product_id", id)
+      .order("created_at"),
+    admin
+      .from("store_inventory_movements")
+      .select("id,variant_id,movement_type,quantity_before,quantity_after,delta,note,created_at")
+      .eq("product_id", id)
+      .order("created_at", { ascending: false })
+      .limit(30),
+  ]);
+
+  const { error } = await searchParams;
+
+  return (
+    <AdminShell active="store" email={data.claims.email}>
+      <section className="admin-content admin-page">
+        <div className="page-heading store-edit-heading">
+          <div>
+            <span>LOJA COMPLETA</span>
+            <h1>Editar produto</h1>
+            <p>{product.brand} {product.name}</p>
+          </div>
+          <Link href="/admin/store" className="secondary-action">← Voltar para loja</Link>
+        </div>
+
+        <article className="panel product-editor-panel">
+          <StoreProductForm
+            mode="edit"
+            action={updateStoreProduct.bind(null, id)}
+            categories={categories ?? []}
+            product={product}
+            errorMessage={error ? errors[error] ?? "Erro ao salvar." : null}
+          />
+        </article>
+
+        <VariantInventoryPanel productId={id} variants={variants ?? []} />
+        <InventoryHistory variants={variants ?? []} movements={movements ?? []} />
+      </section>
+    </AdminShell>
+  );
+}
