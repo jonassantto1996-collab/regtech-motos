@@ -16,7 +16,7 @@ export function VariantInventoryPanel({productId,variants}:{productId:string;var
   <div className="variant-list">{variants.map(v=><div className="variant-row" key={v.id}>
    <div><strong>{v.name}</strong><small>{v.sku||"Sem SKU"}{v.price!==null?` · ${Number(v.price).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}`:""}</small></div>
    <span className={`stock-pill ${v.stock_quantity<=v.low_stock_threshold?"low":""}`}>{v.stock_quantity} un.</span>
-   <form action={updateVariantStock.bind(null,productId,v.id)}><input name="stock_quantity" type="number" min="0" step="1" defaultValue={v.stock_quantity} className="admin-control"/><button className="admin-secondary-button">Atualizar</button></form>
+   <form action={updateVariantStock.bind(null,productId,v.id)}><input name="stock_quantity" type="number" min="0" step="1" defaultValue={v.stock_quantity} className="admin-control"/><input name="note" maxLength={200} placeholder="Motivo do ajuste (opcional)" className="admin-control"/><button className="admin-secondary-button">Atualizar</button></form>
   </div>)}</div>
  </article>;
 }
