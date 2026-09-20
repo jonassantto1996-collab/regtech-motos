@@ -172,3 +172,5 @@
  .login-official-logo img{width:min(240px,82%)}
  .login-brand>div:nth-child(2){margin:34px 0 0}
 }
+
+.page-heading-actions{display:flex;gap:8px;align-items:center}@media(max-width:800px){.page-heading-actions{width:100%;display:grid;grid-template-columns:1fr}.page-heading-actions .secondary-action{width:100%}}

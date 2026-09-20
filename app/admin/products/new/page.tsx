@@ -20,7 +20,7 @@ export default async function NewProductPage({ searchParams }: { searchParams: P
       <main className="admin-content admin-page">
         <div className="page-heading">
           <div><span>CATÁLOGO</span><h1>Nova moto</h1><p>Cadastre as informações comerciais e técnicas do modelo.</p></div>
-          <Link className="secondary-action" href="/admin/products">Voltar para motos</Link>
+          <div className="page-heading-actions"><Link className="secondary-action" href="/admin/import/nfe">Importar NF-e</Link><Link className="secondary-action" href="/admin/products">Voltar para motos</Link></div>
         </div>
         <section className="panel product-editor-panel">
           <ProductForm mode="create" action={createProduct} errorMessage={errorMessage} />
