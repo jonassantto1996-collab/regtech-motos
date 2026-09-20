@@ -9,3 +9,13 @@ export function parseStoreProductForm(formData:FormData,mode:"create"|"edit"):St
  const price=Number(priceRaw.replace(",","."));if(!Number.isFinite(price)||price<0)return {ok:false,error:"invalid_price"};
  return {ok:true,data:{category_id,brand,name,slug,sku:skuRaw||null,description,price:Math.round(price*100)/100,availability,is_active:formData.get("is_active")==="on"}};
 }
+export type StoreVariantInput={name:string;sku:string|null;price:number|null;stock_quantity:number;low_stock_threshold:number};
+export type StoreVariantParseResult={ok:true;data:StoreVariantInput}|{ok:false;error:string};
+export function parseStoreVariantForm(formData:FormData):StoreVariantParseResult{
+ const name=String(formData.get("variant_name")??"").trim(),skuRaw=String(formData.get("variant_sku")??"").trim(),priceRaw=String(formData.get("variant_price")??"").trim(),stockRaw=String(formData.get("stock_quantity")??"0").trim(),thresholdRaw=String(formData.get("low_stock_threshold")??"2").trim();
+ if(!name)return {ok:false,error:"invalid_variant"};if(name.length>120||skuRaw.length>100)return {ok:false,error:"invalid_variant"};
+ const stock=Number(stockRaw),threshold=Number(thresholdRaw),price=priceRaw?Number(priceRaw.replace(",",".")):null;
+ if(!Number.isInteger(stock)||stock<0||!Number.isInteger(threshold)||threshold<0||(price!==null&&(!Number.isFinite(price)||price<0)))return {ok:false,error:"invalid_variant"};
+ return {ok:true,data:{name,sku:skuRaw||null,price:price===null?null:Math.round(price*100)/100,stock_quantity:stock,low_stock_threshold:threshold}};
+}
+export function parseStockQuantity(formData:FormData){const stock=Number(String(formData.get("stock_quantity")??""));return Number.isInteger(stock)&&stock>=0?{ok:true as const,stock}:{ok:false as const,error:"invalid_stock"}}
