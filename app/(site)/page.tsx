@@ -9,7 +9,7 @@ import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
 
 const STORE_WHATSAPP_CONTACTS = [
   {
-    label: "Assistência técnica",
+    label: "Atendimento Tucumã",
     phone: "+55 94 99298-9833",
     href: "https://wa.me/5594992989833",
   },
@@ -19,7 +19,7 @@ const STORE_WHATSAPP_CONTACTS = [
     href: "https://wa.me/5594992975433",
   },
   {
-    label: "Atendimento Tucumã",
+    label: "Assistência técnica",
     phone: "+55 94 99286-7788",
     href: "https://wa.me/5594992867788",
   },
