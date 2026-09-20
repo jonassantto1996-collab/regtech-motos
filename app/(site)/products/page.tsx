@@ -142,6 +142,11 @@ export default async function ProductsPage({
                   ? "Nenhum resultado"
                   : "Motos disponíveis"}
               </h2>
+              {result.totalCount > 0 && (
+                <p className="mt-2 text-sm text-gray-500">
+                  {result.totalCount} {result.totalCount === 1 ? "modelo encontrado" : "modelos encontrados"}
+                </p>
+              )}
             </div>
           </div>
 

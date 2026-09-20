@@ -101,7 +101,16 @@ export default async function ProductPage({
             productName={`${product.brand} ${product.model}`}
           />
 
-          <div className="lg:pt-5">
+          <div className="lg:sticky lg:top-6 lg:self-start lg:pt-5">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              <span className="inline-flex min-h-7 items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-emerald-700">
+                <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
+                <span className="capitalize">{product.availability}</span>
+              </span>
+              <span className="inline-flex min-h-7 items-center rounded-full border border-gray-200 bg-gray-50 px-3 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-gray-600">
+                {product.category}
+              </span>
+            </div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-700">
               {product.brand}
             </p>
@@ -114,9 +123,13 @@ export default async function ProductPage({
 
             <div className="mt-6 border-y border-gray-200 py-6 sm:mt-8 sm:py-7">
               <InterestModal productId={product.id} />
-              <p className="mt-3 text-sm leading-6 text-gray-500">
-                Registre seu interesse para continuar o atendimento pelo WhatsApp.
-              </p>
+              <div className="mt-4 grid gap-2 text-sm text-gray-500">
+                <p>Registre seu interesse para continuar o atendimento pelo WhatsApp.</p>
+                <p className="flex items-center gap-2 text-xs text-gray-500">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden />
+                  Atendimento direto com a equipe Regtech.
+                </p>
+              </div>
             </div>
 
             <dl className="divide-y divide-gray-200 border-b border-gray-200 text-sm">
@@ -164,9 +177,9 @@ export default async function ProductPage({
             {product.product_colors.length > 0 && (
               <div className="mt-9">
                 <h3 className="text-sm font-semibold text-gray-950">Cores disponíveis</h3>
-                <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+                <ul className="mt-3 flex flex-wrap gap-2">
                   {product.product_colors.map((c) => (
-                    <li key={c.id} className="border-b border-gray-300 pb-1 text-sm text-gray-700">
+                    <li key={c.id} className="rounded-full border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-medium text-gray-700">
                       {c.color}
                     </li>
                   ))}
