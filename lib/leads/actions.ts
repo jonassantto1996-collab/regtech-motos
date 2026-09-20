@@ -8,7 +8,7 @@ import {
 } from "./validation";
 import { buildWhatsappLink } from "./whatsapp";
 import { headers } from "next/headers";
-import { createHash } from "node:crypto";
+import { hashRateLimitKey, isRateLimitAllowed } from "./rate-limit";
 
 export type CreateLeadInput = {
   fullName: string;
@@ -30,14 +30,6 @@ export type CreateLeadResult =
 // de service_role porque a RLS pública não permite SELECT em leads.
 const RATE_LIMIT_WINDOW_SECONDS = 60;
 
-function hashRateLimitKey(value: string): string {
-  const secret = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!secret) {
-    throw new Error("SUPABASE_SERVICE_ROLE_KEY ausente para rate limiting");
-  }
-  return createHash("sha256").update(`${secret}:${value}`).digest("hex");
-}
-
 function reportLeadError(stage: string, error: unknown, context: Record<string, unknown> = {}) {
   console.error(JSON.stringify({
     level: "error",
@@ -52,15 +44,12 @@ function reportLeadError(stage: string, error: unknown, context: Record<string, 
 async function consumeRateLimit(key: string, windowSeconds: number, maxRequests: number) {
   const admin = createAdminClient();
   const { data, error } = await admin.rpc("consume_lead_rate_limit", {
-    p_key_hash: hashRateLimitKey(key),
+    p_key_hash: hashRateLimitKey(key, process.env.SUPABASE_SERVICE_ROLE_KEY),
     p_window_seconds: windowSeconds,
     p_max_requests: maxRequests,
   });
-  if (error) {
-    reportLeadError("rate_limit", error);
-    return false; // fail closed: não grava lead se a proteção estiver indisponível
-  }
-  return data === true;
+  if (error) reportLeadError("rate_limit", error);
+  return isRateLimitAllowed(data, error); // fail closed se a proteção estiver indisponível
 }
 
 async function getRequestOrigin(): Promise<string | null> {
