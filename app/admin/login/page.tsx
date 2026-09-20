@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { login } from "../actions";
 import { PasswordField } from "./PasswordField";
@@ -20,13 +21,12 @@ export default async function LoginPage({
   return (
     <main className="admin-login">
       <section className="login-brand">
-        <div className="login-logo">REGTECH <span>MOTORS</span></div>
+        <div className="login-official-logo"><Image src="/regtech-motors-logo.png" alt="Regtech Motors" width={300} height={81} priority /></div>
         <div>
           <span className="login-kicker">PAINEL ADMINISTRATIVO</span>
           <h1>Gestão do catálogo<br />Regtech Motors.</h1>
           <p>Acesso reservado para administração de produtos, leads e conteúdo da Home.</p>
         </div>
-        <small>Regtech Motors</small>
       </section>
 
       <section className="login-form-area">
