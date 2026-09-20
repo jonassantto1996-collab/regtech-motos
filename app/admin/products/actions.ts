@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { parseProductForm, parseColorsInput, parseSpecsInput } from "@/lib/products/validation";
+import { isAuthorizedAdmin } from "@/lib/admin/authorization";
 
 /**
  * Confere se existe uma sessão de admin válida. Nunca confiar em informação
@@ -29,7 +30,7 @@ export async function requireAdminSession(): Promise<string> {
     .eq("is_active", true)
     .maybeSingle();
 
-  if (error || !adminUser) {
+  if (!isAuthorizedAdmin(adminUser, error)) {
     await supabase.auth.signOut();
     redirect("/admin/login?error=not_authorized");
   }
