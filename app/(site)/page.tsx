@@ -2,18 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import HomeProductCard from "@/components/home/HomeProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
-import { InstagramIcon } from "@/components/icons/InstagramIcon";
-import { ExternalLinkIcon, MapPinIcon } from "@/components/icons/SiteIcons";
+import { ExternalLinkIcon, WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { getActiveProductListItemById, listProducts } from "@/lib/catalog/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
 
-const STORE_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000";
+const STORE_WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\\D/g, "") ?? "";
 
 // Quantidade de produtos mostrados na seção "Motos".
 const FEATURED_LIMIT = 4;
 
 export default async function Home() {
+  const storeWhatsappUrl = STORE_WHATSAPP_NUMBER ? `https://wa.me/${STORE_WHATSAPP_NUMBER}` : null;
   // Mesma consulta usada pelo catálogo público (lib/catalog/queries.ts) —
   // sem criar uma consulta nova. Página 1, ordenado pelos mais recentes.
   const { products } = await listProducts({
@@ -394,13 +394,8 @@ export default async function Home() {
                   Conheça a Regtech de perto.
                 </h2>
                 <p className="mt-5 max-w-md text-base leading-7 text-blue-100">
-                  Visite a loja física e conheça os modelos disponíveis com a
-                  equipe Regtech.
-                </p>
-                <p className="mt-8 border-t border-white/20 pt-5 text-sm leading-6 text-white/85">
-                  Av. dos Estados, 241 — Centro, Tucumã — PA
-                  <br />
-                  CEP 68385-000
+                  Conheça os modelos disponíveis e fale com a equipe Regtech para
+                  tirar dúvidas sobre disponibilidade, detalhes e atendimento.
                 </p>
               </div>
             </div>
@@ -408,64 +403,67 @@ export default async function Home() {
             <div className="flex flex-col justify-between bg-gray-50 p-6 sm:p-10 lg:p-12">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
-                  Canais oficiais
+                  Contato da loja
                 </p>
                 <h3 className="mt-3 max-w-md text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
-                  Continue sua experiência com a Regtech.
+                  Fale diretamente com a equipe Regtech.
                 </h3>
               </div>
 
-              <div className="mt-10 divide-y divide-gray-300 border-y border-gray-300">
-                <a
-                  href="https://www.instagram.com/regtechcellshop"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex min-h-20 items-center justify-between gap-5 py-5"
-                >
-                  <div>
-                    <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
-                      Instagram
-                    </span>
-                    <span className="mt-1 flex items-center gap-2 text-base font-semibold text-gray-950">
-                      <span className="inline-grid h-7 w-7 place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
-                        <InstagramIcon className="h-4 w-4" />
-                      </span>
-                      @regtechcellshop
-                    </span>
-                  </div>
-                  <span
-                    aria-hidden
-                    className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              <div className="mt-10 border-y border-gray-300">
+                {storeWhatsappUrl ? (
+                  <a
+                    href={storeWhatsappUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex min-h-24 items-center justify-between gap-5 py-6"
                   >
-                    <ExternalLinkIcon className="h-4 w-4" />
-                  </span>
-                </a>
-
-                <a
-                  href={STORE_MAP_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex min-h-20 items-center justify-between gap-5 py-5"
-                >
-                  <div>
-                    <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
-                      Loja física
-                    </span>
-                    <span className="mt-1 flex items-center gap-2 text-base font-semibold text-gray-950">
-                      <span className="inline-grid h-7 w-7 place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
-                        <MapPinIcon className="h-4 w-4" />
+                    <div>
+                      <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
+                        WhatsApp
                       </span>
-                      Av. dos Estados, 241 — Centro, Tucumã — PA
+                      <span className="mt-2 flex items-center gap-3 text-base font-semibold text-gray-950">
+                        <span className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
+                          <WhatsAppIcon className="h-5 w-5" />
+                        </span>
+                        Conversar com a equipe
+                      </span>
+                    </div>
+                    <span
+                      aria-hidden
+                      className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    >
+                      <ExternalLinkIcon className="h-4 w-4" />
                     </span>
-                  </div>
-                  <span aria-hidden className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
-                    <ExternalLinkIcon className="h-4 w-4" />
-                  </span>
-                </a>
+                  </a>
+                ) : (
+                  <Link
+                    href="/products"
+                    className="group flex min-h-24 items-center justify-between gap-5 py-6"
+                  >
+                    <div>
+                      <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
+                        Atendimento
+                      </span>
+                      <span className="mt-2 flex items-center gap-3 text-base font-semibold text-gray-950">
+                        <span className="inline-grid h-9 w-9 place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
+                          <WhatsAppIcon className="h-5 w-5" />
+                        </span>
+                        Escolher uma moto para falar com a equipe
+                      </span>
+                    </div>
+                    <span
+                      aria-hidden
+                      className="text-xl text-blue-700 transition-transform group-hover:translate-x-1"
+                    >
+                      →
+                    </span>
+                  </Link>
+                )}
               </div>
 
               <p className="mt-8 text-sm leading-6 text-gray-600">
-                Consulte os modelos pelo catálogo digital ou visite a loja física em Tucumã.
+                Endereço e Instagram continuam disponíveis nos canais oficiais do rodapé.
               </p>
             </div>
           </div>
