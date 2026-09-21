@@ -1,0 +1,15 @@
+.moto-inventory-panel,.moto-history-panel{margin-top:16px;min-height:0}
+.moto-stock-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:17px;border-bottom:1px solid #e8edf3}
+.moto-stock-heading>div:first-child>span{font-size:9px;font-weight:800;letter-spacing:.16em;color:#087cff}
+.moto-stock-heading h2{font-size:17px!important;margin:5px 0 5px!important;color:#172436}
+.moto-stock-heading p{font-size:11px;line-height:1.55;color:#758397;margin:0}
+.moto-stock-total{min-width:108px;text-align:right;display:grid;gap:2px}
+.moto-stock-total span,.moto-stock-total small{font-size:9px;color:#758397}
+.moto-stock-total strong{font-size:28px;color:#075ad7}
+.moto-stock-list{display:grid;gap:10px;margin-top:18px}
+.moto-stock-row{display:grid;grid-template-columns:minmax(170px,.8fr) auto minmax(420px,1.4fr);gap:16px;align-items:center;padding:14px 15px;border:1px solid #e5ebf2;border-radius:10px;background:#fbfdff}
+.moto-stock-meta{display:grid;gap:3px}.moto-stock-meta>span{font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:#8793a1}.moto-stock-meta strong{font-size:12px;color:#172436}.moto-stock-meta small{font-size:9px;color:#758397}
+.moto-stock-form{display:grid!important;grid-template-columns:100px minmax(160px,1fr) auto;gap:8px;align-items:end}.moto-stock-form label{display:grid;gap:5px}.moto-stock-form label>span{font-size:9px;font-weight:700;color:#58677a}.moto-stock-form .admin-control{min-height:38px}.moto-stock-form .admin-secondary-button{min-height:38px!important;white-space:nowrap}
+.moto-history-list{display:grid;gap:8px;margin-top:18px}.moto-history-row{display:grid;grid-template-columns:minmax(180px,1fr) auto auto;gap:14px;align-items:center;padding:13px 14px;border:1px solid #e7ecf2;border-radius:9px;background:#fbfdff}.moto-history-row>div{display:grid;gap:3px}.moto-history-row strong{font-size:11px}.moto-history-row small{font-size:9px;color:#758397}
+@media(max-width:1000px){.moto-stock-row{grid-template-columns:1fr auto}.moto-stock-form{grid-column:1/-1}}
+@media(max-width:800px){.moto-stock-heading{display:grid;gap:10px}.moto-stock-total{text-align:left;grid-auto-flow:column;justify-content:start;align-items:baseline;gap:6px}.moto-stock-row{grid-template-columns:1fr auto;padding:13px}.moto-stock-form{grid-template-columns:1fr;grid-column:1/-1}.moto-stock-form .admin-secondary-button{width:100%}.moto-history-row{grid-template-columns:1fr auto}.moto-history-row .inventory-change{grid-column:1/-1;text-align:left}}

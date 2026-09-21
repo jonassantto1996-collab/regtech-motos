@@ -12,15 +12,17 @@ import {
 } from "../../types";
 import { ProductForm } from "../../ProductForm";
 import { ProductImagesManager } from "../../ProductImagesManager";
+import { MotoInventoryPanel } from "../../MotoInventoryPanel";
 import { AdminShell } from "../../../AdminShell";
 import "../../../admin.css";
+import "../../moto-inventory.css";
 
 export default async function EditProductPage({
   params,
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; stock_error?: string; stock_saved?: string }>;
 }) {
   await requireAdminSession();
   const supabase = await createClient();
@@ -63,7 +65,7 @@ export default async function EditProductPage({
     );
   }
 
-  const [{ data: colors }, { data: specs }, { data: images }] =
+  const [{ data: colors }, { data: specs }, { data: images }, { data: inventory }, { data: movements }] =
     await Promise.all([
       admin
         .from("product_colors")
@@ -82,6 +84,17 @@ export default async function EditProductPage({
         )
         .eq("product_id", id)
         .order("display_order", { ascending: true }),
+      admin
+        .from("moto_inventory")
+        .select("id,color,stock_quantity,low_stock_threshold")
+        .eq("product_id", id)
+        .order("color"),
+      admin
+        .from("moto_inventory_movements")
+        .select("id,movement_type,quantity_before,quantity_after,delta,color,note,created_at")
+        .eq("product_id", id)
+        .order("created_at", { ascending: false })
+        .limit(40),
     ]);
 
   return (
@@ -91,6 +104,17 @@ export default async function EditProductPage({
           <div><span>CATÁLOGO</span><h1>Editar moto</h1><p>{product.brand} {product.model}</p></div>
           <Link className="secondary-action" href="/admin/products">Voltar para motos</Link>
         </div>
+        {search.stock_error && (
+          <p className="admin-alert error">
+            {search.stock_error === "invalid_quantity"
+              ? "Informe uma quantidade inteira maior ou igual a zero."
+              : search.stock_error === "note_too_long"
+                ? "O motivo do ajuste deve ter no máximo 200 caracteres."
+                : "Não foi possível atualizar o estoque da moto."}
+          </p>
+        )}
+        {search.stock_saved && <p className="admin-alert success">Estoque atualizado e movimentação registrada.</p>}
+
         <section className="panel product-editor-panel">
           <ProductForm
             mode="edit"
@@ -101,6 +125,12 @@ export default async function EditProductPage({
             errorMessage={errorMessage}
           />
         </section>
+        <MotoInventoryPanel
+          productId={id}
+          colors={(colors ?? []).map((item) => item.color)}
+          inventory={inventory ?? []}
+          movements={movements ?? []}
+        />
         <section className="panel product-editor-panel images-editor-panel">
           <ProductImagesManager productId={id} images={(images ?? []) as ProductImage[]} errorMessage={errorMessage} />
         </section>
