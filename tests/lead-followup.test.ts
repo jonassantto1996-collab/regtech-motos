@@ -6,7 +6,7 @@ test("follow-up message changes with lead status",()=>{
  const interested=buildLeadFollowupMessage({fullName:"João Silva",productName:"Regtech TUI",status:"INTERESSADO"});
  const sold=buildLeadFollowupMessage({fullName:"João Silva",productName:"Regtech TUI",status:"VENDA_REALIZADA"});
  assert.match(interested,/retomar seu interesse/i);
- assert.match(sold,/tudo certo/i);
+ assert.match(sold,/parabéns pela conquista/i);
  assert.notEqual(interested,sold);
 });
 
