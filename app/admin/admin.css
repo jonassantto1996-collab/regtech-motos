@@ -192,3 +192,9 @@
 .admin-control:focus-visible{outline:none}.status-form select:focus-visible{outline:2px solid #087cff;outline-offset:2px}
 @media(max-width:800px){.admin-content{padding:16px}.admin-page{padding-top:22px}.page-heading{gap:14px;margin-bottom:18px}.page-heading h1{font-size:25px}.page-heading p{line-height:1.5}.page-heading-actions{width:100%;display:grid;grid-template-columns:1fr}.panel{border-radius:10px}.admin-table th,.admin-table td{padding-left:13px;padding-right:13px}.sidebar-logout-form{padding:16px 5px 0}.sidebar-logout{min-height:44px}}
 @media(prefers-reduced-motion:reduce){.admin-side a,.drawer-panel a,.primary-action,.admin-primary-button,.admin-secondary-button,.secondary-action,.status-form button,.table-actions a,.table-actions button,.sidebar-logout,.drawer-close,.mobile-menu-button,.panel-title a{transition:none}}
+
+.lead-whatsapp-link{display:inline-flex;align-items:center;gap:7px;color:#075ad7;text-decoration:none;font-weight:700;transition:color .18s ease}
+.lead-whatsapp-link:hover{color:#043f9f}
+.lead-whatsapp-link:focus-visible{outline:2px solid #1590ff;outline-offset:3px;border-radius:4px}
+.lead-whatsapp-icon{width:24px;height:24px;display:inline-grid;place-items:center;border:1px solid #cfe0f3;border-radius:50%;background:#f7fbff;flex:none}
+.lead-whatsapp-icon svg{width:13px;height:13px}

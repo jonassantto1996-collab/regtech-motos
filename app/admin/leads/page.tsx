@@ -11,6 +11,8 @@ import {
 } from "@/lib/leads/types";
 import { AdminShell } from "../AdminShell";
 import { requireAdminSession } from "../products/actions";
+import { buildLeadFollowupWhatsappLink } from "@/lib/leads/followup";
+import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import "../admin.css";
 
 const currencyFormatter = new Intl.NumberFormat("pt-BR", {
@@ -67,7 +69,7 @@ export default async function AdminLeadsPage({
     <AdminShell active="leads" email={claims.claims.email}>
       <section className="admin-content admin-page">
         <div className="page-heading">
-          <div><span>COMERCIAL</span><h1>Leads</h1><p>Acompanhe os contatos gerados pelo catálogo e atualize o estágio de atendimento.</p></div>
+          <div><span>COMERCIAL</span><h1>Leads</h1><p>Acompanhe os contatos e clique no WhatsApp para abrir uma mensagem preparada conforme o status atual.</p></div>
         </div>
 
         {errorMessage && <p className="admin-alert error" role="alert">{errorMessage}</p>}
@@ -83,7 +85,29 @@ export default async function AdminLeadsPage({
                   <tr key={lead.id}>
                     <td>{dateFormatter.format(new Date(lead.created_at))}</td>
                     <td><strong>{lead.full_name}</strong></td>
-                    <td>{formatWhatsappDisplay(lead.whatsapp)}</td>
+                    <td>{(() => {
+                      const href = buildLeadFollowupWhatsappLink({
+                        whatsapp: lead.whatsapp,
+                        fullName: lead.full_name,
+                        productName: lead.product_name_snapshot,
+                        status: lead.status,
+                      });
+                      return href ? (
+                        <a
+                          className="lead-whatsapp-link"
+                          href={href}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label={`Abrir WhatsApp de ${lead.full_name} com mensagem para status ${LEAD_STATUS_LABELS[lead.status]}`}
+                          title={`Mensagem: ${LEAD_STATUS_LABELS[lead.status]}`}
+                        >
+                          <span className="lead-whatsapp-icon"><WhatsAppIcon /></span>
+                          {formatWhatsappDisplay(lead.whatsapp)}
+                        </a>
+                      ) : (
+                        formatWhatsappDisplay(lead.whatsapp)
+                      );
+                    })()}</td>
                     <td>{lead.product_name_snapshot}</td>
                     <td>{currencyFormatter.format(Number(lead.price_snapshot))}</td>
                     <td>

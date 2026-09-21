@@ -7,10 +7,12 @@ import "../../admin.css";
 import "./import.css";
 
 const errors: Record<string, string> = {
-  missing_file: "Selecione o XML da NF-e.",
-  file_too_large: "O XML excede o limite de 2 MB.",
-  invalid_file_type: "Envie um arquivo XML da NF-e.",
+  missing_file: "Selecione o XML ou PDF da NF-e.",
+  file_too_large: "O arquivo excede o limite permitido (XML 2 MB · PDF 10 MB).",
+  invalid_file_type: "Envie um arquivo XML ou PDF da NF-e.",
   invalid_xml: "Não foi possível interpretar esse XML como uma NF-e válida.",
+  invalid_pdf: "O PDF enviado não é um DANFE válido ou está corrompido.",
+  pdf_unreadable: "Recebemos o PDF, mas não foi possível ler os itens com segurança. Use o XML da NF-e para evitar entrada incorreta no estoque.",
   server_error: "Não foi possível importar a nota fiscal.",
 };
 
@@ -34,15 +36,15 @@ export default async function NfeImportPage({
           <div>
             <span>ENTRADA DE MERCADORIA</span>
             <h1>Importar NF-e</h1>
-            <p>Envie o XML da nota para carregar todos os itens e revisar a entrada antes de atualizar o estoque.</p>
+            <p>Envie o XML ou PDF da nota para carregar os itens e revisar a entrada antes de atualizar o estoque.</p>
           </div>
         </div>
 
         <article className="panel nfe-upload-card">
           <div className="nfe-upload-heading">
-            <span className="login-kicker">FASE 1 · XML</span>
+            <span className="login-kicker">FASE 1 · XML OU PDF</span>
             <h2>Adicionar nota fiscal</h2>
-            <p>O sistema lê fornecedor, número da nota, produtos, quantidades e valores para preparar a conferência da entrada.</p>
+            <p>O sistema prioriza o XML e também aceita DANFE em PDF com texto legível. Em ambos os casos, a entrada só ocorre após sua conferência.</p>
           </div>
 
           <NfeUploadForm errorMessage={error ? errors[error] ?? "Erro ao importar a NF-e." : null} />

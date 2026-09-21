@@ -1,19 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { importNfeXml } from "./actions";
+import { importNfeFile } from "./actions";
 
 export function NfeUploadForm({ errorMessage }: { errorMessage?: string | null }) {
   const [fileName, setFileName] = useState("");
 
   return (
-    <form action={importNfeXml} className="nfe-upload-form">
+    <form action={importNfeFile} className="nfe-upload-form">
       <label className={"nfe-dropzone " + (fileName ? "has-file" : "")}>
         <input
           className="nfe-file-input"
-          name="xml"
+          name="invoice"
           type="file"
-          accept=".xml,text/xml,application/xml"
+          accept=".xml,.pdf,text/xml,application/xml,application/pdf"
           required
           onChange={(event) => setFileName(event.currentTarget.files?.[0]?.name ?? "")}
         />
@@ -25,9 +25,9 @@ export function NfeUploadForm({ errorMessage }: { errorMessage?: string | null }
           </svg>
         </span>
 
-        <strong>{fileName ? "XML pronto para leitura" : "Selecionar XML da NF-e"}</strong>
+        <strong>{fileName ? "Arquivo pronto para leitura" : "Selecionar NF-e em XML ou PDF"}</strong>
         <span className="nfe-file-name" aria-live="polite">
-          {fileName || "Arquivo .xml · máximo 2 MB"}
+          {fileName || "XML até 2 MB · PDF até 10 MB"}
         </span>
         <span className="nfe-file-button">{fileName ? "Trocar arquivo" : "Escolher arquivo"}</span>
       </label>
@@ -36,7 +36,7 @@ export function NfeUploadForm({ errorMessage }: { errorMessage?: string | null }
         <span className="nfe-safety-mark" aria-hidden="true">✓</span>
         <div>
           <strong>Conferência obrigatória antes da entrada</strong>
-          <span>Nenhum estoque é alterado apenas pelo upload. Você revisa os itens antes de confirmar.</span>
+          <span>Nenhum estoque é alterado apenas pelo upload. XML é a fonte preferencial; PDFs só avançam quando a leitura dos itens é segura.</span>
         </div>
       </div>
 
