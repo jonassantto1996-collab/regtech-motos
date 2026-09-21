@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { inflateSync } from "node:zlib";
-import { parseNfeXml, type ParsedNfe, type ParsedNfeItem } from "./nfe";
+import { parseNfeXml, type ParsedNfe, type ParsedNfeItem } from "./nfe.ts";
 
 function decodePdfLiteral(value: string) {
   return value
