@@ -2,6 +2,12 @@ import Link from "next/link";
 import { requestPasswordReset } from "../actions";
 import "../admin.css";
 
+const errorMessages: Record<string, string> = {
+  missing_email: "Informe o e-mail da conta administrativa.",
+  invalid_email: "Informe um endereço de e-mail válido.",
+  invalid_link: "O link de recuperação é inválido ou expirou. Solicite um novo.",
+};
+
 export default async function ForgotPasswordPage({ searchParams }: { searchParams: Promise<{ error?: string; sent?: string }> }) {
   const params = await searchParams;
   return (
@@ -22,7 +28,7 @@ export default async function ForgotPasswordPage({ searchParams }: { searchParam
             <form action={requestPasswordReset}>
               <label htmlFor="email">E-mail</label>
               <input id="email" name="email" type="email" autoComplete="email" required />
-              {params.error && <p className="login-error" role="alert">Informe um e-mail válido.</p>}
+              {params.error && <p className="login-error" role="alert">{errorMessages[params.error] ?? "Não foi possível iniciar a recuperação."}</p>}
               <button type="submit">Enviar instruções</button>
             </form>
             <Link className="auth-back" href="/admin/login">← Voltar para o login</Link>

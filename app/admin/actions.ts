@@ -1,6 +1,9 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { isAuthorizedAdmin } from "@/lib/admin/authorization";
+import { resolveAuthBaseUrl } from "@/lib/admin/auth-url";
 import { redirect } from "next/navigation";
 
 /**
@@ -24,13 +27,25 @@ export async function login(formData: FormData) {
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: signInData, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
-  if (error) {
+  if (error || !signInData.user) {
     redirect("/admin/login?error=invalid_credentials");
+  }
+
+  const admin = createAdminClient();
+  const { data: adminUser, error: adminError } = await admin
+    .from("admin_users")
+    .select("role,is_active")
+    .eq("user_id", signInData.user.id)
+    .maybeSingle();
+
+  if (!isAuthorizedAdmin(adminUser, adminError)) {
+    await supabase.auth.signOut();
+    redirect("/admin/login?error=not_authorized");
   }
 
   redirect("/admin");
@@ -50,13 +65,22 @@ export async function requestPasswordReset(formData: FormData) {
     redirect("/admin/forgot-password?error=missing_email");
   }
 
-  const supabase = await createClient();
-  const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
-  const vercelUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined;
-  const siteUrl = configuredUrl && !configuredUrl.includes("localhost") ? configuredUrl : vercelUrl;
-  const redirectTo = siteUrl ? `${siteUrl}/admin/reset-password` : undefined;
+  const normalizedEmail = email.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    redirect("/admin/forgot-password?error=invalid_email");
+  }
 
-  await supabase.auth.resetPasswordForEmail(email.trim(), {
+  const supabase = await createClient();
+  const siteUrl = resolveAuthBaseUrl({
+    configuredUrl: process.env.NEXT_PUBLIC_SITE_URL,
+    vercelUrl: process.env.VERCEL_URL,
+    vercelEnv: process.env.VERCEL_ENV,
+  });
+  const redirectTo = siteUrl
+    ? `${siteUrl}/admin/auth/callback?next=/admin/reset-password`
+    : undefined;
+
+  await supabase.auth.resetPasswordForEmail(normalizedEmail, {
     ...(redirectTo ? { redirectTo } : {}),
   });
 

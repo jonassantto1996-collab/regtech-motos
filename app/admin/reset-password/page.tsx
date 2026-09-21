@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import { updatePassword } from "../actions";
 import { PasswordField } from "../login/PasswordField";
 import "../admin.css";
@@ -11,6 +13,10 @@ const messages: Record<string, string> = {
 };
 
 export default async function ResetPasswordPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getClaims();
+  if (!data?.claims) redirect("/admin/forgot-password?error=invalid_link");
+
   const params = await searchParams;
   return (
     <main className="auth-simple-page">

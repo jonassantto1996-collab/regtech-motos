@@ -46,7 +46,8 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isAdminArea = pathname.startsWith("/admin");
   const isLoginPage = pathname === "/admin/login";
-  const isPublicAuthPage = isLoginPage || pathname === "/admin/forgot-password" || pathname === "/admin/reset-password";
+  const isAuthCallback = pathname === "/admin/auth/callback";
+  const isPublicAuthPage = isLoginPage || pathname === "/admin/forgot-password" || pathname === "/admin/reset-password" || isAuthCallback;
 
   if (isAdminArea && !isPublicAuthPage && !isAuthenticated) {
     const url = request.nextUrl.clone();
@@ -61,6 +62,10 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin";
     return NextResponse.redirect(url);
+  }
+
+  if (isAdminArea) {
+    supabaseResponse.headers.set("Cache-Control", "private, no-store");
   }
 
   // Retornar sempre este objeto (com os cookies já copiados acima) — criar

@@ -7,6 +7,7 @@ import "../admin.css";
 const ERROR_MESSAGES: Record<string, string> = {
   missing_fields: "Preencha e-mail e senha.",
   invalid_credentials: "E-mail ou senha inválidos.",
+  not_authorized: "Esta conta não possui permissão administrativa.",
 };
 
 export default async function LoginPage({
