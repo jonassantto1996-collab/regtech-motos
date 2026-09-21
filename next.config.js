@@ -28,6 +28,13 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  experimental: {
+    // Uploads administrativos chegam a 15 MB. Cada Server Action ainda
+    // valida tipo, tamanho e assinatura antes de persistir o arquivo.
+    serverActions: {
+      bodySizeLimit: "16mb",
+    },
+  },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
