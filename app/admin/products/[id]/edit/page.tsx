@@ -16,6 +16,7 @@ import { MotoInventoryPanel } from "../../MotoInventoryPanel";
 import { AdminShell } from "../../../AdminShell";
 import "../../../admin.css";
 import "../../moto-inventory.css";
+import "../../product-images.css";
 
 export default async function EditProductPage({
   params,

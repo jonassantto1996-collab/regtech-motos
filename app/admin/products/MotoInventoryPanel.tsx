@@ -135,7 +135,7 @@ export function MotoInventoryPanel({
             ))}
           </div>
         ) : (
-          <div className="store-inline-empty">
+          <div className="moto-empty-state">
             <strong>Nenhuma movimentação registrada</strong>
             <span>O primeiro ajuste ou entrada por NF-e aparecerá aqui.</span>
           </div>

@@ -13,3 +13,7 @@
 .moto-history-list{display:grid;gap:8px;margin-top:18px}.moto-history-row{display:grid;grid-template-columns:minmax(180px,1fr) auto auto;gap:14px;align-items:center;padding:13px 14px;border:1px solid #e7ecf2;border-radius:9px;background:#fbfdff}.moto-history-row>div{display:grid;gap:3px}.moto-history-row strong{font-size:11px}.moto-history-row small{font-size:9px;color:#758397}
 @media(max-width:1000px){.moto-stock-row{grid-template-columns:1fr auto}.moto-stock-form{grid-column:1/-1}}
 @media(max-width:800px){.moto-stock-heading{display:grid;gap:10px}.moto-stock-total{text-align:left;grid-auto-flow:column;justify-content:start;align-items:baseline;gap:6px}.moto-stock-row{grid-template-columns:1fr auto;padding:13px}.moto-stock-form{grid-template-columns:1fr;grid-column:1/-1}.moto-stock-form .admin-secondary-button{width:100%}.moto-history-row{grid-template-columns:1fr auto}.moto-history-row .inventory-change{grid-column:1/-1;text-align:left}}
+
+.moto-empty-state{margin-top:18px;padding:22px;border:1px dashed #ccd7e4;border-radius:10px;background:#f8fafc;display:grid;gap:6px;text-align:center}
+.moto-empty-state strong{display:block;font-size:12px;line-height:1.35;color:#253548}
+.moto-empty-state span{display:block;font-size:10px;line-height:1.5;color:#7a8796}
