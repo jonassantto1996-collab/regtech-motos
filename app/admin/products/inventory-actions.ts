@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logAdminAction, requireAdminSession } from "../actions";
+import { logAdminAction, requireAdminSession } from "./actions";
 
 export async function adjustMotoInventoryStock(
   productId: string,
