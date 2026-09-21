@@ -27,7 +27,7 @@ export function buildLeadFollowupMessage(params: {
     INTERESSADO:
       `Olá, ${name}! Aqui é da Regtech Motors. Passando para retomar seu interesse na ${product}. Se ainda fizer sentido para você, posso verificar a disponibilidade e te ajudar a continuar o atendimento.`,
     VENDA_REALIZADA:
-      `Olá, ${name}! Aqui é da Regtech Motors. Passando para saber se está tudo certo com sua ${product}. Se precisar de orientação ou suporte, estamos à disposição.`,
+      `Olá, ${name}! Aqui é da Regtech Motors. Parabéns pela conquista da sua ${product}! 🎉 Esperamos que você aproveite muito essa nova experiência com a mobilidade elétrica. Se precisar de qualquer orientação, suporte ou tiver alguma dúvida, pode contar com a nossa equipe.`,
     NAO_CONVERTIDO:
       `Olá, ${name}! Aqui é da Regtech Motors. Você chegou a consultar a ${product}. Se ainda tiver interesse em uma moto elétrica, posso te mostrar as opções disponíveis e tirar suas dúvidas.`,
   };
