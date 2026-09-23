@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import HomeProductCard from "@/components/home/HomeProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
+import ContactRider from "@/components/home/ContactRider";
 import { ExternalLinkIcon, WhatsAppIcon } from "@/components/icons/SiteIcons";
+import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { getActiveProductListItemById, listProducts } from "@/lib/catalog/queries";
 import { createClient } from "@/lib/supabase/server";
 import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
@@ -17,6 +19,19 @@ const STORE_WHATSAPP_CONTACTS = [
     label: "Atendimento Regtech Cell Shop",
     phone: "+55 94 99298-9833",
     href: "https://wa.me/5594992989833",
+  },
+] as const;
+
+const STORE_INSTAGRAM_CONTACTS = [
+  {
+    label: "Instagram Regtech Motors",
+    handle: "@regtechmotors",
+    href: "https://www.instagram.com/regtechmotors",
+  },
+  {
+    label: "Instagram Regtech Cell Shop",
+    handle: "@regtechcellshop",
+    href: "https://www.instagram.com/regtechcellshop",
   },
 ] as const;
 
@@ -390,70 +405,88 @@ export default async function Home() {
         </section>
       )}
 
-      {/* LOJA — dados institucionais confirmados pelo cliente. */}
+
+      {/* CANAIS OFICIAIS — mantém o hero intacto e concentra atendimento/social nesta área inferior. */}
       <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-7xl">
-          <div className="grid overflow-hidden border border-gray-200 lg:grid-cols-[1fr_1fr]">
-            <div className="relative flex min-h-[24rem] items-end overflow-hidden bg-gradient-to-br from-blue-700 via-blue-900 to-blue-950 p-6 text-white sm:min-h-[28rem] sm:p-10 lg:min-h-[34rem] lg:p-12">
-              <div aria-hidden className="absolute -right-24 top-1/2 h-80 w-80 -translate-y-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
-              <div className="relative max-w-lg">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">
-                  Regtech CellShop
-                </p>
-                <h2 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-                  Conheça a Regtech de perto.
-                </h2>
-                <p className="mt-5 max-w-md text-base leading-7 text-blue-100">
-                  Conheça os modelos disponíveis e fale com a equipe Regtech para
-                  tirar dúvidas sobre disponibilidade, detalhes e atendimento.
-                </p>
-              </div>
-            </div>
+          <div className="overflow-hidden border border-gray-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.08)] lg:grid lg:grid-cols-[1.08fr_0.92fr]">
+            <div className="px-5 py-9 sm:px-8 sm:py-12 lg:px-12 lg:py-14">
+              <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.24em] text-blue-700">
+                Canais oficiais
+              </p>
+              <h2 className="mt-3 max-w-xl text-[2rem] font-bold leading-[1.06] tracking-tight text-gray-950 sm:text-4xl lg:text-[2.8rem]">
+                Fale com a equipe oficial da Regtech.
+              </h2>
+              <p className="mt-4 max-w-xl text-sm leading-6 text-gray-600 sm:text-base sm:leading-7">
+                Atendimento direto para motos e loja. Escolha o canal ideal para falar com a equipe.
+              </p>
 
-            <div className="flex flex-col justify-between bg-gray-50 p-6 sm:p-10 lg:p-12">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
-                  Contato da loja
-                </p>
-                <h3 className="mt-3 max-w-md text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
-                  Fale diretamente com a equipe Regtech.
-                </h3>
-              </div>
-
-              <div className="mt-10 divide-y divide-gray-300 border-y border-gray-300">
+              <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {STORE_WHATSAPP_CONTACTS.map((contact) => (
                   <a
                     key={contact.label}
                     href={contact.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex min-h-24 items-center justify-between gap-5 py-5"
+                    className="group flex min-h-[10.5rem] flex-col justify-between border border-gray-200 bg-gray-50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-emerald-300 hover:bg-white hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
                     aria-label={`Abrir WhatsApp — ${contact.label}`}
                   >
-                    <div className="min-w-0">
-                      <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-gray-500">
+                    <div className="flex items-start justify-between gap-4">
+                      <span className="inline-grid h-11 w-11 flex-none place-items-center rounded-full bg-emerald-100 text-emerald-600">
+                        <WhatsAppIcon className="h-6 w-6" />
+                      </span>
+                      <ExternalLinkIcon className="h-4 w-4 flex-none text-gray-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-emerald-600" />
+                    </div>
+                    <div className="mt-5">
+                      <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.13em] text-gray-500">
                         {contact.label}
                       </span>
-                      <span className="mt-2 flex items-center gap-3 text-base font-semibold text-gray-950">
-                        <span className="inline-grid h-9 w-9 flex-none place-items-center rounded-full border border-gray-200 bg-white text-blue-700">
-                          <WhatsAppIcon className="h-5 w-5" />
-                        </span>
-                        <span>{contact.phone}</span>
+                      <span className="mt-2 block text-lg font-bold tracking-tight text-gray-950">
+                        {contact.phone}
+                      </span>
+                      <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-emerald-700">
+                        Falar no WhatsApp <span aria-hidden>→</span>
                       </span>
                     </div>
-                    <span
-                      aria-hidden
-                      className="inline-grid h-9 w-9 flex-none place-items-center rounded-full border border-gray-200 bg-white text-blue-700 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    >
-                      <ExternalLinkIcon className="h-4 w-4" />
-                    </span>
+                  </a>
+                ))}
+
+                {STORE_INSTAGRAM_CONTACTS.map((social) => (
+                  <a
+                    key={social.label}
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group flex min-h-[10.5rem] flex-col justify-between border border-gray-200 bg-gray-50 p-5 transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:bg-white hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+                    aria-label={`Abrir ${social.label}`}
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <span className="inline-grid h-11 w-11 flex-none place-items-center rounded-full bg-blue-100 text-blue-700">
+                        <InstagramIcon className="h-6 w-6" />
+                      </span>
+                      <ExternalLinkIcon className="h-4 w-4 flex-none text-gray-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-blue-700" />
+                    </div>
+                    <div className="mt-5">
+                      <span className="block text-[0.6875rem] font-semibold uppercase tracking-[0.13em] text-gray-500">
+                        {social.label}
+                      </span>
+                      <span className="mt-2 block text-lg font-bold tracking-tight text-gray-950">
+                        {social.handle}
+                      </span>
+                      <span className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-blue-700">
+                        Ver perfil <span aria-hidden>→</span>
+                      </span>
+                    </div>
                   </a>
                 ))}
               </div>
             </div>
+
+            <ContactRider />
           </div>
         </div>
       </section>
+
 
     </main>
   );
