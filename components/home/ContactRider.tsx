@@ -1,27 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export default function ContactRider() {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const node = ref.current;
-    if (!node) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setVisible(true);
+    if (!node || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
+        if (!entry.isIntersecting) return;
+
+        node.classList.remove("translate-x-10", "scale-[0.98]", "opacity-0");
+        node.classList.add("translate-x-0", "scale-100", "opacity-100");
+        observer.disconnect();
       },
       { threshold: 0.25 }
     );
@@ -31,16 +28,10 @@ export default function ContactRider() {
   }, []);
 
   return (
-    <div
-      ref={ref}
-      className="relative min-h-[30rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[36rem] lg:min-h-full"
-    >
+    <div className="relative min-h-[30rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[36rem] lg:min-h-full">
       <div
-        className={`absolute inset-0 transition-all duration-1000 ease-out motion-reduce:transform-none motion-reduce:opacity-100 ${
-          visible
-            ? "translate-x-0 scale-100 opacity-100"
-            : "translate-x-10 scale-[0.98] opacity-0"
-        }`}
+        ref={ref}
+        className="absolute inset-0 translate-x-10 scale-[0.98] opacity-0 transition-all duration-1000 ease-out motion-reduce:translate-x-0 motion-reduce:scale-100 motion-reduce:opacity-100"
       >
         <Image
           src="/regtech-rider.webp"
