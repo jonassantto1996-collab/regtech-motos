@@ -141,9 +141,11 @@ export async function createLead(
     source: "catalogo",
   };
 
-  // 6. GRAVAR O LEAD NO SUPABASE. Client de anon key — a RLS já permite
-  // INSERT público restrito a status = 'NOVO' (confirmado via pg_policies).
-  const { error: insertError } = await supabase
+  // 6. GRAVAR O LEAD SOMENTE PELO SERVIDOR. O navegador/anon key não possui
+  // permissão de INSERT em leads. Assim, toda criação obrigatoriamente passa
+  // pela validação e pelo rate limit acima antes de usar a service_role.
+  const admin = createAdminClient();
+  const { error: insertError } = await admin
     .from("leads")
     .insert(leadRecord);
 
