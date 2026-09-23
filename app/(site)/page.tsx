@@ -9,19 +9,14 @@ import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
 
 const STORE_WHATSAPP_CONTACTS = [
   {
-    label: "Atendimento Tucumã",
+    label: "Atendimento Regtech Motors",
+    phone: "+55 94 99282-8523",
+    href: "https://wa.me/5594992828523",
+  },
+  {
+    label: "Atendimento Regtech Cell Shop",
     phone: "+55 94 99298-9833",
     href: "https://wa.me/5594992989833",
-  },
-  {
-    label: "Atendimento Ourilândia",
-    phone: "+55 94 99297-5433",
-    href: "https://wa.me/5594992975433",
-  },
-  {
-    label: "Assistência técnica",
-    phone: "+55 94 99286-7788",
-    href: "https://wa.me/5594992867788",
   },
 ] as const;
 

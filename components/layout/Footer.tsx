@@ -46,7 +46,7 @@ export default function Footer() {
 
           <div>
             <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-blue-300">
-              Regtech CellShop
+              Canais oficiais
             </p>
             <a
               href={STORE_MAP_URL}
@@ -67,18 +67,32 @@ export default function Footer() {
               </span>
               <ExternalLinkIcon className="mt-0.5 h-4 w-4 flex-none transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
-            <a
-              href="https://www.instagram.com/regtechcellshop"
-              target="_blank"
-              rel="noreferrer"
-              className="group mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-cyan-300"
-            >
-              <span className="inline-grid h-7 w-7 place-items-center rounded-full border border-blue-800 text-blue-200">
-                <InstagramIcon className="h-4 w-4" />
-              </span>
-              @regtechcellshop
-              <ExternalLinkIcon className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-            </a>
+            <div className="mt-4 flex flex-col items-start gap-3">
+              <a
+                href="https://www.instagram.com/regtechmotors"
+                target="_blank"
+                rel="noreferrer"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-cyan-300"
+              >
+                <span className="inline-grid h-7 w-7 place-items-center rounded-full border border-blue-800 text-blue-200">
+                  <InstagramIcon className="h-4 w-4" />
+                </span>
+                @regtechmotors
+                <ExternalLinkIcon className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+              <a
+                href="https://www.instagram.com/regtechcellshop"
+                target="_blank"
+                rel="noreferrer"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-white transition-colors hover:text-cyan-300"
+              >
+                <span className="inline-grid h-7 w-7 place-items-center rounded-full border border-blue-800 text-blue-200">
+                  <InstagramIcon className="h-4 w-4" />
+                </span>
+                @regtechcellshop
+                <ExternalLinkIcon className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+            </div>
           </div>
         </div>
 
