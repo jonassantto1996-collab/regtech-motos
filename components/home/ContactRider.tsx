@@ -1,15 +1,12 @@
-import Image from "next/image";
-
 export default function ContactRider() {
   return (
     <div className="relative min-h-[30rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[36rem] lg:min-h-full">
-      <Image
+      <img
         src="/regtech-rider-clean.webp"
         alt="Personagem Regtech Motors montado em uma moto elétrica"
-        fill
-        priority
-        className="object-contain object-bottom"
-        sizes="(max-width: 1023px) 100vw, 46vw"
+        className="absolute inset-0 h-full w-full object-contain object-bottom"
+        loading="eager"
+        decoding="async"
       />
 
       <div
