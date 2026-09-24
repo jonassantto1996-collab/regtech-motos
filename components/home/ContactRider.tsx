@@ -23,16 +23,16 @@ export default function ContactRider() {
         </p>
       </div>
 
-      <div className="absolute inset-x-5 bottom-5 z-10 border border-white/15 bg-blue-950/45 p-4 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:inset-x-auto sm:bottom-8 sm:left-8 sm:max-w-[20rem] sm:p-5 lg:max-w-[21rem]">
+      <div className="absolute left-5 top-24 z-10 max-w-[17rem] border border-white/15 bg-blue-950/45 p-4 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-8 sm:top-28 sm:max-w-[18rem] sm:p-5 lg:top-32 lg:max-w-[19rem]">
         <p className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-cyan-200">
           Tradição que acompanha a inovação
         </p>
 
-        <h3 className="mt-2 text-xl font-bold leading-tight tracking-tight text-white sm:text-2xl">
+        <h3 className="mt-2 text-lg font-bold leading-tight tracking-tight text-white sm:text-xl lg:text-2xl">
           Referência em Tecnologia há +14 anos!
         </h3>
 
-        <p className="mt-3 text-sm leading-6 text-blue-50/85">
+        <p className="mt-3 text-[0.8125rem] leading-5 text-blue-50/85 sm:text-sm sm:leading-6">
           Tecnologia, mobilidade e atendimento de confiança para acompanhar você no dia a dia.
         </p>
       </div>
