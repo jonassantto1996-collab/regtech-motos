@@ -23,7 +23,7 @@ export default function ContactRider() {
         </p>
       </div>
 
-      <div className="absolute left-4 top-24 z-10 max-w-[13.5rem] border border-white/15 bg-blue-950/45 p-3 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-6 sm:top-24 sm:max-w-[17rem] sm:p-5 lg:left-6 lg:top-24 lg:max-w-[17rem]">
+      <div className="absolute left-4 top-16 z-10 max-w-[12.75rem] border border-white/15 bg-blue-950/45 p-2.5 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-6 sm:top-24 sm:max-w-[17rem] sm:p-5 lg:left-6 lg:top-24 lg:max-w-[17rem]">
         <p className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-cyan-200">
           Tradição que acompanha a inovação
         </p>
