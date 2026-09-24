@@ -2,7 +2,7 @@ export default function ContactRider() {
   return (
     <div className="relative min-h-[30rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[36rem] lg:min-h-full">
       <img
-        src="/regtech-rider-clean.webp"
+        src="https://bjodwjskwnpnqedjasid.supabase.co/storage/v1/object/public/product-images/site/regtech-rider-original.png"
         alt="Personagem Regtech Motors montado em uma moto elétrica"
         className="absolute inset-0 h-full w-full object-contain object-bottom"
         loading="eager"
