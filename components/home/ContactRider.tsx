@@ -4,11 +4,10 @@ export default function ContactRider() {
   return (
     <div className="relative min-h-[30rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[36rem] lg:min-h-full">
       <Image
-        src="/regtech-rider-fixed.svg"
+        src="/regtech-rider-clean.webp"
         alt="Personagem Regtech Motors montado em uma moto elétrica"
         fill
         priority
-        unoptimized
         className="object-contain object-bottom"
         sizes="(max-width: 1023px) 100vw, 46vw"
       />
