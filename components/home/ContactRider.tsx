@@ -8,7 +8,7 @@ export default function ContactRider() {
         alt="Personagem Regtech Motors montado em uma moto elétrica"
         fill
         priority
-        className="object-cover object-center"
+        className="object-contain object-bottom"
         sizes="(max-width: 1023px) 100vw, 46vw"
       />
 
