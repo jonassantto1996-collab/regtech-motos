@@ -4,7 +4,7 @@ export default function ContactRider() {
       <img
         src="https://bjodwjskwnpnqedjasid.supabase.co/storage/v1/object/public/product-images/site/regtech-rider-original.png"
         alt="Personagem Regtech Motors montado em uma moto elétrica"
-        className="absolute left-1/2 top-[-2rem] w-[142%] max-w-none -translate-x-1/2 object-contain sm:top-[-3.5rem] sm:w-[120%] lg:left-[58%] lg:top-[-5rem] lg:w-[108%]"
+        className="absolute left-1/2 top-[-2rem] w-[142%] max-w-none -translate-x-1/2 object-contain sm:top-[-3.5rem] sm:w-[120%] lg:left-[61%] lg:top-[-5rem] lg:w-[108%]"
         loading="eager"
         decoding="async"
       />
