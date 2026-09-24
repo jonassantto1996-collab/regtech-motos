@@ -18,12 +18,12 @@ export default function ContactRider() {
         <p className="text-[0.625rem] font-semibold uppercase tracking-[0.22em] text-cyan-200">
           Regtech Motors
         </p>
-        <p className="mt-2 text-sm font-medium leading-5 text-white/90">
+        <p className="mt-2 hidden text-sm font-medium leading-5 text-white/90 sm:block">
           Sempre mais perto de você.
         </p>
       </div>
 
-      <div className="absolute left-4 top-14 z-10 max-w-[13.25rem] border border-white/15 bg-blue-950/45 px-2.5 py-2 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-6 sm:top-24 sm:max-w-[17rem] sm:p-5 lg:left-6 lg:top-24 lg:max-w-[17rem]">
+      <div className="absolute left-4 top-[3.25rem] z-10 max-w-[13.25rem] border border-white/15 bg-blue-950/45 px-2.5 py-2 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-6 sm:top-24 sm:max-w-[17rem] sm:p-5 lg:left-6 lg:top-24 lg:max-w-[17rem]">
         <p className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-cyan-200">
           Tradição que acompanha a inovação
         </p>
