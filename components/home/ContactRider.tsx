@@ -23,12 +23,12 @@ export default function ContactRider() {
         </p>
       </div>
 
-      <div className="absolute left-5 top-24 z-10 max-w-[17rem] border border-white/15 bg-blue-950/45 p-4 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-8 sm:top-28 sm:max-w-[18rem] sm:p-5 lg:top-32 lg:max-w-[19rem]">
+      <div className="absolute left-4 top-20 z-10 max-w-[16rem] border border-white/15 bg-blue-950/45 p-4 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-6 sm:top-24 sm:max-w-[17rem] sm:p-5 lg:left-6 lg:top-24 lg:max-w-[17rem]">
         <p className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-cyan-200">
           Tradição que acompanha a inovação
         </p>
 
-        <h3 className="mt-2 text-lg font-bold leading-tight tracking-tight text-white sm:text-xl lg:text-2xl">
+        <h3 className="mt-2 text-lg font-bold leading-tight tracking-tight text-white sm:text-xl">
           Referência em Tecnologia há +14 anos!
         </h3>
 
