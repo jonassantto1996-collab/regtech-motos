@@ -17,6 +17,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline'",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https://bjodwjskwnpnqedjasid.supabase.co",
+      "media-src 'self' https://bjodwjskwnpnqedjasid.supabase.co",
       "connect-src 'self' https://bjodwjskwnpnqedjasid.supabase.co wss://bjodwjskwnpnqedjasid.supabase.co",
       "font-src 'self' data:",
       "upgrade-insecure-requests",
