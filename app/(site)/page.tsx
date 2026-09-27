@@ -63,7 +63,7 @@ export default async function Home() {
   const [{ data: heroSettings }, { data: socialProof }, { data: editorialSettings }] = await Promise.all([
     supabase
       .from("home_hero_settings")
-      .select("mode, product_id, storage_path, alt_text, image_position")
+      .select("mode, product_id, storage_path, alt_text, image_position, video_desktop_path, video_tablet_path, video_mobile_path")
       .eq("id", true)
       .maybeSingle(),
     supabase
@@ -106,6 +106,17 @@ export default async function Home() {
     : heroImage
       ? getPublicImageUrl(heroImage.storage_path)
       : null;
+  const heroVideoSources =
+    heroSettings?.mode === "video" &&
+    heroSettings.video_desktop_path &&
+    heroSettings.video_tablet_path &&
+    heroSettings.video_mobile_path
+      ? {
+          desktop: getHomeMediaUrl(heroSettings.video_desktop_path),
+          tablet: getHomeMediaUrl(heroSettings.video_tablet_path),
+          mobile: getHomeMediaUrl(heroSettings.video_mobile_path),
+        }
+      : null;
   const heroPosition = heroSettings?.image_position ?? "center";
   const heroPositionClass =
     heroPosition === "left"
@@ -124,10 +135,11 @@ export default async function Home() {
       {/* HERO — campanha principal da vertical Motors. */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-700 via-blue-900 to-blue-950">
         <div className="hero-media-enter pointer-events-none absolute inset-0">
-          {heroImageUrl && (
+          {(heroImageUrl || heroVideoSources) && (
             <HeroMedia
               imageUrl={heroImageUrl}
               imageAlt={heroImageAlt}
+              videoSources={heroVideoSources}
               priority
               className={`object-cover ${heroPositionClass}`}
             />
