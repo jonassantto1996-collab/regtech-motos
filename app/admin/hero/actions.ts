@@ -11,13 +11,16 @@ import {
   validateImageSignature,
   buildHeroImagePath,
   buildHeroVideoPath,
-  validateHeroVideoFile,
-  validateMp4Signature,
   type HeroVideoViewport,
 } from "@/lib/supabase/storage";
 
 const HERO_PATH = "/admin/hero";
 const HERO_POSITIONS = new Set(["left", "center", "right"]);
+const VIDEO_PREFIXES: Record<HeroVideoViewport, string> = {
+  desktop: "home-hero/video/desktop/",
+  tablet: "home-hero/video/tablet/",
+  mobile: "home-hero/video/mobile/",
+};
 
 type CurrentHeroMedia = {
   storage_path: string | null;
@@ -26,9 +29,19 @@ type CurrentHeroMedia = {
   video_mobile_path: string | null;
 };
 
+type HeroVideoPaths = Record<HeroVideoViewport, string>;
+
 function parseImagePosition(formData: FormData) {
   const value = String(formData.get("image_position") ?? "center");
   return HERO_POSITIONS.has(value) ? value : "center";
+}
+
+function isExpectedVideoPath(viewport: HeroVideoViewport, path: string) {
+  return (
+    path.startsWith(VIDEO_PREFIXES[viewport]) &&
+    path.endsWith(".mp4") &&
+    !path.includes("..")
+  );
 }
 
 async function getCurrentHeroMedia(): Promise<CurrentHeroMedia | null> {
@@ -165,57 +178,53 @@ export async function uploadCustomHero(formData: FormData) {
   redirect(`${HERO_PATH}?saved=custom`);
 }
 
-export async function uploadHeroVideos(formData: FormData) {
-  const adminUserId = await requireAdminSession();
+export async function prepareHeroVideoUploads() {
+  await requireAdminSession();
+  const admin = createAdminClient();
+  const viewports: HeroVideoViewport[] = ["desktop", "tablet", "mobile"];
+  const uploads = {} as Record<HeroVideoViewport, { path: string; token: string }>;
 
-  const inputs: Array<{ viewport: HeroVideoViewport; field: string; file: FormDataEntryValue | null }> = [
-    { viewport: "desktop", field: "desktop_video", file: formData.get("desktop_video") },
-    { viewport: "tablet", field: "tablet_video", file: formData.get("tablet_video") },
-    { viewport: "mobile", field: "mobile_video", file: formData.get("mobile_video") },
-  ];
+  for (const viewport of viewports) {
+    const path = buildHeroVideoPath(viewport);
+    const { data, error } = await admin.storage
+      .from(HOME_MEDIA_BUCKET)
+      .createSignedUploadUrl(path);
 
-  for (const item of inputs) {
-    if (!(item.file instanceof File) || item.file.size === 0) {
-      redirect(`${HERO_PATH}?error=missing_video`);
+    if (error || !data?.token) {
+      console.error(`[prepareHeroVideoUploads] Falha em ${viewport}:`, error);
+      return { ok: false as const, error: "signed_url_failed" };
     }
 
-    const validation = validateHeroVideoFile({
-      type: item.file.type,
-      size: item.file.size,
-    });
-    if (!validation.valid) redirect(`${HERO_PATH}?error=invalid_video`);
+    uploads[viewport] = { path, token: data.token };
+  }
 
-    const signature = await validateMp4Signature(item.file);
-    if (!signature.valid) redirect(`${HERO_PATH}?error=invalid_video`);
+  return { ok: true as const, uploads };
+}
+
+export async function cleanupHeroVideoUploads(paths: string[]) {
+  await requireAdminSession();
+  const safePaths = paths.filter((path) =>
+    (Object.keys(VIDEO_PREFIXES) as HeroVideoViewport[]).some((viewport) =>
+      isExpectedVideoPath(viewport, path)
+    )
+  );
+
+  if (!safePaths.length) return;
+  const admin = createAdminClient();
+  const { error } = await admin.storage.from(HOME_MEDIA_BUCKET).remove(safePaths);
+  if (error) console.error("[cleanupHeroVideoUploads] Falha ao limpar uploads:", error);
+}
+
+export async function finalizeHeroVideoUploads(paths: HeroVideoPaths) {
+  const adminUserId = await requireAdminSession();
+
+  for (const viewport of Object.keys(VIDEO_PREFIXES) as HeroVideoViewport[]) {
+    if (!isExpectedVideoPath(viewport, paths[viewport])) {
+      return { ok: false as const, error: "invalid_video_path" };
+    }
   }
 
   const admin = createAdminClient();
-  const uploaded: Record<HeroVideoViewport, string> = {
-    desktop: "",
-    tablet: "",
-    mobile: "",
-  };
-  const uploadedPaths: string[] = [];
-
-  for (const item of inputs) {
-    const file = item.file as File;
-    const path = buildHeroVideoPath(item.viewport);
-    const { error } = await admin.storage
-      .from(HOME_MEDIA_BUCKET)
-      .upload(path, file, { contentType: "video/mp4" });
-
-    if (error) {
-      if (uploadedPaths.length) {
-        await admin.storage.from(HOME_MEDIA_BUCKET).remove(uploadedPaths);
-      }
-      console.error(`[uploadHeroVideos] Falha no upload ${item.field}:`, error);
-      redirect(`${HERO_PATH}?error=video_upload_failed`);
-    }
-
-    uploaded[item.viewport] = path;
-    uploadedPaths.push(path);
-  }
-
   const current = await getCurrentHeroMedia();
 
   const { error: saveError } = await admin
@@ -227,25 +236,25 @@ export async function uploadHeroVideos(formData: FormData) {
       storage_path: null,
       alt_text: "Vídeo institucional Regtech Motors",
       image_position: "center",
-      video_desktop_path: uploaded.desktop,
-      video_tablet_path: uploaded.tablet,
-      video_mobile_path: uploaded.mobile,
+      video_desktop_path: paths.desktop,
+      video_tablet_path: paths.tablet,
+      video_mobile_path: paths.mobile,
       updated_at: new Date().toISOString(),
     });
 
   if (saveError) {
-    await admin.storage.from(HOME_MEDIA_BUCKET).remove(uploadedPaths);
-    console.error("[uploadHeroVideos] Falha ao salvar configuração:", saveError);
-    redirect(`${HERO_PATH}?error=save_failed`);
+    console.error("[finalizeHeroVideoUploads] Falha ao salvar configuração:", saveError);
+    return { ok: false as const, error: "save_failed" };
   }
 
   await removePreviousMedia(current);
   await logAdminAction(adminUserId, "hero.upload_video", "home_hero", "primary", {
-    desktop_path: uploaded.desktop,
-    tablet_path: uploaded.tablet,
-    mobile_path: uploaded.mobile,
+    desktop_path: paths.desktop,
+    tablet_path: paths.tablet,
+    mobile_path: paths.mobile,
   });
   revalidatePath("/");
   revalidatePath(HERO_PATH);
-  redirect(`${HERO_PATH}?saved=video`);
+
+  return { ok: true as const };
 }
