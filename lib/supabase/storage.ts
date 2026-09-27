@@ -24,11 +24,14 @@ export const ALLOWED_IMAGE_MIME_TYPES = [
 
 export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
 export const MAX_HOME_MEDIA_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB
+export const ALLOWED_VIDEO_MIME_TYPES = ["video/mp4"] as const;
+export const MAX_HERO_VIDEO_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB
 
 const MIME_TO_EXTENSION: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
+  "video/mp4": "mp4",
 };
 
 export type ImageValidationResult =
@@ -87,6 +90,45 @@ export function buildProductImagePath(
 export function buildHeroImagePath(mimeType: string): string {
   const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
   return `home-hero/${crypto.randomUUID()}.${extension}`;
+}
+
+export type HeroVideoViewport = "desktop" | "tablet" | "mobile";
+
+export function buildHeroVideoPath(viewport: HeroVideoViewport): string {
+  return `home-hero/video/${viewport}/${crypto.randomUUID()}.mp4`;
+}
+
+export function validateHeroVideoFile(file: {
+  type: string;
+  size: number;
+}): ImageValidationResult {
+  if (
+    !ALLOWED_VIDEO_MIME_TYPES.includes(
+      file.type as (typeof ALLOWED_VIDEO_MIME_TYPES)[number]
+    )
+  ) {
+    return { valid: false, reason: "Use vídeo MP4 (H.264)." };
+  }
+
+  if (file.size > MAX_HERO_VIDEO_SIZE_BYTES) {
+    return { valid: false, reason: "Vídeo maior que 15 MB." };
+  }
+
+  return { valid: true };
+}
+
+export async function validateMp4Signature(file: File): Promise<ImageValidationResult> {
+  const header = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+  const hasFtyp =
+    header.length >= 12 &&
+    header[4] === 0x66 &&
+    header[5] === 0x74 &&
+    header[6] === 0x79 &&
+    header[7] === 0x70;
+
+  return hasFtyp
+    ? { valid: true }
+    : { valid: false, reason: "O arquivo não possui uma assinatura MP4 válida." };
 }
 
 /** Gera caminho isolado para fotos da seção de prova social da Home. */
