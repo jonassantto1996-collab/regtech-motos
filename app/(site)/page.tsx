@@ -101,11 +101,14 @@ export default async function Home() {
   const heroImage = heroProduct?.product_images[0];
   const customHeroPath =
     heroSettings?.mode === "custom" ? heroSettings.storage_path : null;
-  const heroImageUrl = customHeroPath
-    ? getPublicImageUrl(customHeroPath)
-    : heroImage
-      ? getPublicImageUrl(heroImage.storage_path)
-      : null;
+  const heroImageUrl =
+    heroSettings?.mode === "video"
+      ? null
+      : customHeroPath
+        ? getPublicImageUrl(customHeroPath)
+        : heroImage
+          ? getPublicImageUrl(heroImage.storage_path)
+          : null;
   const heroVideoSources =
     heroSettings?.mode === "video" &&
     heroSettings.video_desktop_path &&
