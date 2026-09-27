@@ -163,9 +163,11 @@ export default async function Home() {
                 className="h-10 w-auto sm:h-14 lg:h-16"
               />
             )}
-            <p className="mt-4 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-blue-200 sm:mt-5 sm:text-xs sm:tracking-[0.2em]">
-              Motos · Mobilidade elétrica
-            </p>
+            {heroSettings?.mode !== "video" && (
+              <p className="mt-4 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-blue-200 sm:mt-5 sm:text-xs sm:tracking-[0.2em]">
+                Motos · Mobilidade elétrica
+              </p>
+            )}
             <h1 className="mt-4 text-[2.15rem] font-bold leading-[1.02] tracking-[-0.035em] text-white sm:text-4xl lg:text-6xl">
               Mobilidade elétrica para o seu próximo caminho.
             </h1>
