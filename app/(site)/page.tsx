@@ -153,14 +153,16 @@ export default async function Home() {
 
         <div className="relative mx-auto flex min-h-[34rem] max-w-7xl items-end px-4 pb-8 pt-24 sm:min-h-[30rem] sm:px-6 sm:pb-14 sm:pt-24 lg:min-h-[34rem] lg:items-center lg:px-8 lg:py-0">
           <div className="hero-copy-enter max-w-sm sm:max-w-md lg:max-w-xl">
-            <Image
-              src="/logo-regtech-motors.png"
-              alt="Regtech Motors"
-              width={201}
-              height={96}
-              priority
-              className="h-10 w-auto sm:h-14 lg:h-16"
-            />
+            {heroSettings?.mode !== "video" && (
+              <Image
+                src="/logo-regtech-motors.png"
+                alt="Regtech Motors"
+                width={201}
+                height={96}
+                priority
+                className="h-10 w-auto sm:h-14 lg:h-16"
+              />
+            )}
             <p className="mt-4 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-blue-200 sm:mt-5 sm:text-xs sm:tracking-[0.2em]">
               Motos · Mobilidade elétrica
             </p>
