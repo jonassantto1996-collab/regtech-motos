@@ -3,8 +3,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getPublicImageUrl } from "@/lib/supabase/storage";
+import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
 import { uploadCustomHero, useProductHero } from "./actions";
+import HeroVideoUploadForm from "./HeroVideoUploadForm";
 import { requireAdminSession } from "../products/actions";
 import { AdminShell } from "../AdminShell";
 import "../admin.css";
@@ -27,7 +28,7 @@ export default async function AdminHeroPage({ searchParams }: { searchParams: Se
 
   const admin = createAdminClient();
   const [{ data: settings }, { data: products }] = await Promise.all([
-    admin.from("home_hero_settings").select("mode, product_id, storage_path, alt_text, image_position").eq("id", true).maybeSingle(),
+    admin.from("home_hero_settings").select("mode, product_id, storage_path, alt_text, image_position, video_desktop_path, video_tablet_path, video_mobile_path").eq("id", true).maybeSingle(),
     admin.from("products").select("id, brand, model").eq("is_active", true).order("brand").order("model"),
   ]);
   const params = await searchParams;
@@ -53,6 +54,41 @@ export default async function AdminHeroPage({ searchParams }: { searchParams: Se
           </select>
           <label className="admin-field">Enquadramento<select name="image_position" defaultValue={settings?.image_position ?? "center"} className="admin-control"><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label><button type="submit" className="admin-primary-button">Usar no Hero</button>
         </form>
+      </section>
+
+
+      <section className="panel hero-settings-card">
+        <h2>Enviar vídeo responsivo</h2>
+        <p>
+          Envie uma versão para desktop, uma para tablet e uma para mobile.
+          O site escolhe automaticamente o arquivo correto para cada tamanho de tela.
+        </p>
+
+        {settings?.mode === "video" &&
+          settings.video_desktop_path &&
+          settings.video_tablet_path &&
+          settings.video_mobile_path && (
+            <div className="hero-video-grid">
+              {[
+                ["Desktop", settings.video_desktop_path],
+                ["Tablet", settings.video_tablet_path],
+                ["Mobile", settings.video_mobile_path],
+              ].map(([label, path]) => (
+                <div key={label}>
+                  <strong>{label}</strong>
+                  <video
+                    src={getHomeMediaUrl(path)}
+                    controls
+                    muted
+                    playsInline
+                    preload="metadata"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+        <HeroVideoUploadForm />
       </section>
 
       <section className="panel hero-settings-card">
