@@ -12,8 +12,8 @@ import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
 const STORE_WHATSAPP_CONTACTS = [
   {
     label: "Atendimento Regtech Motors",
-    phone: "+55 94 99282-8523",
-    href: "https://wa.me/5594992828523",
+    phone: "+55 94 99208-6088",
+    href: "https://wa.me/5594992086088",
   },
   {
     label: "Atendimento Regtech Cell Shop",
