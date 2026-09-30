@@ -30,13 +30,13 @@ export default function ProductGallery({ images, productName }: Props) {
 
   return (
     <div>
-      <div className="relative aspect-square w-full overflow-hidden bg-[#f4f6f8]">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#f4f6f8]">
         <Image
           src={selectedUrl}
           alt={selected.alt_text || productName}
           fill
           quality={92}
-          className="object-contain p-2 sm:p-3 lg:p-4"
+          className="object-contain p-3 sm:p-4 lg:p-5"
           sizes="(max-width: 1024px) 100vw, 58vw"
           priority
         />
