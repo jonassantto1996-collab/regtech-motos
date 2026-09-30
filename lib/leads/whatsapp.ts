@@ -21,7 +21,7 @@ export function buildWhatsappLink(params: {
 
   const message = [
     `Olá! Meu nome é ${params.leadName}.`,
-    `Tive interesse na ${params.brand} ${params.model} e gostaria de saber mais informações sobre esse produto.`,
+    `Tive interesse no modelo ${params.brand} ${params.model} e gostaria de saber mais informações sobre esse produto.`,
     "Aguardo o atendimento. Obrigado!",
   ].join("\n\n");
 
