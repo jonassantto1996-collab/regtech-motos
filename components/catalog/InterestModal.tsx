@@ -68,7 +68,7 @@ export default function InterestModal({ productId }: Props) {
         "Interesse registrado! Você será direcionado ao WhatsApp agora."
       );
       setModalState("success");
-      window.open(result.whatsappUrl, "_blank", "noopener,noreferrer");
+      window.location.assign(result.whatsappUrl);
     });
   }
 
