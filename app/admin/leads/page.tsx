@@ -23,6 +23,7 @@ const currencyFormatter = new Intl.NumberFormat("pt-BR", {
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
   dateStyle: "short",
   timeStyle: "short",
+  timeZone: "America/Belem",
 });
 
 /** Só formatação de exibição — não altera o valor salvo (dígitos puros). */
