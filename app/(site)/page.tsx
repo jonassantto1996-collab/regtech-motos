@@ -338,7 +338,7 @@ export default async function Home() {
               {
                 number: "01",
                 title: "Explore os modelos",
-                text: "Veja as motos elétricas disponíveis no catálogo e acesse cada modelo para conhecer seus detalhes.",
+                text: "Veja as motos disponíveis no catálogo e acesse cada modelo para conhecer seus detalhes.",
               },
               {
                 number: "02",
