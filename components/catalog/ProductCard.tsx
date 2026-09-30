@@ -16,7 +16,7 @@ export default function ProductCard({
       href={`/products/${product.slug}`}
       className="group flex min-w-0 flex-col border-t border-gray-200 pt-4 outline-none transition-colors duration-300 hover:border-blue-300 focus-visible:border-blue-700 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-4 sm:pt-5"
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100/70 transition-colors duration-500 group-hover:from-blue-50/70 group-hover:to-gray-100/70">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 transition-colors duration-500 group-hover:from-blue-50/70 group-hover:to-gray-100">
         <div className="absolute left-3 top-3 z-10 inline-flex min-h-7 items-center rounded-full border border-emerald-200 bg-white/95 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm backdrop-blur sm:left-4 sm:top-4">
           <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
           <span className="capitalize">{product.availability}</span>
@@ -27,7 +27,7 @@ export default function ProductCard({
             src={getPublicImageUrl(mainImage.storage_path)}
             alt={mainImage.alt_text || `${product.brand} ${product.model}`}
             fill
-            className="object-contain p-3 transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:scale-[1.025] sm:p-5"
+            className="object-cover object-center transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
             sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 36rem"
           />
         ) : (
