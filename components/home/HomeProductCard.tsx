@@ -12,7 +12,7 @@ export default function HomeProductCard({ product }: { product: CatalogProductLi
       href={`/products/${product.slug}`}
       className="group min-w-[84vw] snap-center border-r border-gray-200 pr-4 outline-none last:border-r-0 focus-visible:ring-2 focus-visible:ring-blue-700 sm:min-w-[18rem] sm:snap-start sm:pr-7 lg:min-w-0 lg:border-r-0 lg:pr-0"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 sm:aspect-[5/4] lg:aspect-[16/10]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100">
         <span className="absolute left-3 top-3 z-10 inline-flex min-h-6 items-center rounded-full border border-emerald-200 bg-white/95 px-2.5 text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm">
           <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
           <span className="capitalize">{product.availability}</span>
@@ -23,7 +23,7 @@ export default function HomeProductCard({ product }: { product: CatalogProductLi
             src={getPublicImageUrl(mainImage.storage_path)}
             alt={mainImage.alt_text || `${product.brand} ${product.model}`}
             fill
-            className="object-contain p-5 transition-transform duration-500 ease-out motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:scale-[1.03] lg:p-6"
+            className="object-cover object-center transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
             sizes="(max-width: 639px) 84vw, (max-width: 1023px) 18rem, 25vw"
           />
         ) : (
