@@ -10,7 +10,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Regtech Motors",
   description:
-    "Motos elétricas da Regtech Motors. Conheça os modelos disponíveis no catálogo e fale com a gente pelo WhatsApp.",
+    "Motos elétricas e a combustão na Regtech Motors. Conheça os modelos disponíveis no catálogo e fale com a gente pelo WhatsApp.",
   ...(process.env.NEXT_PUBLIC_SITE_URL
     ? { metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL) }
     : {}),
