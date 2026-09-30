@@ -39,6 +39,19 @@ const nextConfig = {
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },
+
+  async redirects() {
+    return [
+      { source: "/products/l70", destination: "/products/zub-l70", permanent: true },
+      { source: "/products/x16", destination: "/products/panda-x16", permanent: true },
+      { source: "/products/zetrix", destination: "/products/trixx-bicicleta-eletrica", permanent: true },
+      { source: "/products/triciclo", destination: "/products/zub-triciclo-eletrico-enjoy", permanent: true },
+      { source: "/products/soyan-soyan", destination: "/products/soyan-sy-96-supao", permanent: true },
+      { source: "/products/bike", destination: "/products/ouxi-gt16", permanent: true },
+      { source: "/products/mini-moto", destination: "/products/impala-mini-moto-cross-2-tempo", permanent: true },
+      { source: "/products/triciclo-eletrico-triciclo", destination: "/products/triciclo-eletrico-drift", permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       {
