@@ -15,7 +15,7 @@ export default function Header() {
             href="/products"
             className="inline-flex min-h-11 items-center text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-white transition-colors duration-200 hover:text-cyan-300 focus-visible:outline-none focus-visible:text-cyan-300 focus-visible:ring-2 focus-visible:ring-cyan-300 focus-visible:ring-offset-4 focus-visible:ring-offset-blue-950 sm:min-h-0 sm:text-sm sm:tracking-[0.18em]"
           >
-            Motos elétricas
+            Motos
           </Link>
         </nav>
       </div>
