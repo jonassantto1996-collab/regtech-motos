@@ -26,14 +26,26 @@ export default function ProductGallery({ images, productName }: Props) {
     );
   }
 
+  const selectedUrl = getPublicImageUrl(selected.storage_path);
+
   return (
     <div>
-      <div className="relative aspect-[5/4] w-full overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 sm:aspect-[4/3]">
+      <div className="relative aspect-[5/4] w-full overflow-hidden bg-gray-100 sm:aspect-[4/3]">
         <Image
-          src={getPublicImageUrl(selected.storage_path)}
+          src={selectedUrl}
+          alt=""
+          aria-hidden
+          fill
+          className="scale-110 object-cover object-center blur-3xl opacity-30"
+          sizes="(max-width: 1024px) 100vw, 58vw"
+          priority
+        />
+        <div aria-hidden className="absolute inset-0 z-10 bg-white/30" />
+        <Image
+          src={selectedUrl}
           alt={selected.alt_text || productName}
           fill
-          className="object-contain p-3 sm:p-8"
+          className="z-20 object-contain p-2 sm:p-4 lg:p-5"
           sizes="(max-width: 1024px) 100vw, 58vw"
           priority
         />
@@ -48,7 +60,7 @@ export default function ProductGallery({ images, productName }: Props) {
               onClick={() => setSelectedId(img.id)}
               aria-label={`Ver imagem ${index + 1} de ${productName}`}
               aria-pressed={img.id === selected.id}
-              className={`relative aspect-[4/3] w-20 flex-shrink-0 snap-start overflow-hidden border-b-2 bg-gray-50 transition-colors sm:w-28 ${
+              className={`relative aspect-[4/3] w-20 flex-shrink-0 snap-start overflow-hidden border-b-2 bg-gray-100 transition-colors sm:w-28 ${
                 img.id === selected.id
                   ? "border-blue-700"
                   : "border-transparent hover:border-gray-400"
@@ -58,7 +70,7 @@ export default function ProductGallery({ images, productName }: Props) {
                 src={getPublicImageUrl(img.storage_path)}
                 alt={img.alt_text || productName}
                 fill
-                className="object-contain p-2"
+                className="object-contain p-1"
                 sizes="112px"
               />
             </button>
