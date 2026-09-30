@@ -10,26 +10,38 @@ export default function ProductCard({
   product: CatalogProductListItem;
 }) {
   const mainImage = product.product_images[0];
+  const imageUrl = mainImage ? getPublicImageUrl(mainImage.storage_path) : null;
 
   return (
     <Link
       href={`/products/${product.slug}`}
       className="group flex min-w-0 flex-col border-t border-gray-200 pt-4 outline-none transition-colors duration-300 hover:border-blue-300 focus-visible:border-blue-700 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-4 sm:pt-5"
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100 transition-colors duration-500 group-hover:from-blue-50/70 group-hover:to-gray-100">
-        <div className="absolute left-3 top-3 z-10 inline-flex min-h-7 items-center rounded-full border border-emerald-200 bg-white/95 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm backdrop-blur sm:left-4 sm:top-4">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100">
+        <div className="absolute left-3 top-3 z-30 inline-flex min-h-7 items-center rounded-full border border-emerald-200 bg-white/95 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm backdrop-blur sm:left-4 sm:top-4">
           <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
           <span className="capitalize">{product.availability}</span>
         </div>
 
-        {mainImage ? (
-          <Image
-            src={getPublicImageUrl(mainImage.storage_path)}
-            alt={mainImage.alt_text || `${product.brand} ${product.model}`}
-            fill
-            className="object-cover object-center transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.035]"
-            sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 36rem"
-          />
+        {mainImage && imageUrl ? (
+          <>
+            <Image
+              src={imageUrl}
+              alt=""
+              aria-hidden
+              fill
+              className="scale-110 object-cover object-center blur-2xl opacity-30"
+              sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 36rem"
+            />
+            <div aria-hidden className="absolute inset-0 z-10 bg-white/30" />
+            <Image
+              src={imageUrl}
+              alt={mainImage.alt_text || `${product.brand} ${product.model}`}
+              fill
+              className="z-20 object-contain p-1.5 transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025] sm:p-2"
+              sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 36rem"
+            />
+          </>
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">
             Sem imagem
