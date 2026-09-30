@@ -20,7 +20,7 @@ export default function ProductGallery({ images, productName }: Props) {
 
   if (!selected) {
     return (
-      <div className="flex aspect-[4/3] w-full items-center justify-center bg-gray-100 text-sm text-gray-400">
+      <div className="flex aspect-square w-full items-center justify-center bg-[#f4f6f8] text-sm text-gray-400">
         Sem imagem disponível
       </div>
     );
@@ -30,22 +30,13 @@ export default function ProductGallery({ images, productName }: Props) {
 
   return (
     <div>
-      <div className="relative aspect-[5/4] w-full overflow-hidden bg-gray-100 sm:aspect-[4/3]">
-        <Image
-          src={selectedUrl}
-          alt=""
-          aria-hidden
-          fill
-          className="scale-110 object-cover object-center blur-3xl opacity-30"
-          sizes="(max-width: 1024px) 100vw, 58vw"
-          priority
-        />
-        <div aria-hidden className="absolute inset-0 z-10 bg-white/30" />
+      <div className="relative aspect-square w-full overflow-hidden bg-[#f4f6f8]">
         <Image
           src={selectedUrl}
           alt={selected.alt_text || productName}
           fill
-          className="z-20 object-contain p-2 sm:p-4 lg:p-5"
+          quality={92}
+          className="object-contain p-2 sm:p-3 lg:p-4"
           sizes="(max-width: 1024px) 100vw, 58vw"
           priority
         />
@@ -60,7 +51,7 @@ export default function ProductGallery({ images, productName }: Props) {
               onClick={() => setSelectedId(img.id)}
               aria-label={`Ver imagem ${index + 1} de ${productName}`}
               aria-pressed={img.id === selected.id}
-              className={`relative aspect-[4/3] w-20 flex-shrink-0 snap-start overflow-hidden border-b-2 bg-gray-100 transition-colors sm:w-28 ${
+              className={`relative aspect-square w-20 flex-shrink-0 snap-start overflow-hidden border-b-2 bg-[#f4f6f8] transition-colors sm:w-28 ${
                 img.id === selected.id
                   ? "border-blue-700"
                   : "border-transparent hover:border-gray-400"
@@ -70,7 +61,8 @@ export default function ProductGallery({ images, productName }: Props) {
                 src={getPublicImageUrl(img.storage_path)}
                 alt={img.alt_text || productName}
                 fill
-                className="object-contain p-1"
+                quality={85}
+                className="object-cover object-center"
                 sizes="112px"
               />
             </button>
