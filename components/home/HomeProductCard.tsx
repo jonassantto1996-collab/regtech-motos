@@ -13,31 +13,21 @@ export default function HomeProductCard({ product }: { product: CatalogProductLi
       href={`/products/${product.slug}`}
       className="group min-w-[84vw] snap-center border-r border-gray-200 pr-4 outline-none last:border-r-0 focus-visible:ring-2 focus-visible:ring-blue-700 sm:min-w-[18rem] sm:snap-start sm:pr-7 lg:min-w-0 lg:border-r-0 lg:pr-0"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-        <span className="absolute left-3 top-3 z-30 inline-flex min-h-6 items-center rounded-full border border-emerald-200 bg-white/95 px-2.5 text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm">
+      <div className="relative aspect-square overflow-hidden bg-[#f4f6f8]">
+        <span className="absolute left-3 top-3 z-20 inline-flex min-h-6 items-center rounded-full border border-emerald-200 bg-white/95 px-2.5 text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm">
           <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
           <span className="capitalize">{product.availability}</span>
         </span>
 
         {mainImage && imageUrl ? (
-          <>
-            <Image
-              src={imageUrl}
-              alt=""
-              aria-hidden
-              fill
-              className="scale-110 object-cover object-center blur-2xl opacity-30"
-              sizes="(max-width: 639px) 84vw, (max-width: 1023px) 18rem, 25vw"
-            />
-            <div aria-hidden className="absolute inset-0 z-10 bg-white/30" />
-            <Image
-              src={imageUrl}
-              alt={mainImage.alt_text || `${product.brand} ${product.model}`}
-              fill
-              className="z-20 object-contain p-1.5 transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025] sm:p-2"
-              sizes="(max-width: 639px) 84vw, (max-width: 1023px) 18rem, 25vw"
-            />
-          </>
+          <Image
+            src={imageUrl}
+            alt={mainImage.alt_text || `${product.brand} ${product.model}`}
+            fill
+            quality={88}
+            className="object-cover object-center transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025]"
+            sizes="(max-width: 639px) 84vw, (max-width: 1023px) 18rem, 25vw"
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">Sem imagem</div>
         )}
