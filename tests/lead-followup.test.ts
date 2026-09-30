@@ -8,6 +8,9 @@ test("follow-up message changes with lead status",()=>{
  assert.match(interested,/retomar seu interesse/i);
  assert.match(sold,/parabéns pela conquista/i);
  assert.notEqual(interested,sold);
+ assert.match(interested,/no modelo Regtech TUI/i);
+ assert.doesNotMatch(interested,/moto elétrica/i);
+ assert.doesNotMatch(sold,/sobre duas rodas/i);
 });
 
 test("follow-up WhatsApp link prefixes Brazilian country code when needed",()=>{
