@@ -39,7 +39,7 @@ export default function Footer() {
                 Início
               </Link>
               <Link href="/products" className="text-sm text-blue-100 transition-colors hover:text-cyan-300">
-                Motos elétricas
+                Motos
               </Link>
             </nav>
           </div>
