@@ -21,15 +21,15 @@ export function buildLeadFollowupMessage(params: {
 
   const messages: Record<LeadStatus, string> = {
     NOVO:
-      `Olá, ${name}! Aqui é da Regtech Motors. Recebemos seu interesse na ${product}. Posso te passar mais informações e verificar a disponibilidade para você?`,
+      `Olá, ${name}! Aqui é da Regtech Motors. Recebemos seu interesse no modelo ${product}. Posso te passar mais informações e verificar a disponibilidade para você?`,
     EM_ATENDIMENTO:
-      `Olá, ${name}! Aqui é da Regtech Motors. Estou dando continuidade ao seu atendimento sobre a ${product}. Ficou alguma dúvida ou posso te ajudar com disponibilidade e condições?`,
+      `Olá, ${name}! Aqui é da Regtech Motors. Estou dando continuidade ao seu atendimento sobre o modelo ${product}. Ficou alguma dúvida ou posso te ajudar com disponibilidade e condições?`,
     INTERESSADO:
-      `Olá, ${name}! Aqui é da Regtech Motors. Passando para retomar seu interesse na ${product}. Se ainda fizer sentido para você, posso verificar a disponibilidade e te ajudar a continuar o atendimento.`,
+      `Olá, ${name}! Aqui é da Regtech Motors. Passando para retomar seu interesse no modelo ${product}. Se ainda fizer sentido para você, posso verificar a disponibilidade e te ajudar a continuar o atendimento.`,
     VENDA_REALIZADA:
-      `Olá, ${name}! Aqui é da Regtech Motors. Parabéns pela conquista da sua ${product}! 🎉 Esperamos que você aproveite muito essa nova experiência sobre duas rodas. Se precisar de qualquer orientação, suporte ou tiver alguma dúvida, pode contar com a nossa equipe.`,
+      `Olá, ${name}! Aqui é da Regtech Motors. Parabéns pela conquista do seu novo veículo, ${product}! 🎉 Esperamos que você aproveite muito essa nova experiência. Se precisar de qualquer orientação, suporte ou tiver alguma dúvida, pode contar com a nossa equipe.`,
     NAO_CONVERTIDO:
-      `Olá, ${name}! Aqui é da Regtech Motors. Você chegou a consultar a ${product}. Se ainda tiver interesse, posso te mostrar as opções disponíveis e tirar suas dúvidas.`,
+      `Olá, ${name}! Aqui é da Regtech Motors. Você chegou a consultar o modelo ${product}. Se ainda tiver interesse, posso te mostrar as opções disponíveis e tirar suas dúvidas.`,
   };
 
   return messages[params.status];
