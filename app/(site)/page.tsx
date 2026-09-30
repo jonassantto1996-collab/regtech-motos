@@ -168,11 +168,11 @@ export default async function Home() {
             )}
             {heroSettings?.mode !== "video" && (
               <p className="mt-4 text-[0.6875rem] font-medium uppercase tracking-[0.18em] text-blue-200 sm:mt-5 sm:text-xs sm:tracking-[0.2em]">
-                Motos · Mobilidade elétrica
+                Motos · Mobilidade
               </p>
             )}
             <h1 className="mt-4 text-[2.15rem] font-bold leading-[1.02] tracking-[-0.035em] text-white sm:text-4xl lg:text-6xl">
-              Mobilidade elétrica para o seu próximo caminho.
+              Mobilidade para o seu próximo caminho.
             </h1>
             <Link
               href="/products"
@@ -216,7 +216,7 @@ export default async function Home() {
 
             <Link
               href="/products"
-              aria-label="Abrir catálogo de motos elétricas"
+              aria-label="Abrir catálogo de motos"
               className="inline-flex h-10 w-10 items-center justify-center border border-gray-300 text-lg text-gray-900 transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-700 hover:bg-blue-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 active:translate-y-0 sm:h-11 sm:w-11 sm:text-xl"
             >
               <span aria-hidden>→</span>
