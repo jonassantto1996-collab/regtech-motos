@@ -16,7 +16,7 @@ import {
 export const metadata: Metadata = {
   title: "Catálogo de Motos — Regtech Motors",
   description:
-    "Confira as motos elétricas disponíveis no catálogo da Regtech Motors: preços, cores e especificações.",
+    "Confira as motos disponíveis na Regtech Motors, incluindo modelos elétricos e a combustão: preços, cores e especificações.",
   alternates: { canonical: "/products" },
 };
 
@@ -82,7 +82,7 @@ export default async function ProductsPage({
           </p>
           <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <h1 className="max-w-2xl text-[1.75rem] font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-              Catálogo de motos elétricas
+              Catálogo de motos
             </h1>
             <p className="max-w-md text-sm leading-6 text-blue-100 sm:text-base">
               Explore os modelos disponíveis e encontre a opção que combina
