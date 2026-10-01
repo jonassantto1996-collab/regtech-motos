@@ -1,10 +1,10 @@
 export default function ContactRider() {
   return (
-    <div className="ios-contact-rider relative min-h-[32rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[38rem] lg:min-h-full">
+    <div className="ios-contact-rider relative min-h-[36rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[38rem] lg:min-h-full">
       <img
         src="https://bjodwjskwnpnqedjasid.supabase.co/storage/v1/object/public/product-images/site/regtech-rider-original.png"
         alt="Personagem Regtech Motors montado em uma moto elétrica"
-        className="ios-contact-rider-image absolute bottom-[-0.75rem] left-[62%] top-auto w-[105%] max-w-[26rem] -translate-x-1/2 object-contain sm:bottom-auto sm:left-[58%] sm:top-[-2.5rem] sm:w-[116%] sm:max-w-none lg:left-[61%] lg:top-[-5rem] lg:w-[108%]"
+        className="ios-contact-rider-image absolute left-0 top-[13.75rem] h-[calc(100%-13.75rem)] w-full max-w-none translate-x-0 object-contain object-bottom sm:left-[58%] sm:top-[-2.5rem] sm:h-auto sm:w-[116%] sm:-translate-x-1/2 lg:left-[61%] lg:top-[-5rem] lg:w-[108%]"
         loading="eager"
         decoding="async"
       />
