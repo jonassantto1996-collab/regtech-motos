@@ -5,13 +5,13 @@ export const REGTECH_MOTORS = {
   telephone: "+55 94 99208-6088",
   whatsapp: "https://wa.me/5594992086088",
   instagram: "https://www.instagram.com/regtechmotors",
-  streetAddress: "Av. dos Estados, 241",
+  streetAddress: "Av. dos Estados, 216",
   addressLocality: "Tucumã",
   addressRegion: "PA",
   postalCode: "68385-000",
   addressCountry: "BR",
   mapUrl:
-    "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000",
+    "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20216%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000",
 } as const;
 
 export function getBusinessJsonLd() {
