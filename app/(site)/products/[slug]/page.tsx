@@ -6,6 +6,7 @@ import InterestModal from "@/components/catalog/InterestModal";
 import { getProductBySlug } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { formatPriceBRL } from "@/lib/catalog/format";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +58,7 @@ export default async function ProductPage({
 
   if (!product) notFound();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const siteUrl = getSiteUrl();
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
     product.product_images[0];
@@ -76,7 +77,7 @@ export default async function ProductPage({
       "@type": "Offer",
       priceCurrency: "BRL",
       price: product.price,
-      ...(siteUrl ? { url: `${siteUrl}/products/${product.slug}` } : {}),
+      url: `${siteUrl}/products/${product.slug}`,
     },
   };
 
