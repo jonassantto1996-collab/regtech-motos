@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
 import HomeProductCard from "@/components/home/HomeProductCard";
 import HeroMedia from "@/components/home/HeroMedia";
@@ -37,6 +38,21 @@ const STORE_INSTAGRAM_CONTACTS = [
 
 // Quantidade de produtos mostrados na seção "Motos".
 const FEATURED_LIMIT = 4;
+
+export const metadata: Metadata = {
+  title: "Regtech Motors | Motos em Tucumã, PA",
+  description:
+    "Regtech Motors em Tucumã, Pará: motos elétricas e a combustão, catálogo online, informações dos modelos e atendimento direto pelo WhatsApp.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Regtech Motors | Motos em Tucumã, PA",
+    description:
+      "Loja de motos elétricas e a combustão em Tucumã, Pará. Conheça os modelos disponíveis e fale com a equipe Regtech Motors.",
+    type: "website",
+    locale: "pt_BR",
+    siteName: "Regtech Motors",
+  },
+};
 
 export default async function Home() {
   // Mesma consulta usada pelo catálogo público (lib/catalog/queries.ts) —
