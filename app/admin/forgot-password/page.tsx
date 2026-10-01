@@ -5,7 +5,9 @@ import "../admin.css";
 const errorMessages: Record<string, string> = {
   missing_email: "Informe o e-mail da conta administrativa.",
   invalid_email: "Informe um endereço de e-mail válido.",
-  invalid_link: "O link de recuperação é inválido ou expirou. Solicite um novo.",
+  invalid_link: "O link de acesso é inválido ou expirou. Solicite um novo.",
+  rate_limited: "Muitos e-mails foram solicitados em pouco tempo. Aguarde alguns minutos e tente novamente.",
+  send_failed: "Não foi possível enviar o e-mail agora. Tente novamente em alguns minutos.",
 };
 
 export default async function ForgotPasswordPage({ searchParams }: { searchParams: Promise<{ error?: string; sent?: string }> }) {
