@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminSession } from "../products/actions";
+import { logAdminAction, requireAdminSession } from "../products/actions";
 import { LEAD_STATUSES, type LeadStatus } from "@/lib/leads/types";
 
 /**
@@ -12,7 +12,7 @@ import { LEAD_STATUSES, type LeadStatus } from "@/lib/leads/types";
  * em toggleProductActive.
  */
 export async function updateLeadStatus(leadId: string, formData: FormData) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
 
   const rawStatus = formData.get("status");
   if (
@@ -32,5 +32,6 @@ export async function updateLeadStatus(leadId: string, formData: FormData) {
     redirect("/admin/leads?error=server_error");
   }
 
+  await logAdminAction(adminUserId, "lead.status_update", "lead", leadId, { status: rawStatus });
   redirect("/admin/leads");
 }

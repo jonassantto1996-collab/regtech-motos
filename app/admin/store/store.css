@@ -1,0 +1,60 @@
+/* Store edit / inventory polish — isolated from the global admin stylesheet */
+
+.store-edit-heading{align-items:center}
+.store-edit-heading .secondary-action{min-height:42px}
+
+.store-ops-panel{margin-top:16px;min-height:0;border-radius:12px;border-color:#dfe6ee;box-shadow:0 5px 18px #10243a08}
+.store-panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding-bottom:17px;border-bottom:1px solid #e8edf3}
+.store-panel-heading>div>span{font-size:9px;font-weight:800;letter-spacing:.16em;color:#087cff}
+.store-panel-heading h2{font-size:17px!important;margin:5px 0 5px!important;color:#172436;letter-spacing:-.2px}
+.store-panel-heading p{margin:0;max-width:680px;font-size:11px;line-height:1.55;color:#758397}
+.store-panel-heading>.status-badge{white-space:nowrap;margin-top:3px}
+
+.polished-variant-form{grid-template-columns:1.4fr 1.05fr .75fr .65fr .65fr auto;margin-top:20px;gap:10px}
+.polished-variant-form label{display:grid;gap:6px;align-self:end}
+.polished-variant-form label>span{font-size:9px;font-weight:700;color:#58677a}
+.polished-variant-form .admin-control{min-height:42px}
+.polished-variant-form .admin-primary-button{min-height:42px;white-space:nowrap;align-self:end}
+
+.polished-variant-list{display:grid;gap:10px;margin-top:20px}
+.polished-variant-row{grid-template-columns:minmax(180px,1fr) auto minmax(370px,1.35fr);gap:16px;padding:14px 15px;border:1px solid #e5ebf2;border-radius:10px;background:#fbfdff}
+.polished-variant-row+.polished-variant-row{border-top:1px solid #e5ebf2}
+.variant-meta{min-width:0}
+.variant-meta strong{font-size:12px}
+.variant-meta small{font-size:9px;color:#758397;margin-top:4px}
+.polished-variant-row .stock-pill{align-self:center}
+.variant-stock-form{display:grid!important;grid-template-columns:80px minmax(150px,1fr) auto;gap:8px;align-items:center}
+.variant-stock-form .admin-control{min-height:38px}
+.variant-stock-form .admin-secondary-button{min-height:38px!important;white-space:nowrap}
+
+.store-inline-empty{margin-top:18px;padding:22px;border:1px dashed #ccd7e4;border-radius:10px;background:#f8fafc;display:grid;gap:5px;text-align:center}
+.store-inline-empty strong{font-size:12px;color:#253548}
+.store-inline-empty span{font-size:10px;color:#7a8796}
+
+.polished-history-list{display:grid;gap:8px;margin-top:18px}
+.polished-history-row{grid-template-columns:minmax(180px,1fr) auto auto;gap:14px;padding:13px 14px;border:1px solid #e7ecf2;border-radius:9px;background:#fbfdff}
+.polished-history-row+.polished-history-row{border-top:1px solid #e7ecf2}
+.polished-history-row strong{font-size:11px}
+.polished-history-row small{font-size:9px;color:#758397}
+.polished-history-row .inventory-delta{align-self:center}
+.polished-history-row .inventory-change{align-self:center;min-width:68px}
+
+@media(max-width:1100px){
+  .polished-variant-form{grid-template-columns:1fr 1fr 1fr}
+  .polished-variant-form .admin-primary-button{width:100%}
+  .polished-variant-row{grid-template-columns:1fr auto}
+  .variant-stock-form{grid-column:1/-1}
+}
+
+@media(max-width:800px){
+  .store-edit-heading{align-items:flex-start}
+  .store-edit-heading .secondary-action{width:100%}
+  .store-panel-heading{display:grid;gap:10px}
+  .store-panel-heading>.status-badge{justify-self:start}
+  .polished-variant-form{grid-template-columns:1fr}
+  .polished-variant-row{grid-template-columns:1fr auto;padding:13px}
+  .variant-stock-form{grid-template-columns:1fr;grid-column:1/-1}
+  .variant-stock-form .admin-secondary-button{width:100%}
+  .polished-history-row{grid-template-columns:1fr auto}
+  .polished-history-row .inventory-change{grid-column:1/-1;text-align:left}
+}

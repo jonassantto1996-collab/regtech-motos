@@ -11,6 +11,7 @@
  */
 
 export const PRODUCT_IMAGES_BUCKET = "product-images";
+export const HOME_MEDIA_BUCKET = "home-media";
 
 // Espelha exatamente a configuração aplicada em storage.buckets (migration
 // create_product_images_bucket). Mudar aqui não muda o banco — os dois
@@ -22,11 +23,15 @@ export const ALLOWED_IMAGE_MIME_TYPES = [
 ] as const;
 
 export const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB
+export const MAX_HOME_MEDIA_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB
+export const ALLOWED_VIDEO_MIME_TYPES = ["video/mp4"] as const;
+export const MAX_HERO_VIDEO_SIZE_BYTES = 15 * 1024 * 1024; // 15 MB
 
 const MIME_TO_EXTENSION: Record<string, string> = {
   "image/jpeg": "jpg",
   "image/png": "png",
   "image/webp": "webp",
+  "video/mp4": "mp4",
 };
 
 export type ImageValidationResult =
@@ -80,6 +85,58 @@ export function buildProductImagePath(
   return `products/${productId}/${fileName}`;
 }
 
+
+/** Gera um caminho isolado para uma imagem exclusiva do Hero da Home. */
+export function buildHeroImagePath(mimeType: string): string {
+  const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
+  return `home-hero/${crypto.randomUUID()}.${extension}`;
+}
+
+export type HeroVideoViewport = "desktop" | "tablet" | "mobile";
+
+export function buildHeroVideoPath(viewport: HeroVideoViewport): string {
+  return `home-hero/video/${viewport}/${crypto.randomUUID()}.mp4`;
+}
+
+export function validateHeroVideoFile(file: {
+  type: string;
+  size: number;
+}): ImageValidationResult {
+  if (
+    !ALLOWED_VIDEO_MIME_TYPES.includes(
+      file.type as (typeof ALLOWED_VIDEO_MIME_TYPES)[number]
+    )
+  ) {
+    return { valid: false, reason: "Use vídeo MP4 (H.264)." };
+  }
+
+  if (file.size > MAX_HERO_VIDEO_SIZE_BYTES) {
+    return { valid: false, reason: "Vídeo maior que 15 MB." };
+  }
+
+  return { valid: true };
+}
+
+export async function validateMp4Signature(file: File): Promise<ImageValidationResult> {
+  const header = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+  const hasFtyp =
+    header.length >= 12 &&
+    header[4] === 0x66 &&
+    header[5] === 0x74 &&
+    header[6] === 0x79 &&
+    header[7] === 0x70;
+
+  return hasFtyp
+    ? { valid: true }
+    : { valid: false, reason: "O arquivo não possui uma assinatura MP4 válida." };
+}
+
+/** Gera caminho isolado para fotos da seção de prova social da Home. */
+export function buildSocialProofImagePath(mimeType: string): string {
+  const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
+  return `home-social-proof/${crypto.randomUUID()}.${extension}`;
+}
+
 /**
  * Converte um storage_path em URL pública utilizável pelo frontend.
  * O bucket product-images é público — nenhuma credencial é necessária
@@ -88,4 +145,60 @@ export function buildProductImagePath(
 export function getPublicImageUrl(storagePath: string): string {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   return `${supabaseUrl}/storage/v1/object/public/${PRODUCT_IMAGES_BUCKET}/${storagePath}`;
+}
+
+
+/**
+ * Defesa adicional server-side: confirma a assinatura binária real do arquivo.
+ * O MIME enviado pelo navegador não é uma fronteira de segurança.
+ */
+export async function validateImageSignature(file: File): Promise<ImageValidationResult> {
+  const header = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+  const isJpeg = header.length >= 3 && header[0] === 0xff && header[1] === 0xd8 && header[2] === 0xff;
+  const isPng = header.length >= 8 &&
+    header[0] === 0x89 && header[1] === 0x50 && header[2] === 0x4e && header[3] === 0x47 &&
+    header[4] === 0x0d && header[5] === 0x0a && header[6] === 0x1a && header[7] === 0x0a;
+  const isWebp = header.length >= 12 &&
+    header[0] === 0x52 && header[1] === 0x49 && header[2] === 0x46 && header[3] === 0x46 &&
+    header[8] === 0x57 && header[9] === 0x45 && header[10] === 0x42 && header[11] === 0x50;
+
+  const matches =
+    (file.type === "image/jpeg" && isJpeg) ||
+    (file.type === "image/png" && isPng) ||
+    (file.type === "image/webp" && isWebp);
+
+  return matches
+    ? { valid: true }
+    : { valid: false, reason: "O conteúdo do arquivo não corresponde ao formato de imagem declarado." };
+}
+
+
+/** Validação dedicada às imagens editoriais da Home (arquivos maiores). */
+export function validateHomeMediaFile(file: {
+  type: string;
+  size: number;
+}): ImageValidationResult {
+  if (
+    !ALLOWED_IMAGE_MIME_TYPES.includes(
+      file.type as (typeof ALLOWED_IMAGE_MIME_TYPES)[number]
+    )
+  ) {
+    return { valid: false, reason: "Use JPEG, PNG ou WebP." };
+  }
+
+  if (file.size > MAX_HOME_MEDIA_SIZE_BYTES) {
+    return { valid: false, reason: "Arquivo maior que 15 MB." };
+  }
+
+  return { valid: true };
+}
+
+export function buildHomeEditorialImagePath(mimeType: string): string {
+  const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
+  return `home-editorial/${crypto.randomUUID()}.${extension}`;
+}
+
+export function getHomeMediaUrl(storagePath: string): string {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/${HOME_MEDIA_BUCKET}/${storagePath}`;
 }

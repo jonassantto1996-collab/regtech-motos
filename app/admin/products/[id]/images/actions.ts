@@ -3,10 +3,11 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminSession } from "../../actions";
+import { logAdminAction, requireAdminSession } from "../../actions";
 import {
   PRODUCT_IMAGES_BUCKET,
   validateImageFile,
+  validateImageSignature,
   buildProductImagePath,
 } from "@/lib/supabase/storage";
 
@@ -26,7 +27,7 @@ export async function uploadProductImage(
   productId: string,
   formData: FormData
 ) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
 
   const file = formData.get("file");
   if (!(file instanceof File) || file.size === 0) {
@@ -38,6 +39,11 @@ export async function uploadProductImage(
     size: (file as File).size,
   });
   if (!validation.valid) {
+    redirect(`${editPath(productId)}?error=invalid_image`);
+  }
+
+  const signatureValidation = await validateImageSignature(file as File);
+  if (!signatureValidation.valid) {
     redirect(`${editPath(productId)}?error=invalid_image`);
   }
 
@@ -93,6 +99,7 @@ export async function uploadProductImage(
     redirect(`${editPath(productId)}?error=upload_failed`);
   }
 
+  await logAdminAction(adminUserId, "product_image.upload", "product", productId, { storage_path: storagePath, is_main: isFirstImage });
   revalidatePath(editPath(productId));
   redirect(editPath(productId));
 }
@@ -113,7 +120,7 @@ export async function uploadProductImage(
  * desfeito por causa disso) e o admin é avisado para definir manualmente.
  */
 export async function deleteProductImage(imageId: string, productId: string) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
   const admin = createAdminClient();
 
   const { data: image, error: fetchError } = await admin
@@ -183,6 +190,7 @@ export async function deleteProductImage(imageId: string, productId: string) {
     // já documentado e aceito na análise da etapa.
   }
 
+  await logAdminAction(adminUserId, "product_image.delete", "product", productId, { image_id: imageId, was_main: typedImage.is_main });
   revalidatePath(editPath(productId));
 
   if (promotionFailed) {
@@ -206,7 +214,7 @@ export async function setMainProductImage(
   imageId: string,
   productId: string
 ) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
   const admin = createAdminClient();
 
   const { data: targetImage, error: fetchError } = await admin
@@ -271,6 +279,7 @@ export async function setMainProductImage(
     redirect(`${editPath(productId)}?error=main_image_switch_failed`);
   }
 
+  await logAdminAction(adminUserId, "product_image.set_main", "product", productId, { image_id: imageId, previous_main_id: previousMainId });
   revalidatePath(editPath(productId));
   redirect(editPath(productId));
 }
@@ -281,7 +290,7 @@ async function swapDisplayOrder(
   imageId: string,
   direction: "up" | "down"
 ) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
   const admin = createAdminClient();
 
   const { data: images, error } = await admin
@@ -332,6 +341,7 @@ async function swapDisplayOrder(
     redirect(`${editPath(productId)}?error=reorder_failed`);
   }
 
+  await logAdminAction(adminUserId, "product_image.reorder", "product", productId, { image_id: imageId, direction });
   revalidatePath(editPath(productId));
   redirect(editPath(productId));
 }
@@ -350,7 +360,7 @@ export async function updateImageAltText(
   productId: string,
   formData: FormData
 ) {
-  await requireAdminSession();
+  const adminUserId = await requireAdminSession();
   const admin = createAdminClient();
 
   const { data: image, error: fetchError } = await admin
@@ -375,6 +385,7 @@ export async function updateImageAltText(
     redirect(`${editPath(productId)}?error=alt_text_update_failed`);
   }
 
+  await logAdminAction(adminUserId, "product_image.alt_text_update", "product", productId, { image_id: imageId, has_alt_text: Boolean(altText) });
   revalidatePath(editPath(productId));
   redirect(editPath(productId));
 }

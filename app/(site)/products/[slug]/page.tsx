@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductGallery from "@/components/catalog/ProductGallery";
@@ -5,9 +6,8 @@ import InterestModal from "@/components/catalog/InterestModal";
 import { getProductBySlug } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { formatPriceBRL } from "@/lib/catalog/format";
+import { getSiteUrl } from "@/lib/site-url";
 
-// Renderização totalmente dinâmica (sem cache/revalidation) — mesma
-// decisão aplicada à listagem.
 export const dynamic = "force-dynamic";
 
 type Params = { slug: string };
@@ -21,7 +21,6 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    // Não revela se o slug não existe ou se o produto está inativo.
     return { title: "Produto não encontrado — Regtech Motors" };
   }
 
@@ -57,11 +56,9 @@ export default async function ProductPage({
   const { slug } = await params;
   const product = await getProductBySlug(slug);
 
-  if (!product) {
-    notFound();
-  }
+  if (!product) notFound();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const siteUrl = getSiteUrl();
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
     product.product_images[0];
@@ -69,10 +66,6 @@ export default async function ProductPage({
     ? getPublicImageUrl(mainImage.storage_path)
     : undefined;
 
-  // Dados estruturados conservadores: só campos que temos com segurança.
-  // "availability" fica de fora de propósito (Decisão 8) — o campo atual
-  // no banco é texto livre e mapear errado pra um enum do schema.org seria
-  // pior do que não incluir.
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -84,102 +77,131 @@ export default async function ProductPage({
       "@type": "Offer",
       priceCurrency: "BRL",
       price: product.price,
-      ...(siteUrl
-        ? { url: `${siteUrl}/products/${product.slug}` }
-        : {}),
+      url: `${siteUrl}/products/${product.slug}`,
     },
   };
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
+    <main className="bg-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <ProductGallery
-          images={product.product_images}
-          productName={`${product.brand} ${product.model}`}
-        />
+      <div className="mx-auto max-w-7xl px-4 pb-14 pt-4 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8 lg:pb-28">
+        <Link
+          href="/products"
+          className="inline-flex min-h-10 items-center text-xs font-semibold uppercase tracking-[0.16em] text-gray-500 transition-colors hover:text-blue-700"
+        >
+          ← Voltar ao catálogo
+        </Link>
 
-        <div>
-          <span className="text-sm uppercase tracking-wide text-gray-500">
-            {product.brand}
-          </span>
-          <h1 className="text-3xl font-bold text-gray-900">
-            {product.model}
-          </h1>
-          <p className="mt-2 text-2xl font-semibold text-gray-900">
-            {formatPriceBRL(product.price)}
-          </p>
+        <div className="mt-3 grid gap-7 sm:mt-5 sm:gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 xl:gap-20">
+          <ProductGallery
+            images={product.product_images}
+            productName={`${product.brand} ${product.model}`}
+          />
 
-          <InterestModal productId={product.id} />
+          <div className="lg:sticky lg:top-6 lg:self-start lg:pt-5">
+            <div className="mb-5 flex flex-wrap items-center gap-2">
+              <span className="inline-flex min-h-7 items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-emerald-700">
+                <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
+                <span className="capitalize">{product.availability}</span>
+              </span>
+              <span className="inline-flex min-h-7 items-center rounded-full border border-gray-200 bg-gray-50 px-3 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-gray-600">
+                {product.category}
+              </span>
+            </div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-700">
+              {product.brand}
+            </p>
+            <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-950 sm:text-5xl">
+              {product.model}
+            </h1>
+            <p className="mt-4 text-2xl font-semibold tracking-tight text-gray-900 sm:mt-5 sm:text-3xl">
+              {formatPriceBRL(product.price)}
+            </p>
 
-          <dl className="mt-6 space-y-2 text-sm">
-            <div className="flex justify-between border-b border-gray-100 pb-2">
-              <dt className="text-gray-500">Disponibilidade</dt>
-              <dd className="text-gray-900">{product.availability}</dd>
+            <div className="mt-6 border-y border-gray-200 py-6 sm:mt-8 sm:py-7">
+              <InterestModal productId={product.id} />
+              <div className="mt-4 grid gap-2 text-sm text-gray-500">
+                <p>Registre seu interesse para continuar o atendimento pelo WhatsApp.</p>
+                <p className="flex items-center gap-2 text-xs text-gray-500">
+                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden />
+                  Atendimento direto com a equipe Regtech.
+                </p>
+              </div>
             </div>
-            <div className="flex justify-between border-b border-gray-100 pb-2">
-              <dt className="text-gray-500">Garantia</dt>
-              <dd className="text-gray-900">{product.warranty}</dd>
-            </div>
-            <div className="flex justify-between border-b border-gray-100 pb-2">
-              <dt className="text-gray-500">Retirada disponível</dt>
-              <dd className="text-gray-900">
-                {product.pickup_available ? "Sim" : "Não"}
-              </dd>
-            </div>
-            <div className="flex justify-between border-b border-gray-100 pb-2">
-              <dt className="text-gray-500">Categoria</dt>
-              <dd className="text-gray-900">{product.category}</dd>
-            </div>
-          </dl>
 
-          {product.product_colors.length > 0 && (
-            <div className="mt-6">
-              <h2 className="mb-2 font-semibold text-gray-900">
-                Cores disponíveis
-              </h2>
-              <ul className="flex flex-wrap gap-2">
-                {product.product_colors.map((c) => (
-                  <li
-                    key={c.id}
-                    className="rounded-full border border-gray-300 px-3 py-1 text-sm text-gray-700"
-                  >
-                    {c.color}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            <dl className="divide-y divide-gray-200 border-b border-gray-200 text-sm">
+              <div className="grid grid-cols-2 gap-6 py-4">
+                <dt className="text-gray-500">Disponibilidade</dt>
+                <dd className="text-right font-medium text-gray-950">{product.availability}</dd>
+              </div>
+              <div className="grid grid-cols-2 gap-6 py-4">
+                <dt className="text-gray-500">Garantia</dt>
+                <dd className="text-right font-medium text-gray-950">{product.warranty}</dd>
+              </div>
+              <div className="grid grid-cols-2 gap-6 py-4">
+                <dt className="text-gray-500">Retirada disponível</dt>
+                <dd className="text-right font-medium text-gray-950">
+                  {product.pickup_available ? "Sim" : "Não"}
+                </dd>
+              </div>
+              <div className="grid grid-cols-2 gap-6 py-4">
+                <dt className="text-gray-500">Categoria</dt>
+                <dd className="text-right font-medium text-gray-950">{product.category}</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-9 border-t border-gray-200 pt-8 sm:mt-16 sm:gap-10 sm:pt-12 lg:mt-16 lg:grid-cols-2 lg:gap-16 lg:pt-14">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+              Detalhes
+            </p>
+            <h2 className="mt-3 text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
+              Informações do modelo
+            </h2>
+
+            {product.description ? (
+              <p className="mt-6 max-w-xl whitespace-pre-line text-base leading-7 text-gray-600">
+                {product.description}
+              </p>
+            ) : (
+              <p className="mt-6 text-sm text-gray-500">
+                Consulte a equipe Regtech para mais informações sobre este modelo.
+              </p>
+            )}
+
+            {product.product_colors.length > 0 && (
+              <div className="mt-9">
+                <h3 className="text-sm font-semibold text-gray-950">Cores disponíveis</h3>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {product.product_colors.map((c) => (
+                    <li key={c.id} className="rounded-full border border-gray-200 bg-gray-50 px-3 py-2 text-xs font-medium text-gray-700">
+                      {c.color}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
           {product.product_specs.length > 0 && (
-            <div className="mt-6">
-              <h2 className="mb-2 font-semibold text-gray-900">
-                Especificações técnicas
-              </h2>
-              <dl className="space-y-1 text-sm">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700">
+                Ficha técnica
+              </p>
+              <dl className="mt-5 divide-y divide-gray-200 border-y border-gray-200">
                 {product.product_specs.map((s) => (
-                  <div
-                    key={s.id}
-                    className="flex justify-between border-b border-gray-100 pb-1"
-                  >
+                  <div key={s.id} className="grid grid-cols-2 gap-6 py-4 text-sm">
                     <dt className="text-gray-500">{s.spec_key}</dt>
-                    <dd className="text-gray-900">{s.spec_value}</dd>
+                    <dd className="text-right font-medium text-gray-950">{s.spec_value}</dd>
                   </div>
                 ))}
               </dl>
-            </div>
-          )}
-
-          {product.description && (
-            <div className="mt-6">
-              <h2 className="mb-2 font-semibold text-gray-900">Descrição</h2>
-              <p className="whitespace-pre-line text-gray-700">
-                {product.description}
-              </p>
             </div>
           )}
         </div>

@@ -268,3 +268,24 @@ export async function getActiveProductPriceBounds(): Promise<{
     max: Number(maxResult.data.price),
   };
 }
+
+
+/** Busca um produto ativo por ID para usos editoriais, como o Hero da Home. */
+export async function getActiveProductListItemById(
+  id: string
+): Promise<CatalogProductListItem | null> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select(
+      `id, brand, model, slug, category, description, price, availability, warranty, pickup_available,
+       product_images(id, storage_path, display_order, is_main, alt_text)`
+    )
+    .eq("id", id)
+    .eq("is_active", true)
+    .eq("product_images.is_main", true)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return data as CatalogProductListItem;
+}

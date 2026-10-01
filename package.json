@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "node --experimental-strip-types --experimental-specifier-resolution=node --test tests/*.test.ts",
+    "backup:storage": "node scripts/backup-storage.mjs",
+    "restore:storage": "node scripts/restore-storage.mjs"
   },
   "dependencies": {
     "next": "16.3.5",

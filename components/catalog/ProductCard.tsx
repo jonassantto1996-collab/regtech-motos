@@ -9,22 +9,28 @@ export default function ProductCard({
 }: {
   product: CatalogProductListItem;
 }) {
-  // A consulta já traz só a imagem principal embutida (quando existe).
   const mainImage = product.product_images[0];
+  const imageUrl = mainImage ? getPublicImageUrl(mainImage.storage_path) : null;
 
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="group flex flex-col overflow-hidden rounded-lg border border-gray-200 transition hover:shadow-md"
+      className="group flex min-w-0 flex-col border-t border-gray-200 pt-4 outline-none transition-colors duration-300 hover:border-blue-300 focus-visible:border-blue-700 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-4 sm:pt-5"
     >
-      <div className="relative aspect-square w-full bg-gray-100">
-        {mainImage ? (
+      <div className="relative aspect-square w-full overflow-hidden bg-[#f4f6f8] transition-colors duration-500 group-hover:bg-[#eef3f8]">
+        <div className="absolute left-3 top-3 z-20 inline-flex min-h-7 items-center rounded-full border border-emerald-200 bg-white/95 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm backdrop-blur sm:left-4 sm:top-4">
+          <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
+          <span className="capitalize">{product.availability}</span>
+        </div>
+
+        {mainImage && imageUrl ? (
           <Image
-            src={getPublicImageUrl(mainImage.storage_path)}
+            src={imageUrl}
             alt={mainImage.alt_text || `${product.brand} ${product.model}`}
             fill
-            className="object-cover transition group-hover:scale-105"
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            quality={88}
+            className="object-cover object-center transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025]"
+            sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 36rem"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">
@@ -32,16 +38,30 @@ export default function ProductCard({
           </div>
         )}
       </div>
-      <div className="flex flex-1 flex-col gap-1 p-4">
-        <span className="text-xs uppercase tracking-wide text-gray-500">
-          {product.brand}
-        </span>
-        <h3 className="font-medium text-gray-900">{product.model}</h3>
-        <p className="mt-auto text-lg font-semibold text-gray-900">
+
+      <div className="flex flex-1 flex-col pt-5">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+          <span className="text-[0.6875rem] font-semibold uppercase tracking-[0.22em] text-blue-700">
+            {product.brand}
+          </span>
+          <span className="text-[0.625rem] uppercase tracking-[0.16em] text-gray-400">
+            {product.category}
+          </span>
+        </div>
+
+        <h3 className="mt-1 text-xl font-semibold tracking-tight text-gray-950 transition-colors duration-300 group-hover:text-blue-800 sm:text-2xl">
+          {product.model}
+        </h3>
+
+        <p className="mt-3 text-base font-semibold text-gray-800 sm:text-lg">
           {formatPriceBRL(product.price)}
         </p>
-        <span className="text-xs font-medium uppercase tracking-wide text-blue-700 transition group-hover:text-blue-900">
-          Ver modelo →
+
+        <span className="mt-5 inline-flex min-h-11 items-center justify-between border-b border-gray-300 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-gray-900 transition-colors group-hover:border-blue-700 group-hover:text-blue-700">
+          Ver detalhes
+          <span aria-hidden className="text-lg font-normal transition-transform duration-300 motion-safe:group-hover:translate-x-1.5">
+            →
+          </span>
         </span>
       </div>
     </Link>

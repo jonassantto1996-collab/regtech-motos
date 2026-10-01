@@ -7,6 +7,8 @@ import {
   normalizeAndValidateWhatsapp,
 } from "./validation";
 import { buildWhatsappLink } from "./whatsapp";
+import { headers } from "next/headers";
+import { hashRateLimitKey, isRateLimitAllowed } from "./rate-limit";
 
 export type CreateLeadInput = {
   fullName: string;
@@ -28,6 +30,37 @@ export type CreateLeadResult =
 // de service_role porque a RLS pública não permite SELECT em leads.
 const RATE_LIMIT_WINDOW_SECONDS = 60;
 
+function reportLeadError(stage: string, error: unknown, context: Record<string, unknown> = {}) {
+  console.error(JSON.stringify({
+    level: "error",
+    scope: "lead_intake",
+    stage,
+    context,
+    error: error instanceof Error ? error.message : String(error),
+    at: new Date().toISOString(),
+  }));
+}
+
+async function consumeRateLimit(key: string, windowSeconds: number, maxRequests: number) {
+  const admin = createAdminClient();
+  const { data, error } = await admin.rpc("consume_lead_rate_limit", {
+    p_key_hash: hashRateLimitKey(key, process.env.SUPABASE_SERVICE_ROLE_KEY),
+    p_window_seconds: windowSeconds,
+    p_max_requests: maxRequests,
+  });
+  if (error) reportLeadError("rate_limit", error);
+  return isRateLimitAllowed(data, error); // fail closed se a proteção estiver indisponível
+}
+
+async function getRequestOrigin(): Promise<string | null> {
+  const h = await headers();
+  // Na Vercel, x-forwarded-for é definido pela infraestrutura. Usa apenas o
+  // primeiro endereço e nunca persiste o IP bruto: somente hash server-side.
+  const forwarded = h.get("x-forwarded-for");
+  const ip = forwarded?.split(",")[0]?.trim();
+  return ip || null;
+}
+
 export async function createLead(
   input: CreateLeadInput
 ): Promise<CreateLeadResult> {
@@ -47,29 +80,18 @@ export async function createLead(
     return { success: false, error: "Produto inválido." };
   }
 
-  const admin = createAdminClient();
-  const windowStart = new Date(
-    Date.now() - RATE_LIMIT_WINDOW_SECONDS * 1000
-  ).toISOString();
+  // Proteção em camadas: telefone + origem. Os contadores são atualizados
+  // atomicamente no Postgres e não armazenam IP/telefone em texto puro.
+  const origin = await getRequestOrigin();
+  const [phoneAllowed, originAllowed] = await Promise.all([
+    consumeRateLimit(`phone:${whatsappResult.value}`, RATE_LIMIT_WINDOW_SECONDS, 1),
+    origin ? consumeRateLimit(`origin:${origin}`, 60, 8) : Promise.resolve(true),
+  ]);
 
-  const { count: recentCount, error: rateLimitError } = await admin
-    .from("leads")
-    .select("id", { count: "exact", head: true })
-    .eq("whatsapp", whatsappResult.value)
-    .gte("created_at", windowStart);
-
-  if (rateLimitError) {
-    console.error("[leads] erro ao checar rate limit:", rateLimitError);
+  if (!phoneAllowed || !originAllowed) {
     return {
       success: false,
-      error: "Não foi possível processar sua solicitação. Tente novamente.",
-    };
-  }
-
-  if ((recentCount ?? 0) > 0) {
-    return {
-      success: false,
-      error: "Aguarde um momento antes de enviar novamente.",
+      error: "Muitas tentativas em pouco tempo. Aguarde um momento e tente novamente.",
     };
   }
 
@@ -87,7 +109,7 @@ export async function createLead(
     .maybeSingle();
 
   if (productError) {
-    console.error("[leads] erro ao confirmar produto:", productError);
+    reportLeadError("product_lookup", productError, { productId: input.productId });
     return {
       success: false,
       error: "Não foi possível confirmar o produto. Tente novamente.",
@@ -119,14 +141,16 @@ export async function createLead(
     source: "catalogo",
   };
 
-  // 6. GRAVAR O LEAD NO SUPABASE. Client de anon key — a RLS já permite
-  // INSERT público restrito a status = 'NOVO' (confirmado via pg_policies).
-  const { error: insertError } = await supabase
+  // 6. GRAVAR O LEAD SOMENTE PELO SERVIDOR. O navegador/anon key não possui
+  // permissão de INSERT em leads. Assim, toda criação obrigatoriamente passa
+  // pela validação e pelo rate limit acima antes de usar a service_role.
+  const admin = createAdminClient();
+  const { error: insertError } = await admin
     .from("leads")
     .insert(leadRecord);
 
   if (insertError) {
-    console.error("[leads] erro ao criar lead:", insertError);
+    reportLeadError("lead_insert", insertError, { productId: input.productId });
     return {
       success: false,
       error: "Não foi possível registrar seu interesse. Tente novamente.",
