@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { getSiteUrl } from "@/lib/site-url";
 
 // Sem essa diretiva, o Next.js poderia gerar o sitemap de forma estática
 // no build — refletindo os produtos só até o próximo deploy, e não em
@@ -7,15 +8,8 @@ import { createClient } from "@/lib/supabase/server";
 // catálogo (Decisão 6).
 export const dynamic = "force-dynamic";
 
-// Sem NEXT_PUBLIC_SITE_URL configurada não há como gerar URLs absolutas
-// corretas — retorna sitemap vazio em vez de inventar um domínio (Decisão
-// 9). Assim que a variável existir na Vercel, o sitemap passa a listar
-// normalmente.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (!siteUrl) {
-    return [];
-  }
+  const siteUrl = getSiteUrl();
 
   const supabase = await createClient();
   const { data, error } = await supabase
