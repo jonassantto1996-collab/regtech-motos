@@ -73,7 +73,7 @@
   .contact-rider-media {
     position: relative;
     order: 3;
-    height: 23rem;
+    height: clamp(22rem, 100vw, 28rem);
     margin-top: 0.75rem;
     overflow: hidden;
   }
@@ -81,12 +81,14 @@
   .contact-rider-mobile-image {
     position: absolute;
     left: 50%;
-    top: -1.75rem;
-    width: 122%;
+    top: auto;
+    bottom: -1.5rem;
+    width: 100%;
     height: auto;
-    max-width: 30rem;
+    max-width: none;
     margin: 0;
-    transform: translateX(-50%);
+    transform: translateX(-50%) scale(1.55);
+    transform-origin: center bottom;
     object-fit: contain;
   }
 }
