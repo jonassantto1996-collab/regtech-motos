@@ -393,7 +393,7 @@ export default async function Home() {
       </section>
 
       {socialProof && socialProof.length > 0 && (
-        <section className="bg-white py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <section className="ios-contact-section bg-white py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between lg:pb-10">
               <div>
