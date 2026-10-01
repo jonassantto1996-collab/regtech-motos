@@ -25,8 +25,7 @@ export default function Footer() {
               />
             </Link>
             <p className="mt-5 max-w-md text-sm leading-6 text-blue-200">
-              Conheça a linha Regtech Motors e fale com nossa equipe para saber
-              mais sobre os modelos disponíveis.
+              Loja de motos e mobilidade em Tucumã, Pará. Conheça modelos elétricos e a combustão e fale com a equipe Regtech Motors.
             </p>
           </div>
 
@@ -53,7 +52,7 @@ export default function Footer() {
               target="_blank"
               rel="noreferrer"
               className="group mt-5 inline-flex items-start gap-3 text-sm leading-6 text-blue-100 transition-colors hover:text-cyan-300"
-              aria-label="Abrir localização da Regtech CellShop no Google Maps"
+              aria-label="Abrir localização da Regtech Motors no Google Maps"
             >
               <span className="mt-0.5 inline-grid h-7 w-7 flex-none place-items-center rounded-full border border-blue-800 text-blue-200">
                 <MapPinIcon className="h-4 w-4" />
