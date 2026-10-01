@@ -81,9 +81,19 @@ export async function requestPasswordReset(formData: FormData) {
     ? `${siteUrl}/admin/auth/callback?next=/admin/reset-password`
     : undefined;
 
-  await supabase.auth.resetPasswordForEmail(normalizedEmail, {
+  const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
     ...(redirectTo ? { redirectTo } : {}),
   });
+
+  if (error) {
+    const isRateLimit =
+      error.status === 429 ||
+      ("code" in error && error.code === "over_email_send_rate_limit");
+
+    redirect(
+      `/admin/forgot-password?error=${isRateLimit ? "rate_limited" : "send_failed"}`
+    );
+  }
 
   redirect("/admin/forgot-password?sent=1");
 }
