@@ -73,7 +73,7 @@ export async function requestPasswordReset(formData: FormData) {
 
   const supabase = await createClient();
   const siteUrl = resolveAuthBaseUrl({
-    configuredUrl: process.env.NEXT_PUBLIC_SITE_URL ?? OFFICIAL_SITE_URL,
+    configuredUrl: OFFICIAL_SITE_URL,
     vercelUrl: process.env.VERCEL_URL,
     vercelEnv: process.env.VERCEL_ENV,
   });
