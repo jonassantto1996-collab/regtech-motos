@@ -1,10 +1,10 @@
 export default function ContactRider() {
   return (
-    <div className="ios-contact-rider relative min-h-[40rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[38rem] lg:min-h-full">
+    <div className="contact-rider-mobile ios-contact-rider relative min-h-[40rem] overflow-hidden bg-[#0d3bb8] sm:min-h-[38rem] lg:min-h-full">
       <img
         src="https://bjodwjskwnpnqedjasid.supabase.co/storage/v1/object/public/product-images/site/regtech-rider-original.png"
         alt="Personagem Regtech Motors montado em uma moto elétrica"
-        className="ios-contact-rider-image absolute left-[62%] top-[15.75rem] h-auto w-[112%] max-w-none -translate-x-1/2 object-contain sm:left-[58%] sm:top-[-2.5rem] sm:w-[116%] lg:left-[61%] lg:top-[-5rem] lg:w-[108%]"
+        className="contact-rider-mobile-image ios-contact-rider-image absolute left-[62%] top-[15.75rem] h-auto w-[112%] max-w-none -translate-x-1/2 object-contain sm:left-[58%] sm:top-[-2.5rem] sm:w-[116%] lg:left-[61%] lg:top-[-5rem] lg:w-[108%]"
         loading="eager"
         decoding="async"
       />
@@ -14,13 +14,13 @@ export default function ContactRider() {
         className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-blue-950/20"
       />
 
-      <div className="absolute left-5 top-5 z-10 max-w-[13rem] border-l border-cyan-300/60 pl-3 sm:left-8 sm:top-8">
+      <div className="contact-rider-mobile-label absolute left-5 top-5 z-10 max-w-[13rem] border-l border-cyan-300/60 pl-3 sm:left-8 sm:top-8">
         <p className="text-[0.625rem] font-semibold uppercase tracking-[0.22em] text-cyan-200">
           Regtech Motors
         </p>
       </div>
 
-      <div className="absolute left-4 top-[3.25rem] z-10 max-w-[13.25rem] border border-white/15 bg-blue-950/45 px-2.5 py-2 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-6 sm:top-16 sm:max-w-[17rem] sm:p-5 lg:left-6 lg:top-16 lg:max-w-[17rem]">
+      <div className="contact-rider-mobile-copy absolute left-4 top-[3.25rem] z-10 max-w-[13.25rem] border border-white/15 bg-blue-950/45 px-2.5 py-2 shadow-[0_18px_45px_rgba(2,6,23,0.18)] backdrop-blur-md sm:left-6 sm:top-16 sm:max-w-[17rem] sm:p-5 lg:left-6 lg:top-16 lg:max-w-[17rem]">
         <p className="text-[0.625rem] font-semibold uppercase tracking-[0.2em] text-cyan-200">
           Tradição que acompanha a inovação
         </p>
