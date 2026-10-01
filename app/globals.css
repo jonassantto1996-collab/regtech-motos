@@ -42,3 +42,25 @@
     display: none;
   }
 }
+
+
+/* Restaura no iPhone o enquadramento anterior da arte Regtech,
+   mantendo o ajuste full-bleed atual no Android. */
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 639px) {
+    .ios-contact-section {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .ios-contact-rider {
+      min-height: 36rem;
+    }
+
+    .ios-contact-rider-image {
+      left: 68%;
+      top: -1rem;
+      width: 123%;
+    }
+  }
+}
