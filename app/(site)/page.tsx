@@ -393,7 +393,7 @@ export default async function Home() {
       </section>
 
       {socialProof && socialProof.length > 0 && (
-        <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <section className="bg-white py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between lg:pb-10">
               <div>
@@ -444,8 +444,8 @@ export default async function Home() {
       {/* CANAIS OFICIAIS — mantém o hero intacto e concentra atendimento/social nesta área inferior. */}
       <section className="bg-white px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         <div className="mx-auto max-w-7xl">
-          <div className="overflow-hidden border border-gray-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.08)] lg:grid lg:grid-cols-[1.08fr_0.92fr]">
-            <div className="px-5 py-9 sm:px-8 sm:py-12 lg:px-12 lg:py-14">
+          <div className="overflow-hidden border-y border-gray-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.06)] sm:border lg:grid lg:grid-cols-[1.08fr_0.92fr] lg:shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+            <div className="px-4 py-9 sm:px-8 sm:py-12 lg:px-12 lg:py-14">
               <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.24em] text-blue-700">
                 Canais oficiais
               </p>
