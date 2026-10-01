@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   if (error) {
     console.error("[catalog] erro em sitemap:", error);
-    return [{ url: `${siteUrl}/` }, { url: `${siteUrl}/products` }];
+    return [{ url: `${siteUrl}/` }, { url: `${siteUrl}/loja` }, { url: `${siteUrl}/products` }];
   }
 
   const productEntries: MetadataRoute.Sitemap = (data ?? []).map((p) => ({
@@ -27,5 +27,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: p.updated_at ? new Date(p.updated_at) : undefined,
   }));
 
-  return [{ url: `${siteUrl}/` }, { url: `${siteUrl}/products` }, ...productEntries];
+  return [{ url: `${siteUrl}/` }, { url: `${siteUrl}/loja` }, { url: `${siteUrl}/products` }, ...productEntries];
 }
