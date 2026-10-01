@@ -80,7 +80,6 @@ export default async function ProductPage({
     description: product.description || undefined,
     ...(imageUrl ? { image: [imageUrl] } : {}),
     brand: { "@type": "Brand", name: product.brand },
-    ...(product.sku ? { sku: product.sku } : {}),
     category: product.category,
     seller: { "@id": `${siteUrl}/#motorcycle-dealer` },
     offers: {
