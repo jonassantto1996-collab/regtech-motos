@@ -68,6 +68,7 @@
     .ios-contact-rider-image {
       left: 68%;
       top: -1rem;
+      bottom: auto;
       width: 123%;
       max-width: none;
     }
