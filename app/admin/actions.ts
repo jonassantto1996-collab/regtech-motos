@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAuthorizedAdmin } from "@/lib/admin/authorization";
 import { resolveAuthBaseUrl } from "@/lib/admin/auth-url";
+import { OFFICIAL_SITE_URL } from "@/lib/site-url";
 import { redirect } from "next/navigation";
 
 /**
@@ -72,7 +73,7 @@ export async function requestPasswordReset(formData: FormData) {
 
   const supabase = await createClient();
   const siteUrl = resolveAuthBaseUrl({
-    configuredUrl: process.env.NEXT_PUBLIC_SITE_URL,
+    configuredUrl: process.env.NEXT_PUBLIC_SITE_URL ?? OFFICIAL_SITE_URL,
     vercelUrl: process.env.VERCEL_URL,
     vercelEnv: process.env.VERCEL_ENV,
   });
