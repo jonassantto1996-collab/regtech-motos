@@ -66,6 +66,13 @@ export default async function ProductPage({
     ? getPublicImageUrl(mainImage.storage_path)
     : undefined;
 
+  const normalizedAvailability = product.availability?.trim().toLowerCase() ?? "";
+  const availabilitySchema = normalizedAvailability.includes("indispon")
+    ? "https://schema.org/OutOfStock"
+    : normalizedAvailability.includes("dispon")
+      ? "https://schema.org/InStock"
+      : undefined;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -73,11 +80,16 @@ export default async function ProductPage({
     description: product.description || undefined,
     ...(imageUrl ? { image: [imageUrl] } : {}),
     brand: { "@type": "Brand", name: product.brand },
+    ...(product.sku ? { sku: product.sku } : {}),
+    category: product.category,
+    seller: { "@id": `${siteUrl}/#motorcycle-dealer` },
     offers: {
       "@type": "Offer",
       priceCurrency: "BRL",
       price: product.price,
       url: `${siteUrl}/products/${product.slug}`,
+      ...(availabilitySchema ? { availability: availabilitySchema } : {}),
+      seller: { "@id": `${siteUrl}/#motorcycle-dealer` },
     },
   };
 
