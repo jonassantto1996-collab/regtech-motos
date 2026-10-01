@@ -44,6 +44,44 @@
 }
 
 
+
+@media (max-width: 639px) {
+  /* Android: layout em fluxo normal para eliminar variações por largura/tela. */
+  .contact-rider-mobile {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contact-rider-mobile-label {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin: 1.25rem 1.25rem 0;
+  }
+
+  .contact-rider-mobile-copy {
+    position: relative;
+    left: auto;
+    top: auto;
+    margin: 1rem 1rem 0;
+    max-width: calc(100% - 2rem);
+  }
+
+  .contact-rider-mobile-image {
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    width: 92%;
+    height: auto;
+    max-width: 28rem;
+    margin: 1rem auto 0;
+    transform: none;
+    object-fit: contain;
+  }
+}
+
 /* Restaura no iPhone o enquadramento anterior da arte Regtech,
    mantendo o ajuste full-bleed atual no Android. */
 @supports (-webkit-touch-callout: none) {
@@ -55,15 +93,33 @@
 
     .ios-contact-rider {
       min-height: 36rem;
+      display: block;
+    }
+
+    .contact-rider-mobile-label {
+      position: absolute;
+      left: 1.25rem;
+      top: 1.25rem;
+      margin: 0;
+    }
+
+    .contact-rider-mobile-copy {
+      position: absolute;
+      left: 1rem;
+      top: 3.25rem;
+      margin: 0;
+      max-width: 13.25rem;
     }
 
     .ios-contact-rider-image {
+      position: absolute;
       left: 68%;
       top: -1rem;
       bottom: auto;
       height: auto;
       width: 123%;
       max-width: none;
+      margin: 0;
       transform: translateX(-50%);
     }
   }
