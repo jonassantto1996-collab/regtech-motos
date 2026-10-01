@@ -10,8 +10,7 @@ export const REGTECH_MOTORS = {
   addressRegion: "PA",
   postalCode: "68385-000",
   addressCountry: "BR",
-  mapUrl:
-    "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20216%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000",
+  mapUrl: "https://share.google/w3YVKQjCmlahD7YR8",
 } as const;
 
 export function getBusinessJsonLd() {
