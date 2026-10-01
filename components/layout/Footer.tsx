@@ -3,7 +3,7 @@ import Link from "next/link";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { ExternalLinkIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 
-const STORE_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20216%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000";
+const STORE_MAP_URL = "https://share.google/w3YVKQjCmlahD7YR8";
 
 export default function Footer() {
   return (
