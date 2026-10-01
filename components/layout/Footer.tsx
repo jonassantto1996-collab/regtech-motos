@@ -3,7 +3,7 @@ import Link from "next/link";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { ExternalLinkIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 
-const STORE_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000";
+const STORE_MAP_URL = "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20216%2C%20Centro%2C%20Tucum%C3%A3%2C%20PA%2C%2068385-000";
 
 export default function Footer() {
   return (
@@ -61,7 +61,7 @@ export default function Footer() {
                 <MapPinIcon className="h-4 w-4" />
               </span>
               <span>
-                Av. dos Estados, 241
+                Av. dos Estados, 216
                 <br />
                 Centro, Tucumã — PA
                 <br />
