@@ -42,6 +42,12 @@ const nextConfig = {
 
   async redirects() {
     return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.regtechmotors.com.br" }],
+        destination: "https://regtechmotors.com.br/:path*",
+        permanent: true,
+      },
       { source: "/products/l70", destination: "/products/zub-l70", permanent: true },
       { source: "/products/x16", destination: "/products/panda-x16", permanent: true },
       { source: "/products/zetrix", destination: "/products/trixx-bicicleta-eletrica", permanent: true },
