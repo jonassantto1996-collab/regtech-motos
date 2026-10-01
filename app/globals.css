@@ -46,49 +46,49 @@
 
 
 @media (max-width: 639px) {
-  /* Android: composição padronizada, independente da largura do aparelho. */
+  /* Mobile: canvas proporcional único para manter a mesma composição em qualquer aparelho. */
   .contact-rider-mobile {
+    position: relative;
+    display: block;
     min-height: 0;
-    display: flex;
-    flex-direction: column;
+    aspect-ratio: 2 / 3;
   }
 
   .contact-rider-mobile-label {
-    position: relative;
-    left: auto;
-    top: auto;
-    order: 1;
-    margin: 1.25rem 1.25rem 0;
+    position: absolute;
+    left: 5%;
+    top: 4%;
+    margin: 0;
   }
 
   .contact-rider-mobile-copy {
-    position: relative;
-    left: auto;
-    top: auto;
-    order: 2;
-    margin: 1rem 1rem 0;
-    max-width: calc(100% - 2rem);
+    position: absolute;
+    left: 4%;
+    top: 11%;
+    width: 55%;
+    max-width: none;
+    margin: 0;
   }
 
   .contact-rider-media {
-    position: relative;
-    order: 3;
-    height: clamp(22rem, 100vw, 28rem);
-    margin-top: 0.75rem;
+    position: absolute;
+    inset: 0;
+    height: auto;
+    margin: 0;
     overflow: hidden;
   }
 
   .contact-rider-mobile-image {
     position: absolute;
-    left: 50%;
-    top: auto;
-    bottom: -1.5rem;
-    width: 100%;
+    left: 68%;
+    top: -2.8%;
+    bottom: auto;
+    width: 123%;
     height: auto;
     max-width: none;
     margin: 0;
-    transform: translateX(-50%) scale(1.55);
-    transform-origin: center bottom;
+    transform: translateX(-50%);
+    transform-origin: center top;
     object-fit: contain;
   }
 }
@@ -101,54 +101,12 @@
   }
 }
 
-
-/* Restaura no iPhone o enquadramento anterior da arte Regtech,
-   mantendo o ajuste full-bleed atual no Android. */
+/* iPhone mantém apenas a margem lateral já aprovada; a composição interna é a mesma do Android. */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 639px) {
     .ios-contact-section {
       padding-left: 1rem;
       padding-right: 1rem;
-    }
-
-    .ios-contact-rider {
-      min-height: 36rem;
-      display: block;
-    }
-
-    .contact-rider-mobile-label {
-      position: absolute;
-      left: 1.25rem;
-      top: 1.25rem;
-      margin: 0;
-    }
-
-    .contact-rider-mobile-copy {
-      position: absolute;
-      left: 1rem;
-      top: 3.25rem;
-      margin: 0;
-      max-width: 13.25rem;
-    }
-
-    .contact-rider-media {
-      position: absolute;
-      inset: 0;
-      height: auto;
-      margin: 0;
-      overflow: visible;
-    }
-
-    .ios-contact-rider-image {
-      position: absolute;
-      left: 68%;
-      top: -1rem;
-      bottom: auto;
-      height: auto;
-      width: 123%;
-      max-width: none;
-      margin: 0;
-      transform: translateX(-50%);
     }
   }
 }
