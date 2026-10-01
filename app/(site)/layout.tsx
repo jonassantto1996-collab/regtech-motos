@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { getBusinessJsonLd } from "@/lib/seo/business";
 
 /**
  * Layout do grupo (site) — aplica o Header e o Footer públicos a todas as
@@ -14,8 +15,14 @@ import Footer from "@/components/layout/Footer";
  * cabeçalho/rodapé públicos.
  */
 export default function SiteLayout({ children }: { children: ReactNode }) {
+  const businessJsonLd = getBusinessJsonLd();
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
+      />
       <Header />
       {children}
       <Footer />
