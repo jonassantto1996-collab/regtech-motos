@@ -44,6 +44,14 @@
 }
 
 
+
+@media (max-width: 639px) {
+  /* Evita que a arte cresça demais em Androids mais largos e invada o texto. */
+  .ios-contact-rider-image {
+    max-width: 28rem;
+  }
+}
+
 /* Restaura no iPhone o enquadramento anterior da arte Regtech,
    mantendo o ajuste full-bleed atual no Android. */
 @supports (-webkit-touch-callout: none) {
@@ -61,6 +69,7 @@
       left: 68%;
       top: -1rem;
       width: 123%;
+      max-width: none;
     }
   }
 }
