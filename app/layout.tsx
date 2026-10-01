@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description:
     "Motos elétricas e a combustão na Regtech Motors. Conheça os modelos disponíveis no catálogo e fale com a gente pelo WhatsApp.",
   metadataBase: new URL(getSiteUrl()),
+  verification: {
+    google: "b_fN3RXAIUy_UFHUkjzPBF2DG2qM4HhzDncnWHkvSUk",
+  },
 };
 
 export default function RootLayout({
