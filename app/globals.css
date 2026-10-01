@@ -46,7 +46,7 @@
 
 
 @media (max-width: 639px) {
-  /* Android: layout em fluxo normal para eliminar variações por largura/tela. */
+  /* Android: composição padronizada, independente da largura do aparelho. */
   .contact-rider-mobile {
     min-height: 0;
     display: flex;
@@ -57,6 +57,7 @@
     position: relative;
     left: auto;
     top: auto;
+    order: 1;
     margin: 1.25rem 1.25rem 0;
   }
 
@@ -64,23 +65,40 @@
     position: relative;
     left: auto;
     top: auto;
+    order: 2;
     margin: 1rem 1rem 0;
     max-width: calc(100% - 2rem);
   }
 
-  .contact-rider-mobile-image {
+  .contact-rider-media {
     position: relative;
-    left: auto;
-    top: auto;
-    bottom: auto;
-    width: 92%;
+    order: 3;
+    height: 23rem;
+    margin-top: 0.75rem;
+    overflow: hidden;
+  }
+
+  .contact-rider-mobile-image {
+    position: absolute;
+    left: 50%;
+    top: -1.75rem;
+    width: 122%;
     height: auto;
-    max-width: 28rem;
-    margin: 1rem auto 0;
-    transform: none;
+    max-width: 30rem;
+    margin: 0;
+    transform: translateX(-50%);
     object-fit: contain;
   }
 }
+
+@media (min-width: 640px) {
+  .contact-rider-media {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+  }
+}
+
 
 /* Restaura no iPhone o enquadramento anterior da arte Regtech,
    mantendo o ajuste full-bleed atual no Android. */
@@ -109,6 +127,14 @@
       top: 3.25rem;
       margin: 0;
       max-width: 13.25rem;
+    }
+
+    .contact-rider-media {
+      position: absolute;
+      inset: 0;
+      height: auto;
+      margin: 0;
+      overflow: visible;
     }
 
     .ios-contact-rider-image {
