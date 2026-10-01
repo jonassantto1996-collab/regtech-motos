@@ -5,7 +5,7 @@ import { useState, type ReactNode } from "react";
 import {DashboardIcon,BikeIcon,ImageIcon,UsersIcon,StoreIcon,HeadsetIcon,SettingsIcon} from "./icons";
 import { logout } from "./actions";
 
-type AdminSection = "dashboard" | "products" | "leads" | "hero" | "editorial" | "store" | "social-proof";
+type AdminSection = "dashboard" | "products" | "leads" | "hero" | "editorial" | "store" | "social-proof" | "users";
 
 const NavContent = ({ active, close }: { active: AdminSection; close?: () => void }) => (
   <nav>
@@ -21,6 +21,7 @@ const NavContent = ({ active, close }: { active: AdminSection; close?: () => voi
     <Link onClick={close} className={active === "store" ? "nav-active" : ""} href="/admin/store"><span className="nav-icon"><StoreIcon /></span><span>Loja completa</span></Link>
     <small>SISTEMA</small>
     <div className="nav-muted"><span className="nav-icon"><HeadsetIcon /></span><span>Atendimentos</span></div>
+    <Link onClick={close} className={active === "users" ? "nav-active" : ""} href="/admin/users"><span className="nav-icon"><UsersIcon /></span><span>Usuários</span></Link>
     <div className="nav-muted"><span className="nav-icon"><SettingsIcon /></span><span>Configurações</span></div>
   </nav>
 );
