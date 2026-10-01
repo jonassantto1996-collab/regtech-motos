@@ -160,14 +160,14 @@ export default async function Home() {
               imageAlt={heroImageAlt}
               videoSources={heroVideoSources}
               priority
-              className={`object-cover ${heroPositionClass}`}
+              className={`object-cover ${heroPositionClass} ${heroVideoSources ? "brightness-[1.08] contrast-[1.12] saturate-[1.08]" : ""}`}
             />
           )}
         </div>
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-blue-950 via-blue-950/75 to-blue-900/10 sm:bg-gradient-to-r sm:from-blue-950 sm:via-blue-950/70 sm:to-blue-900/10"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-blue-950/95 via-blue-950/60 to-blue-950/5 sm:bg-gradient-to-r sm:from-blue-950/95 sm:via-blue-950/55 sm:to-transparent"
         />
 
         <div className="relative mx-auto flex min-h-[34rem] max-w-7xl items-end px-4 pb-8 pt-24 sm:min-h-[30rem] sm:px-6 sm:pb-14 sm:pt-24 lg:min-h-[34rem] lg:items-center lg:px-8 lg:py-0">
