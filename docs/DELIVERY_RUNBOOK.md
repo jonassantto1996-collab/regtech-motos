@@ -42,10 +42,10 @@ Nunca commitar a pasta `backups/`.
 
 ## Domínio e autenticação
 Antes da produção final:
-- configurar `NEXT_PUBLIC_SITE_URL` com o domínio definitivo;
+- configurar `NEXT_PUBLIC_SITE_URL=https://regtechmotors.com.br`;
 - adicionar o mesmo domínio/URL de callback permitido no Supabase Auth;
 - validar o fluxo completo **Esqueci minha senha → e-mail → callback → nova senha → login**;
-- confirmar que o domínio definitivo aponta para o deployment atual de produção.
+- confirmar que `regtechmotors.com.br` e `www.regtechmotors.com.br` apontam para o deployment atual de produção.
 
 ## Variáveis obrigatórias
 - `NEXT_PUBLIC_SUPABASE_URL`
