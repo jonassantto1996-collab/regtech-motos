@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import BrandLogo from "@/components/layout/BrandLogo";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { ExternalLinkIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 
@@ -16,13 +16,7 @@ export default function Footer() {
               className="inline-block outline-none focus-visible:ring-2 focus-visible:ring-cyan-300"
               aria-label="Regtech Motors — início"
             >
-              <Image
-                src="/logo-regtech-motors.png"
-                alt="Regtech Motors"
-                width={201}
-                height={96}
-                className="h-9 w-auto sm:h-10"
-              />
+              <BrandLogo className="h-10 sm:h-12" />
             </Link>
             <p className="mt-5 max-w-md text-sm leading-6 text-blue-200">
               Loja de motos e mobilidade em Tucumã, Pará. Conheça modelos elétricos e a combustão e fale com a equipe Regtech Motors.
@@ -98,6 +92,10 @@ export default function Footer() {
           </div>
         </div>
 
+        <div className="flex flex-col gap-2 pt-6 text-xs text-blue-300 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} Regtech Motors. Todos os direitos reservados.</p>
+          <p>Tucumã · Pará</p>
+        </div>
       </div>
     </footer>
   );
