@@ -30,13 +30,33 @@ export default function ProductGallery({ images, productName }: Props) {
 
   return (
     <div>
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#f4f6f8]">
+      <div className="relative isolate aspect-[4/3] w-full overflow-hidden bg-[#0f172a]">
+        {/* Fundo: a própria foto ampliada e desfocada preenche a caixa
+            (mesma URL da foto principal → o navegador baixa uma vez só). */}
         <Image
+          key={`bg-${selected.id}`}
+          src={selectedUrl}
+          alt=""
+          aria-hidden
+          fill
+          quality={92}
+          className="-z-10 scale-125 object-cover object-center opacity-90 blur-2xl saturate-150"
+          sizes="(max-width: 1024px) 100vw, 58vw"
+          priority
+        />
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-black/10 via-black/20 to-black/40"
+          aria-hidden
+        />
+
+        {/* Foto principal inteira, nítida, sem corte. */}
+        <Image
+          key={`fg-${selected.id}`}
           src={selectedUrl}
           alt={selected.alt_text || productName}
           fill
           quality={92}
-          className="object-contain p-3 sm:p-4 lg:p-5"
+          className="object-contain object-center drop-shadow-[0_20px_40px_rgba(0,0,0,0.45)]"
           sizes="(max-width: 1024px) 100vw, 58vw"
           priority
         />
