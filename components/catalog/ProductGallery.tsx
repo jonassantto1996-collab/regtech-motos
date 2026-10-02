@@ -30,7 +30,7 @@ export default function ProductGallery({ images, productName }: Props) {
 
   return (
     <div>
-      <div className="relative isolate aspect-[4/3] w-full overflow-hidden bg-[#0f172a]">
+      <div className="relative isolate aspect-square w-full overflow-hidden bg-[#0f172a]">
         {/* Fundo: a própria foto ampliada e desfocada preenche a caixa
             (mesma URL da foto principal → o navegador baixa uma vez só). */}
         <Image
