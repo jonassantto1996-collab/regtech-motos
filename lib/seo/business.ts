@@ -2,6 +2,8 @@ import { getSiteUrl } from "@/lib/site-url";
 
 export const REGTECH_MOTORS = {
   name: "Regtech Motors",
+  legalName: "Regtech Celulares e Informática LTDA",
+  cnpj: "47.159.149/0001-81",
   telephone: "+55 94 99208-6088",
   whatsapp: "https://wa.me/5594992086088",
   instagram: "https://www.instagram.com/regtechmotors",
@@ -11,6 +13,11 @@ export const REGTECH_MOTORS = {
   postalCode: "68385-000",
   addressCountry: "BR",
   mapUrl: "https://share.google/w3YVKQjCmlahD7YR8",
+  openingHours: [
+    { label: "Segunda a sexta", hours: "08:00 – 18:00" },
+    { label: "Sábado", hours: "08:00 – 12:00" },
+    { label: "Domingo", hours: "Fechado" },
+  ],
 } as const;
 
 export function getBusinessJsonLd() {
@@ -25,6 +32,8 @@ export function getBusinessJsonLd() {
         "@type": "MotorcycleDealer",
         "@id": businessId,
         name: REGTECH_MOTORS.name,
+        legalName: REGTECH_MOTORS.legalName,
+        taxID: REGTECH_MOTORS.cnpj,
         description:
           "Loja de motos elétricas e a combustão em Tucumã, Pará, com catálogo online e atendimento direto pelo WhatsApp.",
         url: siteUrl,
@@ -32,6 +41,20 @@ export function getBusinessJsonLd() {
         image: `${siteUrl}/logo-regtech-motors.png`,
         telephone: REGTECH_MOTORS.telephone,
         currenciesAccepted: "BRL",
+        openingHoursSpecification: [
+          {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            opens: "08:00",
+            closes: "18:00",
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: "Saturday",
+            opens: "08:00",
+            closes: "12:00",
+          },
+        ],
         address: {
           "@type": "PostalAddress",
           streetAddress: REGTECH_MOTORS.streetAddress,
