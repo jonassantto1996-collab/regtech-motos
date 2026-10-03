@@ -369,7 +369,7 @@ export default async function Home() {
             ].map((item) => (
               <div
                 key={item.number}
-                className="group py-8 first:pt-7 lg:px-10 lg:py-11 lg:first:pl-0 lg:last:pr-0"
+                className="group py-8 first:pt-7 lg:px-10 lg:py-11 lg:first:pl-0 lg:first:pt-11 lg:last:pr-0"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold tracking-[0.2em] text-blue-700">

@@ -108,12 +108,14 @@ export default async function ProductPage({
         </Link>
 
         <div className="mt-3 grid gap-7 sm:mt-5 sm:gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16 xl:gap-20">
-          <ProductGallery
-            images={product.product_images}
-            productName={`${product.brand} ${product.model}`}
-          />
+          <div className="lg:sticky lg:top-6 lg:self-start">
+            <ProductGallery
+              images={product.product_images}
+              productName={`${product.brand} ${product.model}`}
+            />
+          </div>
 
-          <div className="lg:sticky lg:top-6 lg:self-start lg:pt-5">
+          <div className="lg:pt-5">
             <div className="mb-5 flex flex-wrap items-center gap-2">
               <span className="inline-flex min-h-7 items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-emerald-700">
                 <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />

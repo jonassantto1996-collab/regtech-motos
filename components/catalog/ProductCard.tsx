@@ -30,7 +30,7 @@ export default function ProductCard({
             fill
             quality={88}
             className="object-cover object-center transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025]"
-            sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 36rem"
+            sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1023px) 50vw, 26rem"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">
