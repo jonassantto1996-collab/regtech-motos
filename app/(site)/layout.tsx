@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import FloatingWhatsApp from "@/components/layout/FloatingWhatsApp";
 import { getBusinessJsonLd } from "@/lib/seo/business";
 
 /**
@@ -26,6 +27,7 @@ export default function SiteLayout({ children }: { children: ReactNode }) {
       <Header />
       {children}
       <Footer />
+      <FloatingWhatsApp />
     </>
   );
 }
