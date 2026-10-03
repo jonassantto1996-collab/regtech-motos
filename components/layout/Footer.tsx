@@ -9,7 +9,7 @@ const STORE_MAP_URL = REGTECH_MOTORS.mapUrl;
 export default function Footer() {
   return (
     <footer className="border-t border-blue-900 bg-blue-950 text-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+      <div className="mx-auto max-w-7xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-12 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
         <div className="grid gap-10 border-b border-blue-900 pb-10 sm:grid-cols-2 lg:grid-cols-[1.3fr_0.6fr_1fr_0.9fr] lg:gap-12 lg:pb-12">
           <div>
             <Link
@@ -122,8 +122,10 @@ export default function Footer() {
 
         <div className="flex flex-col gap-2 pt-6 text-xs text-blue-300 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Regtech Motors. Todos os direitos reservados.</p>
-          <p>
-            {REGTECH_MOTORS.legalName} · CNPJ {REGTECH_MOTORS.cnpj}
+          <p className="flex flex-col gap-1 sm:block">
+            <span>{REGTECH_MOTORS.legalName}</span>
+            <span className="hidden sm:inline"> · </span>
+            <span className="whitespace-nowrap">CNPJ {REGTECH_MOTORS.cnpj}</span>
           </p>
         </div>
       </div>
