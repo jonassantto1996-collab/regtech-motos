@@ -2,12 +2,14 @@ import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/site-url";
 import { formatPriceBRL } from "@/lib/catalog/format";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
+import { getCatalogSettings } from "@/lib/catalog/settings";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const siteUrl = getSiteUrl();
   const supabase = await createClient();
+  const { showPrices } = await getCatalogSettings();
 
   const { data } = await supabase
     .from("products")
@@ -18,7 +20,7 @@ export async function GET() {
   const products = (data ?? [])
     .map(
       (product) =>
-        `- ${product.brand} ${product.model} — ${product.category} — ${formatPriceBRL(product.price)} — ${product.availability ?? "Consulte disponibilidade"} — ${siteUrl}/products/${product.slug}`
+        `- ${product.brand} ${product.model} — ${product.category} — ${showPrices ? formatPriceBRL(product.price) : "Consulte o valor"} — ${product.availability ?? "Consulte disponibilidade"} — ${siteUrl}/products/${product.slug}`
     )
     .join("\n");
 
