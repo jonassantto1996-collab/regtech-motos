@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
-import { formatPriceBRL } from "@/lib/catalog/format";
+import { formatCardInstallments, formatPriceBRL } from "@/lib/catalog/format";
 import type { CatalogProductListItem } from "@/lib/catalog/queries";
 
 export default function ProductCard({
@@ -11,6 +11,7 @@ export default function ProductCard({
 }) {
   const mainImage = product.product_images[0];
   const imageUrl = mainImage ? getPublicImageUrl(mainImage.storage_path) : null;
+  const cardText = formatCardInstallments(product.card_price, product.card_installments);
 
   return (
     <Link
@@ -53,9 +54,15 @@ export default function ProductCard({
           {product.model}
         </h3>
 
-        <p className="mt-3 text-base font-semibold text-gray-800 sm:text-lg">
-          {formatPriceBRL(product.price)}
-        </p>
+        <div className="mt-3">
+          <p className="text-base font-semibold text-gray-800 sm:text-lg">
+            {formatPriceBRL(product.price)}
+            <span className="ml-1.5 text-xs font-medium text-gray-500">à vista</span>
+          </p>
+          {cardText && (
+            <p className="mt-1 text-sm text-gray-600">ou {cardText}</p>
+          )}
+        </div>
 
         <span className="mt-5 inline-flex min-h-11 items-center justify-between border-b border-gray-300 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-gray-900 transition-colors group-hover:border-blue-700 group-hover:text-blue-700">
           Ver detalhes
