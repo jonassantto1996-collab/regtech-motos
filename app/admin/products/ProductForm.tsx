@@ -138,7 +138,7 @@ export function ProductForm({
         />
       </Field>
 
-      <Field label="Preço (R$)" htmlFor="price" required>
+      <Field label="Preço à vista (R$)" htmlFor="price" required>
         <input
           id="price"
           name="price"
@@ -147,6 +147,32 @@ export function ProductForm({
           min="0"
           required
           defaultValue={defaultValues?.price}
+          className="admin-control"
+        />
+      </Field>
+
+      <Field label="Valor total no cartão (R$) — opcional" htmlFor="card_price">
+        <input
+          id="card_price"
+          name="card_price"
+          type="number"
+          step="0.01"
+          min="0.01"
+          placeholder="Ex.: 10500.00"
+          defaultValue={defaultValues?.card_price ?? undefined}
+          className="admin-control"
+        />
+      </Field>
+
+      <Field label="Parcelas no cartão" htmlFor="card_installments">
+        <input
+          id="card_installments"
+          name="card_installments"
+          type="number"
+          step="1"
+          min="1"
+          max="24"
+          defaultValue={defaultValues?.card_installments ?? 12}
           className="admin-control"
         />
       </Field>
