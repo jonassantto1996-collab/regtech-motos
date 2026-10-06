@@ -5,7 +5,7 @@ import ProductGallery from "@/components/catalog/ProductGallery";
 import InterestModal from "@/components/catalog/InterestModal";
 import { getProductBySlug } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
-import { formatPriceBRL } from "@/lib/catalog/format";
+import { formatCardInstallments, formatPriceBRL } from "@/lib/catalog/format";
 import { getSiteUrl } from "@/lib/site-url";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +27,7 @@ export async function generateMetadata({
   const title = `${product.brand} ${product.model} — Regtech Motors`;
   const description =
     (product.description ? product.description.slice(0, 160) : "") ||
-    `${product.brand} ${product.model} por ${formatPriceBRL(product.price)}.`;
+    `${product.brand} ${product.model} por ${formatPriceBRL(product.price)} à vista.`;
 
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
@@ -59,6 +59,7 @@ export default async function ProductPage({
   if (!product) notFound();
 
   const siteUrl = getSiteUrl();
+  const cardText = formatCardInstallments(product.card_price, product.card_installments);
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
     product.product_images[0];
@@ -131,9 +132,18 @@ export default async function ProductPage({
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-950 sm:text-5xl">
               {product.model}
             </h1>
-            <p className="mt-4 text-2xl font-semibold tracking-tight text-gray-900 sm:mt-5 sm:text-3xl">
-              {formatPriceBRL(product.price)}
-            </p>
+            <div className="mt-4 sm:mt-5">
+              <p className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+                {formatPriceBRL(product.price)}
+                <span className="ml-2 text-sm font-medium tracking-normal text-gray-500 sm:text-base">à vista</span>
+              </p>
+              {cardText && product.card_price && (
+                <p className="mt-2 text-sm text-gray-600 sm:text-base">
+                  ou <strong className="font-semibold text-gray-900">{cardText}</strong>{" "}
+                  <span className="text-gray-500">(total {formatPriceBRL(product.card_price)})</span>
+                </p>
+              )}
+            </div>
 
             <div className="mt-6 border-y border-gray-200 py-6 sm:mt-8 sm:py-7">
               <InterestModal productId={product.id} />
