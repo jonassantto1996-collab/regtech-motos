@@ -6,6 +6,8 @@ type Props = {
   selectedCategory?: string;
   selectedMinPrice?: string;
   selectedMaxPrice?: string;
+  /** Quando os preços estão ocultos no site, os filtros de preço somem. */
+  showPriceFilters?: boolean;
 };
 
 const fieldLabel =
@@ -21,9 +23,10 @@ export default function FiltersBar({
   selectedCategory,
   selectedMinPrice,
   selectedMaxPrice,
+  showPriceFilters = true,
 }: Props) {
   return (
-    <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div className={`grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2 ${showPriceFilters ? "lg:grid-cols-4" : ""}`}>
       <div>
         <label htmlFor="brand" className={fieldLabel}>
           Marca
@@ -62,6 +65,8 @@ export default function FiltersBar({
         </select>
       </div>
 
+      {showPriceFilters && (
+      <>
       <div>
         <label htmlFor="minPrice" className={fieldLabel}>
           Preço mínimo
@@ -93,6 +98,8 @@ export default function FiltersBar({
           className={fieldClass}
         />
       </div>
+      </>
+      )}
     </div>
   );
 }
