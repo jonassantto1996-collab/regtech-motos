@@ -7,6 +7,7 @@ import ContactRider from "@/components/home/ContactRider";
 import { ExternalLinkIcon, WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { getActiveProductListItemById, listProducts } from "@/lib/catalog/queries";
+import { getCatalogSettings } from "@/lib/catalog/settings";
 import { createClient } from "@/lib/supabase/server";
 import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
 
@@ -55,6 +56,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
+  const { showPrices } = await getCatalogSettings();
   // Mesma consulta usada pelo catálogo público (lib/catalog/queries.ts) —
   // sem criar uma consulta nova. Página 1, ordenado pelos mais recentes.
   const { products } = await listProducts({
@@ -262,7 +264,7 @@ export default async function Home() {
             <>
               <div className={`mobile-snap-row mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:mt-8 sm:gap-7 lg:grid lg:overflow-visible lg:pb-0 ${featuredGridClass}`}>
                 {featuredProducts.map((product) => (
-                  <HomeProductCard key={product.id} product={product} />
+                  <HomeProductCard key={product.id} product={product} showPrice={showPrices} />
                 ))}
               </div>
 
