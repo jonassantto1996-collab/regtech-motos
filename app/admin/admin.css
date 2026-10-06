@@ -229,3 +229,5 @@
 .users-disable{color:#a52323}
 .users-enable{color:#14864e}
 @media(max-width:900px){.users-admin-grid{grid-template-columns:1fr}.users-row{grid-template-columns:42px minmax(0,1fr)}.users-access{grid-column:2;justify-content:flex-start}}
+
+.price-visibility-card{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 20px;margin-bottom:16px;min-height:0}.price-visibility-card strong{font-size:13px;color:#07111f;margin-right:8px}.price-visibility-card p{margin:6px 0 0;font-size:11px;color:#687789}.price-visibility-card form{margin:0}@media(max-width:800px){.price-visibility-card{flex-direction:column;align-items:stretch}}
