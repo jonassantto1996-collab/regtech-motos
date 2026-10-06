@@ -43,7 +43,7 @@ export default async function EditProductPage({
   const { data: product } = await admin
     .from("products")
     .select(
-      "id, brand, model, slug, sku, category, description, price, availability, warranty, pickup_available, is_active, created_at, updated_at"
+      "id, brand, model, slug, sku, category, description, price, card_price, card_installments, availability, warranty, pickup_available, is_active, created_at, updated_at"
     )
     .eq("id", id)
     .maybeSingle();
