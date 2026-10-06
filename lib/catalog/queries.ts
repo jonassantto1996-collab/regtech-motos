@@ -18,7 +18,12 @@ export type CatalogProduct = {
   slug: string;
   category: string;
   description: string;
+  /** Preço à vista. */
   price: number;
+  /** Valor total no cartão (opcional). */
+  card_price: number | null;
+  /** Parcelas no cartão (opcional, junto com card_price). */
+  card_installments: number | null;
   availability: string;
   warranty: string;
   pickup_available: boolean;
@@ -110,7 +115,7 @@ export async function listProducts(
   let query = supabase
     .from("products")
     .select(
-      `id, brand, model, slug, category, description, price, availability, warranty, pickup_available,
+      `id, brand, model, slug, category, description, price, card_price, card_installments, availability, warranty, pickup_available,
        product_images(id, storage_path, display_order, is_main, alt_text)`,
       { count: "exact" }
     )
@@ -161,6 +166,7 @@ export async function listProducts(
   const products = (data ?? []).map((row) => ({
     ...row,
     price: Number(row.price),
+    card_price: row.card_price == null ? null : Number(row.card_price),
   })) as CatalogProductListItem[];
 
   const totalCount = count ?? 0;
@@ -183,7 +189,7 @@ export async function getProductBySlug(
   const { data, error } = await supabase
     .from("products")
     .select(
-      `id, brand, model, slug, category, description, price, availability, warranty, pickup_available,
+      `id, brand, model, slug, category, description, price, card_price, card_installments, availability, warranty, pickup_available,
        product_colors(id, color),
        product_specs(id, spec_key, spec_value),
        product_images(id, storage_path, display_order, is_main, alt_text)`
@@ -205,7 +211,11 @@ export async function getProductBySlug(
     return null;
   }
 
-  return { ...data, price: Number(data.price) } as CatalogProductDetail;
+  return {
+    ...data,
+    price: Number(data.price),
+    card_price: data.card_price == null ? null : Number(data.card_price),
+  } as CatalogProductDetail;
 }
 
 /** Marcas distintas entre produtos ativos, para popular o filtro. */
@@ -278,7 +288,7 @@ export async function getActiveProductListItemById(
   const { data, error } = await supabase
     .from("products")
     .select(
-      `id, brand, model, slug, category, description, price, availability, warranty, pickup_available,
+      `id, brand, model, slug, category, description, price, card_price, card_installments, availability, warranty, pickup_available,
        product_images(id, storage_path, display_order, is_main, alt_text)`
     )
     .eq("id", id)
@@ -287,5 +297,9 @@ export async function getActiveProductListItemById(
     .maybeSingle();
 
   if (error || !data) return null;
-  return data as CatalogProductListItem;
+  return {
+    ...data,
+    price: Number(data.price),
+    card_price: data.card_price == null ? null : Number(data.card_price),
+  } as CatalogProductListItem;
 }
