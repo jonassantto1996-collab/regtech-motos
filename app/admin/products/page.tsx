@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminSession, toggleProductActive } from "./actions";
+import { requireAdminSession, setShowPrices, toggleProductActive } from "./actions";
 import { PRODUCT_ERROR_MESSAGES, type Product } from "./types";
 import { AdminShell } from "../AdminShell";
 import "../admin.css";
@@ -37,12 +37,36 @@ export default async function ProductsPage({
     )
     .order("created_at", { ascending: false });
 
+  const { data: catalogSettings } = await admin
+    .from("catalog_settings")
+    .select("show_prices")
+    .eq("id", true)
+    .maybeSingle();
+  const showPrices = catalogSettings?.show_prices ?? true;
+
   return (
     <AdminShell active="products" email={claims.claims.email}>
       <section className="admin-content admin-page">
         <div className="page-heading">
           <div><span>CATÁLOGO</span><h1>Motos</h1><p>Gerencie os modelos exibidos no catálogo público.</p></div>
           <Link className="primary-action" href="/admin/products/new">+ Nova moto</Link>
+        </div>
+
+        <div className="panel price-visibility-card">
+          <div>
+            <strong>Preços no site</strong>
+            <span className={showPrices ? "status-badge active" : "status-badge"}>{showPrices ? "Visíveis" : "Ocultos"}</span>
+            <p>
+              {showPrices
+                ? "Os clientes veem os preços das motos no site."
+                : "Os preços estão escondidos. No lugar, o site mostra “Consulte o valor”."}
+            </p>
+          </div>
+          <form action={setShowPrices.bind(null, !showPrices)}>
+            <button type="submit" className={showPrices ? "admin-secondary-button" : "admin-primary-button"}>
+              {showPrices ? "Ocultar preços" : "Mostrar preços"}
+            </button>
+          </form>
         </div>
 
         {errorMessage && <p className="admin-alert error" role="alert">{errorMessage}</p>}

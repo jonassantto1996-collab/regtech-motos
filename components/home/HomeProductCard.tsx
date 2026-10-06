@@ -4,7 +4,13 @@ import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { formatCardInstallments, formatPriceBRL } from "@/lib/catalog/format";
 import type { CatalogProductListItem } from "@/lib/catalog/queries";
 
-export default function HomeProductCard({ product }: { product: CatalogProductListItem }) {
+export default function HomeProductCard({
+  product,
+  showPrice = true,
+}: {
+  product: CatalogProductListItem;
+  showPrice?: boolean;
+}) {
   const mainImage = product.product_images[0];
   const imageUrl = mainImage ? getPublicImageUrl(mainImage.storage_path) : null;
   const cardText = formatCardInstallments(product.card_price, product.card_installments);
@@ -43,11 +49,17 @@ export default function HomeProductCard({ product }: { product: CatalogProductLi
           <h3 className="text-lg font-semibold tracking-tight text-gray-950 transition-colors group-hover:text-blue-700 lg:text-2xl">{product.model}</h3>
           <span aria-hidden className="text-lg text-gray-400 transition-all group-hover:translate-x-1 group-hover:text-blue-700">→</span>
         </div>
-        <p className="mt-2 text-sm font-semibold text-gray-700 lg:text-base">
-          {formatPriceBRL(product.price)}
-          <span className="ml-1.5 text-xs font-medium text-gray-500">à vista</span>
-        </p>
-        {cardText && <p className="mt-0.5 text-xs text-gray-600 lg:text-sm">ou {cardText}</p>}
+        {showPrice ? (
+          <>
+            <p className="mt-2 text-sm font-semibold text-gray-700 lg:text-base">
+              {formatPriceBRL(product.price)}
+              <span className="ml-1.5 text-xs font-medium text-gray-500">à vista</span>
+            </p>
+            {cardText && <p className="mt-0.5 text-xs text-gray-600 lg:text-sm">ou {cardText}</p>}
+          </>
+        ) : (
+          <p className="mt-2 text-sm font-semibold text-gray-700 lg:text-base">Consulte o valor</p>
+        )}
       </div>
     </Link>
   );

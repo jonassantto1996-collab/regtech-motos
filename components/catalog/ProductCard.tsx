@@ -6,8 +6,10 @@ import type { CatalogProductListItem } from "@/lib/catalog/queries";
 
 export default function ProductCard({
   product,
+  showPrice = true,
 }: {
   product: CatalogProductListItem;
+  showPrice?: boolean;
 }) {
   const mainImage = product.product_images[0];
   const imageUrl = mainImage ? getPublicImageUrl(mainImage.storage_path) : null;
@@ -54,6 +56,7 @@ export default function ProductCard({
           {product.model}
         </h3>
 
+        {showPrice ? (
         <div className="mt-3">
           <p className="text-base font-semibold text-gray-800 sm:text-lg">
             {formatPriceBRL(product.price)}
@@ -63,6 +66,9 @@ export default function ProductCard({
             <p className="mt-1 text-sm text-gray-600">ou {cardText}</p>
           )}
         </div>
+        ) : (
+          <p className="mt-3 text-base font-semibold text-gray-800 sm:text-lg">Consulte o valor</p>
+        )}
 
         <span className="mt-5 inline-flex min-h-11 items-center justify-between border-b border-gray-300 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-gray-900 transition-colors group-hover:border-blue-700 group-hover:text-blue-700">
           Ver detalhes

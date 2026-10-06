@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { parseProductForm, parseColorsInput, parseSpecsInput } from "@/lib/products/validation";
@@ -148,5 +149,23 @@ export async function toggleProductActive(id: string, nextValue: boolean) {
   }
   await logAdminAction(adminUserId, nextValue ? "product.activate" : "product.deactivate", "product", id);
 
+  redirect("/admin/products");
+}
+
+/** Chave geral: mostra ou oculta os preços de todas as motos no site. */
+export async function setShowPrices(nextValue: boolean) {
+  const adminUserId = await requireAdminSession();
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("catalog_settings")
+    .upsert({ id: true, show_prices: nextValue }, { onConflict: "id" });
+
+  if (error) {
+    redirect("/admin/products?error=server_error");
+  }
+  await logAdminAction(adminUserId, nextValue ? "catalog.show_prices" : "catalog.hide_prices", "catalog_settings");
+
+  revalidatePath("/", "layout");
   redirect("/admin/products");
 }

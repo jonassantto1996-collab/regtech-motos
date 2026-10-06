@@ -7,6 +7,7 @@ import { getProductBySlug } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { formatCardInstallments, formatPriceBRL } from "@/lib/catalog/format";
 import { getSiteUrl } from "@/lib/site-url";
+import { getCatalogSettings } from "@/lib/catalog/settings";
 
 export const dynamic = "force-dynamic";
 
@@ -24,10 +25,13 @@ export async function generateMetadata({
     return { title: "Produto não encontrado — Regtech Motors" };
   }
 
+  const { showPrices } = await getCatalogSettings();
   const title = `${product.brand} ${product.model} — Regtech Motors`;
   const description =
     (product.description ? product.description.slice(0, 160) : "") ||
-    `${product.brand} ${product.model} por ${formatPriceBRL(product.price)} à vista.`;
+    (showPrices
+      ? `${product.brand} ${product.model} por ${formatPriceBRL(product.price)} à vista.`
+      : `${product.brand} ${product.model} na Regtech Motors. Consulte o valor.`);
 
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
@@ -59,6 +63,7 @@ export default async function ProductPage({
   if (!product) notFound();
 
   const siteUrl = getSiteUrl();
+  const { showPrices } = await getCatalogSettings();
   const cardText = formatCardInstallments(product.card_price, product.card_installments);
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
@@ -83,14 +88,19 @@ export default async function ProductPage({
     brand: { "@type": "Brand", name: product.brand },
     category: product.category,
     seller: { "@id": `${siteUrl}/#motorcycle-dealer` },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "BRL",
-      price: product.price,
-      url: `${siteUrl}/products/${product.slug}`,
-      ...(availabilitySchema ? { availability: availabilitySchema } : {}),
-      seller: { "@id": `${siteUrl}/#motorcycle-dealer` },
-    },
+    // Com os preços ocultos no site, o preço também sai dos dados para o Google.
+    ...(showPrices
+      ? {
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "BRL",
+            price: product.price,
+            url: `${siteUrl}/products/${product.slug}`,
+            ...(availabilitySchema ? { availability: availabilitySchema } : {}),
+            seller: { "@id": `${siteUrl}/#motorcycle-dealer` },
+          },
+        }
+      : {}),
   };
 
   return (
@@ -132,6 +142,7 @@ export default async function ProductPage({
             <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-950 sm:text-5xl">
               {product.model}
             </h1>
+            {showPrices ? (
             <div className="mt-4 sm:mt-5">
               <p className="text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
                 {formatPriceBRL(product.price)}
@@ -144,6 +155,11 @@ export default async function ProductPage({
                 </p>
               )}
             </div>
+            ) : (
+              <p className="mt-4 text-2xl font-semibold tracking-tight text-gray-900 sm:mt-5 sm:text-3xl">
+                Consulte o valor
+              </p>
+            )}
 
             <div className="mt-6 border-y border-gray-200 py-6 sm:mt-8 sm:py-7">
               <InterestModal productId={product.id} />

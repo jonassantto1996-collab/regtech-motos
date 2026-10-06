@@ -12,6 +12,7 @@ import {
   getActiveProductPriceBounds,
   type SortOption,
 } from "@/lib/catalog/queries";
+import { getCatalogSettings } from "@/lib/catalog/settings";
 
 export const metadata: Metadata = {
   title: "Catálogo de Motos — Regtech Motors",
@@ -46,16 +47,21 @@ export default async function ProductsPage({
   searchParams: Promise<SearchParamsShape>;
 }) {
   const sp = await searchParams;
+  const { showPrices } = await getCatalogSettings();
 
-  const sort: SortOption = VALID_SORTS.includes(sp.sort as SortOption)
+  // Com os preços ocultos, ordenação e filtros por preço são ignorados —
+  // assim ninguém consegue deduzir os valores pela ordem da lista.
+  const requestedSort: SortOption = VALID_SORTS.includes(sp.sort as SortOption)
     ? (sp.sort as SortOption)
     : "recent";
+  const sort: SortOption =
+    !showPrices && requestedSort !== "recent" ? "recent" : requestedSort;
 
   const page = Math.max(1, Number(sp.page) || 1);
-  const minPrice = parsePositiveNumber(sp.minPrice);
-  const maxPrice = parsePositiveNumber(sp.maxPrice);
+  const minPrice = showPrices ? parsePositiveNumber(sp.minPrice) : undefined;
+  const maxPrice = showPrices ? parsePositiveNumber(sp.maxPrice) : undefined;
   const hasFilters = Boolean(
-    sp.q || sp.brand || sp.category || sp.minPrice || sp.maxPrice
+    sp.q || sp.brand || sp.category || minPrice !== undefined || maxPrice !== undefined
   );
 
   const [result, brands, categories, priceBounds] = await Promise.all([
@@ -70,7 +76,7 @@ export default async function ProductsPage({
     }),
     getActiveProductBrands(),
     getActiveProductCategories(),
-    getActiveProductPriceBounds(),
+    showPrices ? getActiveProductPriceBounds() : Promise.resolve(null),
   ]);
 
   return (
@@ -97,7 +103,7 @@ export default async function ProductsPage({
           <form method="GET" action="/products">
             <div className="grid gap-5 border-b border-gray-200 pb-6 sm:gap-6 sm:pb-8 lg:grid-cols-[1fr_auto] lg:items-end">
               <SearchForm defaultValue={sp.q} />
-              <SortSelect value={sort} />
+              <SortSelect value={sort} allowPriceSort={showPrices} />
             </div>
 
             <div className="border-b border-gray-200 py-6 sm:py-7">
@@ -109,6 +115,7 @@ export default async function ProductsPage({
                 selectedCategory={sp.category}
                 selectedMinPrice={sp.minPrice}
                 selectedMaxPrice={sp.maxPrice}
+                showPriceFilters={showPrices}
               />
 
               <div className="mt-5 flex flex-col gap-3 sm:mt-6 sm:flex-row sm:items-center sm:justify-between">
@@ -165,7 +172,7 @@ export default async function ProductsPage({
           ) : (
             <div className="grid grid-cols-1 gap-x-8 gap-y-11 sm:gap-y-14 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-16">
               {result.products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard key={product.id} product={product} showPrice={showPrices} />
               ))}
             </div>
           )}
