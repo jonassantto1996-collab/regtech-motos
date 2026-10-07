@@ -395,7 +395,7 @@ export default async function Home() {
       </section>
 
       {socialProof && socialProof.length > 0 && (
-        <section className="ios-contact-section bg-white py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <section className="ios-contact-section bg-white pb-10 pt-12 sm:px-6 sm:pb-12 sm:pt-16 lg:px-8 lg:pb-14 lg:pt-20">
           <div className="mx-auto max-w-7xl">
             <div className="flex flex-col gap-4 border-b border-gray-200 pb-7 sm:flex-row sm:items-end sm:justify-between lg:pb-10">
               <div>
@@ -439,12 +439,23 @@ export default async function Home() {
               ))}
             </div>
 
-            <div className="mx-4 mt-10 max-w-3xl border-t border-gray-200 pt-8 text-center sm:mx-auto sm:mt-14 sm:pt-10 lg:mt-16">
-              <p className="text-[0.9375rem] leading-7 text-gray-700 sm:hidden">
-                Mais de 14 anos de confiança em Tucumã, desde a Puma Cell. Cada entrega é a prova de que fazer do jeito certo vale a pena.
+            <div className="mx-4 mt-8 sm:mx-0 sm:mt-10 lg:mt-12 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2.3fr)] lg:items-center lg:gap-12">
+              <p className="text-center text-[0.9375rem] leading-7 text-gray-700 sm:hidden">
+                <strong className="font-semibold text-gray-950">Mais de 14 anos de confiança em Tucumã</strong>, desde a Puma Cell. Cada entrega é a prova de que fazer do jeito certo{" "}
+                <strong className="font-semibold text-blue-700">vale a pena</strong>.
               </p>
-              <p className="hidden text-lg leading-8 text-gray-700 sm:block">
-                Quem conhece a Regtech sabe: a confiança vem de longe. São mais de 14 anos atendendo Tucumã e região, desde os tempos da Puma Cell, e hoje essa mesma dedicação chega à mobilidade. Cada cliente que sai daqui com a sua moto é a prova de que fazer as coisas do jeito certo vale a pena: atendimento de verdade, produto de qualidade e suporte depois da compra.
+              <div className="hidden sm:block">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700">
+                  Desde a Puma Cell
+                </p>
+                <p className="mt-2 text-2xl font-bold leading-tight tracking-tight text-gray-950 lg:text-[1.75rem]">
+                  Mais de 14 anos de confiança em Tucumã.
+                </p>
+              </div>
+              <p className="hidden text-base leading-7 text-gray-700 sm:mt-4 sm:block lg:mt-0 lg:border-l lg:border-gray-200 lg:pl-12 lg:text-[1.0625rem] lg:leading-7">
+                Quem conhece a Regtech sabe: a confiança vem de longe. Atendemos Tucumã e região desde os tempos da Puma Cell, e hoje essa mesma dedicação chega à mobilidade. Cada cliente que sai daqui com a sua moto leva junto o nosso compromisso:{" "}
+                <strong className="font-semibold text-gray-950">atendimento de verdade, produto de qualidade e suporte depois da compra</strong>. Ver essas fotos é a melhor recompensa do nosso trabalho e a prova de que{" "}
+                <strong className="font-semibold text-blue-700">fazer as coisas do jeito certo vale a pena</strong>.
               </p>
             </div>
           </div>
