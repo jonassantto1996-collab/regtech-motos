@@ -52,6 +52,28 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     siteName: "Regtech Motors",
+    url: "https://regtechmotors.com.br/",
+    images: [
+      {
+        url: "https://regtechmotors.com.br/og-regtech-motors-20261008.jpg",
+        width: 1080,
+        height: 1920,
+        type: "image/jpeg",
+        alt: "Personagem da Regtech Motors em uma moto elétrica sobre fundo azul",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Regtech Motors | Motos em Tucumã, PA",
+    description:
+      "Loja de motos elétricas e a combustão em Tucumã, Pará. Conheça os modelos disponíveis e fale com a equipe Regtech Motors.",
+    images: [
+      {
+        url: "https://regtechmotors.com.br/og-regtech-motors-20261008.jpg",
+        alt: "Personagem da Regtech Motors em uma moto elétrica sobre fundo azul",
+      },
+    ],
   },
 };
 
