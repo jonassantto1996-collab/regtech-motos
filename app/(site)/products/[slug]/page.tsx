@@ -2,12 +2,13 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductGallery from "@/components/catalog/ProductGallery";
-import InterestModal from "@/components/catalog/InterestModal";
+import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { getProductBySlug } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { formatCardInstallments, formatPriceBRL } from "@/lib/catalog/format";
 import { getSiteUrl } from "@/lib/site-url";
 import { getCatalogSettings } from "@/lib/catalog/settings";
+import { REGTECH_MOTORS } from "@/lib/seo/business";
 
 export const dynamic = "force-dynamic";
 
@@ -71,6 +72,10 @@ export default async function ProductPage({
   const imageUrl = mainImage
     ? getPublicImageUrl(mainImage.storage_path)
     : undefined;
+
+  // Botão principal: abre o WhatsApp da loja com a mensagem já pronta sobre esta moto.
+  const whatsappMessage = `Olá! Vi a ${product.brand} ${product.model} no site da Regtech Motors e tenho interesse. Pode me passar mais informações?\n${siteUrl}/products/${product.slug}`;
+  const whatsappHref = `${REGTECH_MOTORS.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`;
 
   const normalizedAvailability = product.availability?.trim().toLowerCase() ?? "";
   const availabilitySchema = normalizedAvailability.includes("indispon")
@@ -162,9 +167,17 @@ export default async function ProductPage({
             )}
 
             <div className="mt-6 border-y border-gray-200 py-6 sm:mt-8 sm:py-7">
-              <InterestModal productId={product.id} />
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-14 w-full items-center justify-center gap-3 bg-[#15803d] px-7 py-4 text-center text-sm font-semibold uppercase tracking-[0.14em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#166534] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#15803d] focus-visible:ring-offset-2 active:translate-y-0"
+              >
+                <WhatsAppIcon className="h-5 w-5 shrink-0" />
+                Chamar no WhatsApp
+              </a>
               <div className="mt-4 grid gap-2 text-sm text-gray-500">
-                <p>Registre seu interesse para continuar o atendimento pelo WhatsApp.</p>
+                <p>Fale direto com a loja: a mensagem já vai pronta com o modelo desta moto.</p>
                 <p className="flex items-center gap-2 text-xs text-gray-500">
                   <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-600" aria-hidden />
                   Atendimento direto com a equipe Regtech.
