@@ -9,8 +9,8 @@ const HREF = `${REGTECH_MOTORS.whatsapp}?text=${encodeURIComponent(MESSAGE)}`;
 
 /**
  * Botão flutuante do WhatsApp (Regtech Motors).
- * Fica escondido no detalhe da moto (/products/[slug]), onde o cliente usa o
- * "Tenho interesse" — assim o lead continua sendo registrado no painel.
+ * Fica escondido no detalhe da moto (/products/[slug]), que já tem o botão
+ * "Chamar no WhatsApp" com a mensagem pronta sobre o modelo.
  */
 export default function FloatingWhatsApp() {
   const pathname = usePathname();
