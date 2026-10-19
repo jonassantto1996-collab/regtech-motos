@@ -14,3 +14,5 @@ export function PackageIcon(props:IconProps){return <svg {...base} {...props}><p
 export function CheckCircleIcon(props:IconProps){return <svg {...base} {...props}><circle cx="12" cy="12" r="9"/><path d="m8 12 2.6 2.6L16.5 9"/></svg>}
 export function AlertCircleIcon(props:IconProps){return <svg {...base} {...props}><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg>}
 export function UserIcon(props:IconProps){return <svg {...base} {...props}><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0 1 14 0"/></svg>}
+export function ChartIcon(props:IconProps){return <svg {...base} {...props}><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>}
+export function EyeIcon(props:IconProps){return <svg {...base} {...props}><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>}
