@@ -21,6 +21,7 @@ export default function FloatingWhatsApp() {
       href={HREF}
       target="_blank"
       rel="noreferrer"
+      data-track-source="flutuante"
       aria-label="Falar com a Regtech Motors no WhatsApp"
       className="group fixed right-4 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_30px_rgba(0,0,0,0.25)] transition-transform duration-200 hover:-translate-y-0.5 hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 sm:right-6 sm:h-16 sm:w-16"
       style={{ bottom: "calc(1rem + env(safe-area-inset-bottom))" }}
