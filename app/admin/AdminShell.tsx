@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
-import {DashboardIcon,BikeIcon,ImageIcon,UsersIcon,StoreIcon,HeadsetIcon,SettingsIcon} from "./icons";
+import {DashboardIcon,BikeIcon,ImageIcon,UsersIcon,StoreIcon,HeadsetIcon,SettingsIcon,ChartIcon} from "./icons";
 import { logout } from "./actions";
 
-type AdminSection = "dashboard" | "products" | "leads" | "hero" | "editorial" | "store" | "social-proof" | "users";
+type AdminSection = "dashboard" | "products" | "leads" | "results" | "hero" | "editorial" | "store" | "social-proof" | "users";
 
 const NavContent = ({ active, close }: { active: AdminSection; close?: () => void }) => (
   <nav>
@@ -16,6 +16,7 @@ const NavContent = ({ active, close }: { active: AdminSection; close?: () => voi
     <Link onClick={close} className={active === "editorial" ? "nav-active" : ""} href="/admin/editorial"><span className="nav-icon"><ImageIcon /></span><span>Destaque da Home</span></Link>
     <Link onClick={close} className={active === "social-proof" ? "nav-active" : ""} href="/admin/social-proof"><span className="nav-icon"><UsersIcon /></span><span>Prova social</span></Link>
     <small>COMERCIAL</small>
+    <Link onClick={close} className={active === "results" ? "nav-active" : ""} href="/admin/results"><span className="nav-icon"><ChartIcon /></span><span>Resultados do site</span></Link>
     <Link onClick={close} className={active === "leads" ? "nav-active" : ""} href="/admin/leads"><span className="nav-icon"><UsersIcon /></span><span>Leads</span></Link>
     <small>LOJA</small>
     <Link onClick={close} className={active === "store" ? "nav-active" : ""} href="/admin/store"><span className="nav-icon"><StoreIcon /></span><span>Loja completa</span></Link>
