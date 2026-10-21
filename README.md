@@ -17,7 +17,7 @@ Tabelas: `products`, `product_images`, `product_colors`, `product_specs`, `leads
 - Supabase (`@supabase/supabase-js` + `@supabase/ssr`)
 - Deploy: Vercel
 
-Esta stack replica o padrão já usado em outros projetos Next.js/Supabase da Vértice Digital (ex.: Vértice ERP), já que não havia nenhum documento específico do Regtech Motos definindo uma arquitetura diferente.
+Esta stack replica o padrão já usado em outros projetos Next.js/Supabase da Viestro Assessoria (ex.: Viestro ERP), já que não havia nenhum documento específico do Regtech Motos definindo uma arquitetura diferente.
 
 ## Estrutura de pastas
 ```

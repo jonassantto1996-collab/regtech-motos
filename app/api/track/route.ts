@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
       : null;
 
   try {
-    // Quem está logado no painel (equipe da loja / Vértice) não entra na conta.
+    // Quem está logado no painel (equipe da loja / Viestro) não entra na conta.
     const supabase = await createClient();
     const { data: claims } = await supabase.auth.getClaims();
     if (claims?.claims) return noContent();
