@@ -83,10 +83,25 @@ export default function HeroMedia({
     window.addEventListener("pageshow", handlePageShow);
     motionPreference.addEventListener("change", ensurePlayback);
 
+    // O navegador só escolhe o vídeo (celular / tablet / computador) quando a
+    // página abre. Ao girar o tablet, a largura muda de faixa e o vídeo antigo
+    // ficava cortado. Aqui, quando a faixa muda, o vídeo certo é recarregado.
+    const breakpointQueries = [
+      window.matchMedia("(max-width: 639px)"),
+      window.matchMedia("(min-width: 1024px)"),
+    ];
+    const handleBreakpointChange = () => {
+      setVideoReady(false);
+      video.load();
+      ensurePlayback();
+    };
+    breakpointQueries.forEach((query) => query.addEventListener("change", handleBreakpointChange));
+
     markReady();
     ensurePlayback();
 
     return () => {
+      breakpointQueries.forEach((query) => query.removeEventListener("change", handleBreakpointChange));
       if (retryTimer) clearTimeout(retryTimer);
       video.removeEventListener("loadeddata", markReady);
       video.removeEventListener("canplay", handleCanPlay);
