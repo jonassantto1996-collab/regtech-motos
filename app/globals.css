@@ -101,6 +101,19 @@
   }
 }
 
+/* Tablet em pé (640–1023px de largura e tela alta): o personagem aparece inteiro,
+   à direita do cartão de texto. Não afeta celular (nem deitado) nem computador. */
+@media (min-width: 640px) and (max-width: 1023px) and (min-height: 700px) {
+  .contact-rider-media .contact-rider-mobile-image {
+    left: calc(100% - 538px);
+    top: -227px;
+    width: auto;
+    height: 1150px;
+    max-width: none;
+    transform: none;
+  }
+}
+
 /* iPhone mantém apenas a margem lateral já aprovada; a composição interna é a mesma do Android. */
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 639px) {
