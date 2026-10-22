@@ -329,7 +329,7 @@ export default async function Home() {
               </Link>
             </div>
 
-            <div className="relative min-h-[26rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-[34rem] lg:border-l lg:border-t-0">
+            <div className="editorial-media relative min-h-[26rem] overflow-hidden border-t border-white/10 bg-blue-950 sm:min-h-[28rem] lg:min-h-[34rem] lg:border-l lg:border-t-0">
               <Image
                 src={editorialSettings.storage_path ? getHomeMediaUrl(editorialSettings.storage_path) : "/regtech-entrega-home.webp"}
                 alt={editorialSettings.alt_text}
