@@ -112,6 +112,21 @@
     max-width: none;
     transform: none;
   }
+
+  /* Foto da entrega: mesma proporção do celular, sem cortar o topo da foto. */
+  .editorial-media.editorial-media {
+    min-height: 0;
+    aspect-ratio: 15 / 16;
+  }
+}
+
+/* Tablet deitado (tela de toque, 1024px ou mais): o personagem vai um pouco para
+   a direita para a orelha não ficar por baixo do cartão de texto. O computador
+   (mouse) não é afetado. */
+@media (min-width: 1024px) and (hover: none) and (pointer: coarse) {
+  .contact-rider-media .contact-rider-mobile-image {
+    transform: translateX(calc(-50% + 2rem));
+  }
 }
 
 /* iPhone mantém apenas a margem lateral já aprovada; a composição interna é a mesma do Android. */
