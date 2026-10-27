@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { TRACK_SOURCES, type TrackSource } from "@/lib/analytics/sources";
+import { DEVICES, TRACK_SOURCES, TRAFFIC_SOURCES, type TrackSource } from "@/lib/analytics/sources";
 
 /**
  * Recebe os eventos anônimos do site (visita de página e clique no WhatsApp)
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
   }
   if (!body || typeof body !== "object") return noContent();
 
-  const { type, path, source, sid } = body as Record<string, unknown>;
+  const { type, path, source, sid, src, dev } = body as Record<string, unknown>;
   if (type !== "page_view" && type !== "whatsapp_click") return noContent();
   if (typeof path !== "string" || !path.startsWith("/") || path.length > 300) return noContent();
   if (path.startsWith("/admin") || path.startsWith("/api")) return noContent();
@@ -57,6 +57,24 @@ export async function POST(request: NextRequest) {
         ? (source as TrackSource)
         : "outros"
       : null;
+  const trafficSource =
+    type === "page_view" && typeof src === "string" && (TRAFFIC_SOURCES as readonly string[]).includes(src) ? src : null;
+  const device =
+    type === "page_view" && typeof dev === "string" && (DEVICES as readonly string[]).includes(dev) ? dev : null;
+
+  // Cidade aproximada informada pela hospedagem (pelo provedor de internet).
+  // O endereço IP não é guardado.
+  let city: string | null = null;
+  let region: string | null = null;
+  if (type === "page_view") {
+    try {
+      const rawCity = request.headers.get("x-vercel-ip-city");
+      city = rawCity ? decodeURIComponent(rawCity).slice(0, 80) : null;
+    } catch {
+      city = null;
+    }
+    region = request.headers.get("x-vercel-ip-country-region")?.slice(0, 10) ?? null;
+  }
 
   try {
     // Quem está logado no painel (equipe da loja / Viestro) não entra na conta.
@@ -89,6 +107,10 @@ export async function POST(request: NextRequest) {
       product_id: productId,
       source: trackSource,
       session_id: sessionId,
+      traffic_source: trafficSource,
+      device,
+      city,
+      region,
     });
   } catch {
     // Silencioso: a contagem nunca pode quebrar o site.

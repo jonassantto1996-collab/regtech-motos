@@ -2,14 +2,66 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import type { TrackSource } from "@/lib/analytics/sources";
+import type { Device, TrackSource, TrafficSource } from "@/lib/analytics/sources";
 
 /**
  * Contagem anônima de visitas e de cliques no WhatsApp.
- * Sem cookies e sem dados pessoais: só a página, a origem do clique e um
- * número aleatório que vale enquanto a aba estiver aberta.
+ * Sem cookies e sem dados pessoais: só a página, de onde a visita veio, o tipo
+ * de aparelho e um número aleatório que vale enquanto a aba estiver aberta.
  */
 const SESSION_KEY = "rtm_sid";
+const ORIGIN_KEY = "rtm_src";
+
+/** De onde a visita veio: decidido na primeira página e mantido na visita toda. */
+function detectTrafficSource(): TrafficSource {
+  const params = new URLSearchParams(window.location.search);
+  const utmSource = (params.get("utm_source") ?? "").toLowerCase();
+  const utmMedium = (params.get("utm_medium") ?? "").toLowerCase();
+  if (params.has("gclid") || /cpc|ppc|paid|ads|anuncio/.test(utmMedium)) return "anuncio";
+  if (utmSource.includes("instagram") || utmSource === "ig") return "instagram";
+  if (utmSource.includes("facebook") || utmSource === "fb") return "facebook";
+  if (utmSource.includes("google")) return "google";
+  if (utmSource.includes("whatsapp")) return "direto";
+  if (utmSource) return "outros";
+
+  // Navegador interno dos apps (o link aberto dentro do Instagram/Facebook).
+  const ua = navigator.userAgent;
+  if (/Instagram/i.test(ua)) return "instagram";
+  if (/FBAN|FBAV|FB_IAB/i.test(ua)) return "facebook";
+
+  let host = "";
+  try {
+    host = document.referrer ? new URL(document.referrer).hostname.toLowerCase() : "";
+  } catch {
+    host = "";
+  }
+  if (!host || host === window.location.hostname) return "direto";
+  if (host.includes("instagram.")) return "instagram";
+  if (host.includes("facebook.") || host === "fb.com" || host.endsWith(".fb.com")) return "facebook";
+  if (host.includes("google.") || host.includes("bing.") || host.includes("yahoo.")) return "google";
+  if (host.includes("whatsapp.") || host === "wa.me") return "direto";
+  return "outros";
+}
+
+function getTrafficSource(): TrafficSource {
+  try {
+    const saved = window.sessionStorage.getItem(ORIGIN_KEY) as TrafficSource | null;
+    if (saved) return saved;
+    const detected = detectTrafficSource();
+    window.sessionStorage.setItem(ORIGIN_KEY, detected);
+    return detected;
+  } catch {
+    return detectTrafficSource();
+  }
+}
+
+function getDevice(): Device {
+  const ua = navigator.userAgent;
+  const iPadOS = /Macintosh/i.test(ua) && navigator.maxTouchPoints > 1;
+  if (iPadOS || /iPad|Tablet/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua))) return "tablet";
+  if (/Mobi|iPhone|iPod|Android/i.test(ua)) return "celular";
+  return "computador";
+}
 
 function getSessionId(): string | null {
   try {
@@ -61,7 +113,7 @@ export default function SiteTracker() {
   useEffect(() => {
     if (!pathname || lastPath.current === pathname) return;
     lastPath.current = pathname;
-    send({ type: "page_view", path: pathname, sid: getSessionId() });
+    send({ type: "page_view", path: pathname, sid: getSessionId(), src: getTrafficSource(), dev: getDevice() });
   }, [pathname]);
 
   useEffect(() => {

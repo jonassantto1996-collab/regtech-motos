@@ -6,7 +6,14 @@ import { AdminShell } from "../AdminShell";
 import { requireAdminSession } from "../products/actions";
 import { ChartIcon, EyeIcon, UsersIcon } from "../icons";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
-import { TRACK_SOURCE_LABELS, type TrackSource } from "@/lib/analytics/sources";
+import {
+  DEVICE_LABELS,
+  TRACK_SOURCE_LABELS,
+  TRAFFIC_SOURCE_LABELS,
+  type Device,
+  type TrackSource,
+  type TrafficSource,
+} from "@/lib/analytics/sources";
 import "../admin.css";
 
 export const dynamic = "force-dynamic";
@@ -26,8 +33,19 @@ type Stats = {
   daily: { day: string; views: number; clicks: number }[];
   products: { id: string; brand: string; model: string; slug: string; views: number; clicks: number }[];
   sources: { source: string; clicks: number }[];
+  origins?: { origin: string; visits: number; clicks: number }[];
+  devices?: { device: string; visits: number }[];
+  cities?: { city: string; region: string | null; visits: number }[];
+  hours?: { hour: number; visits: number }[];
+  funnel?: { visits: number; saw_bikes: number; saw_product: number; clicked: number };
+  details_since?: string | null;
   first_event_at: string | null;
 };
+
+function percent(part: number, total: number) {
+  if (total <= 0) return "0%";
+  return `${((part / total) * 100).toLocaleString("pt-BR", { maximumFractionDigits: 0 })}%`;
+}
 
 // Tucumã/PA segue o horário de Belém (UTC-3, sem horário de verão).
 const OFFSET_MS = 3 * 60 * 60 * 1000;
@@ -103,6 +121,24 @@ export default async function AdminResultsPage({
   const sources = stats?.sources ?? [];
   const maxSource = Math.max(1, ...sources.map((s) => s.clicks));
   const periodLabel = PERIODS.find((p) => p.key === period)?.label ?? "";
+
+  const origins = stats?.origins ?? [];
+  const maxOrigin = Math.max(1, ...origins.map((o) => o.visits));
+  const devices = stats?.devices ?? [];
+  const totalDeviceVisits = devices.reduce((sum, d) => sum + d.visits, 0);
+  const cities = stats?.cities ?? [];
+  const maxCity = Math.max(1, ...cities.map((c) => c.visits));
+  const hourMap = new Map((stats?.hours ?? []).map((h) => [h.hour, h.visits]));
+  const hours = Array.from({ length: 24 }, (_, hour) => ({ hour, visits: hourMap.get(hour) ?? 0 }));
+  const maxHour = Math.max(1, ...hours.map((h) => h.visits));
+  const peakHour = hours.reduce((best, h) => (h.visits > best.visits ? h : best), hours[0]);
+  const funnel = stats?.funnel ?? { visits, saw_bikes: 0, saw_product: 0, clicked: 0 };
+  const funnelSteps = [
+    { label: "Entraram no site", value: funnel.visits },
+    { label: "Viram as motos", value: funnel.saw_bikes },
+    { label: "Abriram a página de uma moto", value: funnel.saw_product },
+    { label: "Chamaram no WhatsApp", value: funnel.clicked },
+  ];
 
   return (
     <AdminShell active="results" email={claims.claims.email}>
@@ -237,6 +273,116 @@ export default async function AdminResultsPage({
             )}
           </article>
         </div>
+
+        <div className="results-section-title">
+          <h2>Como foi o movimento no site</h2>
+          <p>
+            Tudo anônimo: ninguém é identificado. A pessoa só aparece para a loja quando chama no WhatsApp.
+            {stats?.details_since
+              ? ` Origem, aparelho e cidade registrados desde ${dateFormatter.format(new Date(stats.details_since))}.`
+              : " Origem, aparelho e cidade começam a aparecer a partir desta atualização."}
+          </p>
+        </div>
+
+        <div className="results-grid results-grid-even">
+          <article className="panel">
+            <h2>Caminho dentro do site</h2>
+            <p className="results-panel-note">De cada 100 pessoas que entram, quantas chegam a cada etapa.</p>
+            <ol className="results-funnel">
+              {funnelSteps.map((step, index) => (
+                <li key={step.label}>
+                  <div>
+                    <span><b>{index + 1}</b>{step.label}</span>
+                    <strong>
+                      {numberFormatter.format(step.value)}
+                      <small>{percent(step.value, funnel.visits)}</small>
+                    </strong>
+                  </div>
+                  <i style={{ width: `${funnel.visits > 0 ? Math.max(2, (step.value / funnel.visits) * 100) : 0}%` }} />
+                </li>
+              ))}
+            </ol>
+          </article>
+
+          <article className="panel">
+            <h2>De onde vieram as visitas</h2>
+            <p className="results-panel-note">Visitas e quantas delas chamaram no WhatsApp.</p>
+            {origins.length === 0 ? (
+              <p className="results-empty">Nenhuma visita neste período ainda.</p>
+            ) : (
+              <ul className="results-sources results-origins">
+                {origins.map((item) => (
+                  <li key={item.origin}>
+                    <div>
+                      <span>{TRAFFIC_SOURCE_LABELS[item.origin as TrafficSource] ?? item.origin}</span>
+                      <strong>
+                        {numberFormatter.format(item.visits)}
+                        {item.clicks > 0 && <small>· {numberFormatter.format(item.clicks)} no WhatsApp</small>}
+                      </strong>
+                    </div>
+                    <i className="views" style={{ width: `${(item.visits / maxOrigin) * 100}%` }} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+
+          <article className="panel">
+            <h2>Aparelhos usados</h2>
+            {devices.length === 0 ? (
+              <p className="results-empty">Nenhuma visita neste período ainda.</p>
+            ) : (
+              <ul className="results-devices">
+                {devices.map((item) => (
+                  <li key={item.device}>
+                    <strong>{percent(item.visits, totalDeviceVisits)}</strong>
+                    <span>{DEVICE_LABELS[item.device as Device] ?? item.device}</span>
+                    <small>{numberFormatter.format(item.visits)} visitas</small>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+
+          <article className="panel">
+            <h2>Cidades</h2>
+            <p className="results-panel-note">Cidade aproximada, informada pela internet de quem acessa.</p>
+            {cities.length === 0 ? (
+              <p className="results-empty">As cidades aparecem a partir desta atualização.</p>
+            ) : (
+              <ul className="results-sources results-origins">
+                {cities.map((item) => (
+                  <li key={item.city}>
+                    <div>
+                      <span>{item.city}{item.region ? ` · ${item.region}` : ""}</span>
+                      <strong>{numberFormatter.format(item.visits)}</strong>
+                    </div>
+                    <i className="views" style={{ width: `${(item.visits / maxCity) * 100}%` }} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        </div>
+
+        <article className="panel results-hours-panel">
+          <div className="panel-title">
+            <h2>Horários com mais visitas</h2>
+            {peakHour.visits > 0 && (
+              <span className="results-peak">Pico: {String(peakHour.hour).padStart(2, "0")}h às {String((peakHour.hour + 1) % 24).padStart(2, "0")}h</span>
+            )}
+          </div>
+          <div className="results-chart results-hours" role="img" aria-label="Visitas por horário do dia">
+            {hours.map((h) => (
+              <div className="results-day" key={h.hour} title={`${String(h.hour).padStart(2, "0")}h: ${h.visits} visitas`}>
+                <div className="results-bars">
+                  <span className="views" style={{ height: `${h.visits === 0 ? 0 : Math.max(4, (h.visits / maxHour) * 100)}%` }} />
+                </div>
+                <small>{h.hour % 3 === 0 ? `${String(h.hour).padStart(2, "0")}h` : ""}</small>
+              </div>
+            ))}
+          </div>
+        </article>
       </section>
     </AdminShell>
   );
