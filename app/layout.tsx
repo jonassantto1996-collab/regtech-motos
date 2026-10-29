@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   verification: {
     google: "b_fN3RXAIUy_UFHUkjzPBF2DG2qM4HhzDncnWHkvSUk",
+    other: {
+      "msvalidate.01": "3160F585D73C043EB48CEA6AF2C30D4A",
+    },
   },
 };
 
