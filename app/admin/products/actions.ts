@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { parseProductForm, parseColorsInput, parseSpecsInput } from "@/lib/products/validation";
 import { isAuthorizedAdmin } from "@/lib/admin/authorization";
+import { notifySearchEngines } from "@/lib/seo/indexnow";
 
 /**
  * Confere se existe uma sessão de admin válida. Nunca confiar em informação
@@ -94,6 +95,7 @@ export async function createProduct(formData: FormData) {
     redirect(`/admin/products/new?error=${mapDbError(error)}`);
   }
   await logAdminAction(adminUserId, "product.create", "product", typeof createdProductId === "string" ? createdProductId : undefined, { slug: parsedProduct.data.slug });
+  notifySearchEngines([`/products/${parsedProduct.data.slug}`, "/products", "/"]);
 
   redirect("/admin/products");
 }
@@ -131,6 +133,7 @@ export async function updateProduct(id: string, formData: FormData) {
     redirect(`/admin/products/${id}/edit?error=${mapped}`);
   }
   await logAdminAction(adminUserId, "product.update", "product", id, { slug: parsedProduct.data.slug });
+  notifySearchEngines([`/products/${parsedProduct.data.slug}`, "/products", "/"]);
 
   redirect("/admin/products");
 }
@@ -139,15 +142,18 @@ export async function toggleProductActive(id: string, nextValue: boolean) {
   const adminUserId = await requireAdminSession();
 
   const admin = createAdminClient();
-  const { error } = await admin
+  const { data: toggled, error } = await admin
     .from("products")
     .update({ is_active: nextValue })
-    .eq("id", id);
+    .eq("id", id)
+    .select("slug")
+    .maybeSingle();
 
   if (error) {
     redirect("/admin/products?error=server_error");
   }
   await logAdminAction(adminUserId, nextValue ? "product.activate" : "product.deactivate", "product", id);
+  if (toggled?.slug) notifySearchEngines([`/products/${toggled.slug}`, "/products", "/"]);
 
   redirect("/admin/products");
 }
