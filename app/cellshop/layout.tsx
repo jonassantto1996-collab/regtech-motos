@@ -37,7 +37,7 @@ export default async function CellshopLayout({ children }: { children: ReactNode
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070a12]/95 text-white backdrop-blur">
         <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-5 px-4 sm:min-h-20 sm:px-6 lg:px-8">
           <Link href={home} aria-label="Regtech Cell Shop — início" className="shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-[#22d3ee]">
-            <Image src="/cellshop-logo.webp" alt="Regtech Cell Shop" width={480} height={137} priority className="h-9 w-auto sm:h-11" />
+            <Image src="/cellshop-logo.svg" alt="Regtech Cell Shop" width={1439} height={418} priority unoptimized className="h-9 w-auto sm:h-11" />
           </Link>
           <nav aria-label="Navegação principal" className="flex items-center gap-5 sm:gap-8">
             <Link href={base ? `${base}#vitrine` : "/#vitrine"} className={`${NAV_LINK} hidden sm:inline-flex`}>
@@ -64,7 +64,7 @@ export default async function CellshopLayout({ children }: { children: ReactNode
       <footer className="border-t border-white/10 bg-[#070a12] text-white">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr] lg:px-8 lg:py-16">
           <div>
-            <Image src="/cellshop-logo.webp" alt="Regtech Cell Shop" width={480} height={137} className="h-11 w-auto" />
+            <Image src="/cellshop-logo.svg" alt="Regtech Cell Shop" width={1439} height={418} unoptimized className="h-11 w-auto" />
             <p className="mt-5 max-w-sm text-sm leading-6 text-slate-400">
               Smartphones, tablets, carregadores, Bombox, Starlink e acessórios em Tucumã, Pará. Uma loja Regtech, com mais de 14 anos de mercado.
             </p>
