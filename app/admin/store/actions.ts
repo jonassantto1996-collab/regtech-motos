@@ -1,13 +1,16 @@
 "use server";
 import {redirect} from "next/navigation";
+import {revalidatePath} from "next/cache";
 import {createAdminClient} from "@/lib/supabase/admin";
 import {requireAdminSession,logAdminAction} from "@/app/admin/products/actions";
-import {parseStoreProductForm,parseStoreVariantForm,parseStockQuantity} from "@/lib/store/validation";
+import {parseStoreProductForm,parseStoreVariantForm,parseStockQuantity,parseVariantPrices} from "@/lib/store/validation";
 function err(e:{code?:string}|null){return e?.code==="23505"?"duplicate":"server_error"}
 export async function createStoreProduct(formData:FormData){
  const user=await requireAdminSession();const parsed=parseStoreProductForm(formData,"create");if(!parsed.ok)redirect("/admin/store/new?error="+parsed.error);
  const admin=createAdminClient();const {data,error}=await admin.from("store_products").insert(parsed.data).select("id").single();if(error)redirect("/admin/store/new?error="+err(error));
- await logAdminAction(user,"store_product.create","store_product",data.id,{slug:parsed.data.slug});redirect("/admin/store");
+ await logAdminAction(user,"store_product.create","store_product",data.id,{slug:parsed.data.slug});
+ // Vai direto para a edição: é lá que entram fotos, ficha técnica e estoque.
+ redirect("/admin/store/"+data.id+"/edit?created=1");
 }
 export async function updateStoreProduct(id:string,formData:FormData){
  const user=await requireAdminSession();const parsed=parseStoreProductForm(formData,"edit");if(!parsed.ok)redirect("/admin/store/"+id+"/edit?error="+parsed.error);
@@ -20,6 +23,13 @@ export async function createStoreVariant(productId:string,formData:FormData){
  const admin=createAdminClient();const {data,error}=await admin.from("store_product_variants").insert({product_id:productId,...parsed.data}).select("id").single();
  if(error)redirect("/admin/store/"+productId+"/edit?error="+err(error));await logAdminAction(user,"store_variant.create","store_product_variant",data.id,{product_id:productId,stock_quantity:parsed.data.stock_quantity});redirect("/admin/store/"+productId+"/edit");
 }
+export async function updateVariantPrices(productId:string,variantId:string,formData:FormData){
+ const user=await requireAdminSession();const parsed=parseVariantPrices(formData);if(!parsed.ok)redirect("/admin/store/"+productId+"/edit?error="+parsed.error);
+ const admin=createAdminClient();const {data,error}=await admin.from("store_product_variants").update(parsed.data).eq("id",variantId).eq("product_id",productId).select("id").maybeSingle();
+ if(error||!data)redirect("/admin/store/"+productId+"/edit?error=server_error");
+ await logAdminAction(user,"store_variant.price_update","store_product_variant",variantId,{product_id:productId,price:parsed.data.price,wholesale_price:parsed.data.wholesale_price});
+ redirect("/admin/store/"+productId+"/edit");
+}
 export async function updateVariantStock(productId:string,variantId:string,formData:FormData){
  const user=await requireAdminSession();const parsed=parseStockQuantity(formData);if(!parsed.ok)redirect("/admin/store/"+productId+"/edit?error="+parsed.error);const stock=parsed.stock;
  const note=String(formData.get("note")??"").trim();if(note.length>200)redirect("/admin/store/"+productId+"/edit?error=note_too_long");
@@ -28,4 +38,15 @@ export async function updateVariantStock(productId:string,variantId:string,formD
  const movement=Array.isArray(data)?data[0]:null;
  await logAdminAction(user,"store_variant.stock_update","store_product_variant",variantId,{product_id:productId,previous_quantity:movement?.previous_quantity,current_quantity:stock,movement_id:movement?.movement_id??null});
  redirect("/admin/store/"+productId+"/edit");
+}
+/** Escolhe qual preço a loja online mostra: atacado ou varejo. */
+export async function setStorePriceMode(formData:FormData){
+ const user=await requireAdminSession();
+ const mode=String(formData.get("store_price_mode")??"");
+ if(mode!=="wholesale"&&mode!=="retail")redirect("/admin/store?error=server_error");
+ const admin=createAdminClient();const {error}=await admin.from("catalog_settings").update({store_price_mode:mode}).eq("id",true);
+ if(error)redirect("/admin/store?error=server_error");
+ await logAdminAction(user,"store_settings.price_mode","catalog_settings",undefined,{store_price_mode:mode});
+ revalidatePath("/","layout");
+ redirect("/admin/store?saved=price_mode");
 }
