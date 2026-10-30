@@ -4,7 +4,7 @@
  *
  * - O painel escolhe qual preço o site mostra: atacado ou varejo.
  * - A versão (variante) pode ter preço próprio; vazio = mesmo preço do produto.
- * - Preço vazio ou zero = "Consulte o valor".
+ * - Preço vazio ou zero = "Consulte o valor" (na versão, só o zero; o vazio herda).
  * - A condição no cartão (total + parcelas) é do produto; só aparece quando
  *   a versão escolhida custa o mesmo que o produto, para não mostrar parcela errada.
  */
@@ -35,8 +35,12 @@ export function productPrice(product: PricedProduct, mode: PriceMode): number | 
 }
 
 export function variantPrice(product: PricedProduct, variant: PricedVariant | null, mode: PriceMode): number | null {
-  const own = variant ? toNumber(mode === "wholesale" ? variant.wholesale_price : variant.price) : null;
-  return own ?? productPrice(product, mode);
+  if (variant) {
+    const own = mode === "wholesale" ? variant.wholesale_price : variant.price;
+    // Preço próprio preenchido (inclusive zero = "Consulte o valor") vale para a versão.
+    if (own !== null && own !== undefined && own !== "") return toNumber(own);
+  }
+  return productPrice(product, mode);
 }
 
 export type CardCondition = { total: number; installments: number; parcel: number };
