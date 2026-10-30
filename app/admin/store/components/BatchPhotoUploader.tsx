@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { addStoreProductImagesBatch } from "../media-actions";
 import { shrink } from "./StoreImageUploader";
-import { MAX_IMAGES_PER_PRODUCT, planBatch, type BatchProduct } from "@/lib/store/batch-photos";
+import { MAX_IMAGES_PER_PRODUCT, planBatch, type BatchPlan, type BatchProduct } from "@/lib/store/batch-photos";
 
 type Product = BatchProduct & { isActive: boolean };
 type Status = { state: "waiting" | "sending" | "done" | "error"; sent: number; message?: string };
@@ -33,13 +33,17 @@ export function BatchPhotoUploader({ products }: { products: Product[] }) {
   const [statuses, setStatuses] = useState<Record<string, Status>>({});
   const [running, setRunning] = useState(false);
   const [finished, setFinished] = useState(false);
+  // Plano "congelado" no início do envio: a lista de fotos de cada produto não
+  // muda depois que a página recarrega a contagem de fotos já salvas.
+  const [frozenPlan, setFrozenPlan] = useState<BatchPlan<File> | null>(null);
 
   // "Selecionar pasta" (atributo que o React não tipa).
   useEffect(() => {
     folderRef.current?.setAttribute("webkitdirectory", "");
   }, []);
 
-  const plan = useMemo(() => planBatch(files.map((file) => ({ file, name: file.name })), products), [files, products]);
+  const livePlan = useMemo(() => planBatch(files.map((file) => ({ file, name: file.name })), products), [files, products]);
+  const plan = frozenPlan ?? livePlan;
   const previews = useMemo(() => new Map(files.map((f) => [f, URL.createObjectURL(f)])), [files]);
   useEffect(() => () => previews.forEach((url) => URL.revokeObjectURL(url)), [previews]);
 
@@ -56,18 +60,21 @@ export function BatchPhotoUploader({ products }: { products: Product[] }) {
     setIgnored(all.filter((f) => !ACCEPTED.test(f.type) && !f.name.startsWith(".") && f.name !== "desktop.ini").map((f) => f.name));
     setStatuses({});
     setFinished(false);
+    setFrozenPlan(null);
   }
 
   async function send() {
+    setFrozenPlan(plan);
     setRunning(true);
     setFinished(false);
     for (const group of plan.groups) {
       const id = group.product.id;
       if (group.items.length === 0 || statuses[id]?.state === "done") continue;
-      let sent = 0;
+      // As fotos são salvas em ordem: se já entraram N, recomeça da foto N+1 (sem duplicar).
+      let sent = statuses[id]?.sent ?? 0;
       setStatuses((s) => ({ ...s, [id]: { state: "sending", sent } }));
       let error: string | undefined;
-      for (let i = 0; i < group.items.length && !error; i += FILES_PER_SEND) {
+      for (let i = sent; i < group.items.length && !error; i += FILES_PER_SEND) {
         const formData = new FormData();
         try {
           for (const item of group.items.slice(i, i + FILES_PER_SEND)) formData.append("files", await shrink(item.file));
@@ -96,6 +103,7 @@ export function BatchPhotoUploader({ products }: { products: Product[] }) {
     setIgnored([]);
     setStatuses({});
     setFinished(false);
+    setFrozenPlan(null);
   }
 
   return (
