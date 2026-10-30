@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logAdminAction, requireAdminSession } from "@/app/admin/products/actions";
+import { notifyStoreProduct } from "@/lib/cellshop/indexnow";
 import {
   PRODUCT_IMAGES_BUCKET,
   buildStoreProductImagePath,
@@ -74,6 +75,7 @@ export async function uploadStoreProductImages(productId: string, formData: Form
   }
 
   await logAdminAction(user, "store_product_image.upload", "store_product", productId, { count: files.length });
+  notifyStoreProduct(productId);
   redirect(editPath(productId));
 }
 
@@ -95,6 +97,7 @@ export async function deleteStoreProductImage(imageId: string, productId: string
   if (storageError) console.error("[store-image] registro apagado, arquivo ficou no Storage:", image.storage_path);
 
   await logAdminAction(user, "store_product_image.delete", "store_product", productId, { image_id: imageId });
+  notifyStoreProduct(productId);
   redirect(editPath(productId));
 }
 
@@ -125,6 +128,7 @@ export async function moveStoreProductImage(imageId: string, productId: string, 
   }
 
   await logAdminAction(user, "store_product_image.reorder", "store_product", productId, { image_id: imageId, direction });
+  notifyStoreProduct(productId);
   redirect(editPath(productId));
 }
 
@@ -170,6 +174,7 @@ export async function addStoreProductSpec(productId: string, formData: FormData)
   });
   if (error) redirect(specsPath(productId, "server_error"));
   await logAdminAction(user, "store_product_spec.create", "store_product", productId, { spec_key: key });
+  notifyStoreProduct(productId);
   redirect(specsPath(productId));
 }
 
@@ -180,5 +185,6 @@ export async function deleteStoreProductSpec(specId: string, productId: string) 
   const { error } = await admin.from("store_product_specs").delete().eq("id", specId).eq("product_id", productId);
   if (error) redirect(specsPath(productId, "server_error"));
   await logAdminAction(user, "store_product_spec.delete", "store_product", productId, { spec_id: specId });
+  notifyStoreProduct(productId);
   redirect(specsPath(productId));
 }
