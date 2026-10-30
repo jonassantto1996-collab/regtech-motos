@@ -51,7 +51,7 @@ export default function CellshopProductCard({
       href={`${base}/produto/${product.slug}`}
       className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white outline-none transition duration-300 hover:-translate-y-0.5 hover:border-[#0a6cff]/40 hover:shadow-[0_18px_40px_-24px_rgba(10,60,160,0.45)] focus-visible:ring-2 focus-visible:ring-[#0a6cff] focus-visible:ring-offset-2"
     >
-      <div className="relative aspect-square w-full bg-[#f3f5f8]">
+      <div className="relative isolate aspect-square w-full bg-[#f3f5f8]">
         <span
           className={`absolute left-3 top-3 z-10 inline-flex min-h-7 items-center gap-1.5 rounded-full border bg-white/95 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] ${
             inStock ? "border-emerald-200 text-emerald-700" : "border-slate-200 text-slate-500"
@@ -66,7 +66,7 @@ export default function CellshopProductCard({
             alt={image.alt_text || `${product.brand} ${product.name}`}
             fill
             sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 22rem"
-            className="object-contain p-5 transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.04] sm:p-7"
+            className="object-contain p-5 mix-blend-multiply transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.04] sm:p-7"
           />
         ) : (
           <ProductPlaceholder />
