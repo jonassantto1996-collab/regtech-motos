@@ -28,6 +28,11 @@ export async function proxy(request: NextRequest) {
     }
     // Rotas técnicas (contagem de visitas etc.) seguem iguais.
     if (pathname.startsWith("/api")) return NextResponse.next();
+    // robots.txt, sitemap.xml e a chave do IndexNow (.txt) respondem pelo domínio
+    // (app/robots.ts e app/sitemap.ts já entregam a versão da Cell Shop).
+    if (pathname === "/robots.txt" || pathname === "/sitemap.xml" || pathname.endsWith(".txt")) {
+      return NextResponse.next();
+    }
     // Evita endereço duplicado: /cellshop/x vira /x neste domínio.
     if (pathname === "/cellshop" || pathname.startsWith("/cellshop/")) {
       const url = request.nextUrl.clone();
