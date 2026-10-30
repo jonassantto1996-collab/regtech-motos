@@ -78,7 +78,10 @@ export async function getCellshopProducts(): Promise<CellshopProduct[]> {
     .order("created_at", { ascending: false })
     .limit(500);
   if (error) console.error("[cellshop] produtos:", error);
-  return ((data ?? []) as unknown as CellshopProduct[]).map(sortProduct);
+  const list = ((data ?? []) as unknown as CellshopProduct[]).map(sortProduct);
+  // Produtos com foto aparecem primeiro na vitrine (dentro de cada grupo, os mais novos primeiro).
+  const hasPhoto = (p: CellshopProduct) => (p.store_product_images.length > 0 ? 1 : 0);
+  return list.sort((a, b) => hasPhoto(b) - hasPhoto(a));
 }
 
 export async function getCellshopProduct(slug: string): Promise<CellshopProductDetail | null> {
