@@ -40,6 +40,7 @@ export default async function StoreAdminPage({
     <section className="admin-content admin-page">
       <div className="page-heading"><div><span>REGTECH CELL SHOP</span><h1>Loja completa</h1><p>Celulares, tablets, carregadores, Bombox, Starlink e acessórios.</p></div>
         <div className="store-heading-actions">
+          <Link href="/admin/store/fotos" className="secondary-action">Enviar fotos em lote</Link>
           <a href="/admin/store/export" className="secondary-action">Exportar planilha</a>
           <Link href="/admin/store/new" className="primary-action">+ Cadastrar produto</Link>
         </div>
