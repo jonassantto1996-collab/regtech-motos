@@ -7,35 +7,39 @@ import { getSiteUrl } from "@/lib/site-url";
  * base de busca do ChatGPT, então isso acelera a loja aparecer por lá.
  *
  * A chave pública fica em /public/355e046f65246e72c85052b8216cdae3.txt (exigência do IndexNow para
- * provar que o site é nosso).
+ * provar que o site é nosso). Ela responde nos dois domínios (Motors e Cell Shop).
  */
 export const INDEXNOW_KEY = "355e046f65246e72c85052b8216cdae3";
 
-export function notifySearchEngines(paths: string[]) {
-  // Só o site oficial avisa os buscadores. Prévias e testes não.
-  if (process.env.VERCEL_ENV !== "production") return;
+/** Só o site oficial avisa os buscadores. Prévias e testes não. */
+export function isProductionSite() {
+  return process.env.VERCEL_ENV === "production";
+}
 
-  const siteUrl = getSiteUrl();
+/** Envia o aviso agora (use dentro de after()). Nunca lança erro. */
+export async function sendIndexNow(siteUrl: string, paths: string[]) {
   const host = new URL(siteUrl).host;
   const urlList = [...new Set(paths)].map((path) => `${siteUrl}${path}`);
   if (urlList.length === 0) return;
+  try {
+    await fetch("https://api.indexnow.org/indexnow", {
+      method: "POST",
+      headers: { "content-type": "application/json; charset=utf-8" },
+      body: JSON.stringify({
+        host,
+        key: INDEXNOW_KEY,
+        keyLocation: `${siteUrl}/${INDEXNOW_KEY}.txt`,
+        urlList,
+      }),
+      signal: AbortSignal.timeout(5000),
+    });
+  } catch {
+    // Silencioso: se o aviso falhar, o Bing ainda lê o site pelo mapa do site.
+  }
+}
 
+export function notifySearchEngines(paths: string[], siteUrl: string = getSiteUrl()) {
+  if (!isProductionSite()) return;
   // Roda depois da resposta: nunca atrasa nem quebra o painel.
-  after(async () => {
-    try {
-      await fetch("https://api.indexnow.org/indexnow", {
-        method: "POST",
-        headers: { "content-type": "application/json; charset=utf-8" },
-        body: JSON.stringify({
-          host,
-          key: INDEXNOW_KEY,
-          keyLocation: `${siteUrl}/${INDEXNOW_KEY}.txt`,
-          urlList,
-        }),
-        signal: AbortSignal.timeout(5000),
-      });
-    } catch {
-      // Silencioso: se o aviso falhar, o Bing ainda lê o site pelo mapa do site.
-    }
-  });
+  after(() => sendIndexNow(siteUrl, paths));
 }
