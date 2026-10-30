@@ -100,3 +100,52 @@
   .store-price-mode-form{width:100%}
   .store-price-mode-form label{flex:1 1 140px}
 }
+
+/* Envio de fotos em lote */
+.batch-panel{min-height:0;margin-bottom:16px}
+.batch-kicker{font-size:9px;font-weight:800;letter-spacing:.16em;color:#087cff}
+.batch-panel h2{font-size:17px;font-weight:800;margin:5px 0 6px;color:#172436}
+.batch-panel p{margin:0;font-size:12px;color:#5d6b7e;line-height:1.6}
+.batch-panel code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;background:#f1f5f9;border:1px solid #e0e7ef;border-radius:5px;padding:1px 6px;color:#172436}
+.batch-intro,.batch-summary{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px}
+.batch-intro>div:first-child,.batch-summary>div:first-child{max-width:620px}
+.batch-pickers,.batch-actions{display:flex;flex-wrap:wrap;gap:10px}
+.batch-picker{position:relative;overflow:hidden;cursor:pointer;min-height:46px;padding:0 20px}
+.batch-picker input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.batch-warn{color:#b45309}
+.batch-retry{margin-top:12px}
+.batch-panel .admin-alert{margin-top:16px}
+.batch-unmatched{margin-top:16px;padding:14px 16px;border:1px solid #ffd1d1;background:#fff6f6;border-radius:8px}
+.batch-unmatched strong{font-size:12px;color:#a52323}
+.batch-unmatched p{margin:4px 0 8px;font-size:11px}
+.batch-unmatched ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.batch-unmatched li{font-size:10px;background:#fff;border:1px solid #ffd1d1;border-radius:5px;padding:4px 8px;color:#7a1d1d}
+.batch-ignored{margin-top:10px}
+.batch-groups{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:10px}
+.batch-group{border:1px solid #e5ebf2;border-radius:10px;padding:14px 15px;background:#fbfdff;transition:border-color .2s,background .2s}
+.batch-group.is-sending{border-color:#87b8ff;background:#f4f8ff}
+.batch-group.is-done{border-color:#bfe6cf;background:#f3fbf6}
+.batch-group.is-error{border-color:#ffc9c9;background:#fff6f6}
+.batch-group-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.batch-group-head strong{display:block;font-size:13px;color:#172436}
+.batch-group-head small{display:block;margin-top:3px;font-size:10px;color:#758397;word-break:break-all}
+.batch-status{flex-shrink:0;font-size:11px;font-weight:700;color:#455468}
+.is-done .batch-status{color:#147a49}
+.is-error .batch-status{color:#a52323;text-align:right;max-width:55%}
+.is-sending .batch-status{color:#075ad7}
+.batch-thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.batch-thumbs figure{margin:0;width:76px}
+.batch-thumbs img{width:76px;height:76px;object-fit:contain;background:#fff;border:1px solid #e3e8ef;border-radius:7px;display:block}
+.batch-thumbs figcaption{margin-top:4px;font-size:9px;color:#758397;text-align:center}
+.batch-overflow{margin-top:10px!important;font-size:11px!important}
+.batch-codes summary{cursor:pointer;font-size:13px;font-weight:800;color:#075ad7;list-style-position:inside}
+.batch-codes .admin-table{margin-top:14px;min-width:560px}
+.batch-hidden-badge{margin-left:8px;vertical-align:middle;font-weight:700}
+@media(max-width:800px){
+  .batch-pickers,.batch-actions{width:100%;display:grid;grid-template-columns:1fr}
+  .batch-group-head{flex-direction:column}
+  .is-error .batch-status{max-width:none;text-align:left}
+  .batch-thumbs figure,.batch-thumbs img{width:64px}
+  .batch-thumbs img{height:64px}
+  .batch-codes{overflow-x:auto}
+}

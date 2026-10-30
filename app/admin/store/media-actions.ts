@@ -10,12 +10,12 @@ import {
   validateImageFile,
   validateImageSignature,
 } from "@/lib/supabase/storage";
+import { MAX_IMAGES_PER_PRODUCT } from "@/lib/store/batch-photos";
 
 /**
  * Fotos e ficha técnica dos produtos da loja (Regtech Cell Shop).
  * A primeira foto da ordem é a principal (a que aparece na vitrine).
  */
-const MAX_IMAGES_PER_PRODUCT = 12;
 const MAX_SPECS_PER_PRODUCT = 40;
 
 function editPath(productId: string, error?: string) {
@@ -28,17 +28,19 @@ async function productExists(productId: string) {
   return Boolean(data);
 }
 
-/** Envia uma ou mais fotos de uma vez (Storage primeiro, banco depois). */
-export async function uploadStoreProductImages(productId: string, formData: FormData) {
-  const user = await requireAdminSession();
-  if (!(await productExists(productId))) redirect(editPath(productId, "not_found"));
+type SaveImagesResult = { ok: true; added: number } | { ok: false; error: string; added: number };
 
-  const files = formData.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
-  if (files.length === 0) redirect(editPath(productId, "missing_file"));
+/**
+ * Grava as fotos de um produto (Storage primeiro, banco depois), no fim da
+ * ordem atual. Usada pelo envio de um produto e pelo envio em lote.
+ */
+async function saveStoreProductImages(productId: string, files: File[]): Promise<SaveImagesResult> {
+  if (!(await productExists(productId))) return { ok: false, error: "not_found", added: 0 };
+  if (files.length === 0) return { ok: false, error: "missing_file", added: 0 };
 
   for (const file of files) {
     if (!validateImageFile(file).valid || !(await validateImageSignature(file)).valid) {
-      redirect(editPath(productId, "invalid_image"));
+      return { ok: false, error: "invalid_image", added: 0 };
     }
   }
 
@@ -50,16 +52,17 @@ export async function uploadStoreProductImages(productId: string, formData: Form
     .order("display_order", { ascending: false });
 
   if ((existing?.length ?? 0) + files.length > MAX_IMAGES_PER_PRODUCT) {
-    redirect(editPath(productId, "too_many_images"));
+    return { ok: false, error: "too_many_images", added: 0 };
   }
 
   let nextOrder = (existing?.[0]?.display_order ?? -1) + 1;
+  let added = 0;
   for (const file of files) {
     const storagePath = buildStoreProductImagePath(productId, file.type);
     const { error: uploadError } = await admin.storage
       .from(PRODUCT_IMAGES_BUCKET)
       .upload(storagePath, file, { contentType: file.type });
-    if (uploadError) redirect(editPath(productId, "upload_failed"));
+    if (uploadError) return { ok: false, error: "upload_failed", added };
 
     const { error: insertError } = await admin.from("store_product_images").insert({
       product_id: productId,
@@ -69,14 +72,41 @@ export async function uploadStoreProductImages(productId: string, formData: Form
     if (insertError) {
       // Desfaz o upload que já tinha dado certo para não deixar arquivo solto.
       await admin.storage.from(PRODUCT_IMAGES_BUCKET).remove([storagePath]);
-      redirect(editPath(productId, "upload_failed"));
+      return { ok: false, error: "upload_failed", added };
     }
     nextOrder += 1;
+    added += 1;
   }
+  return { ok: true, added };
+}
 
-  await logAdminAction(user, "store_product_image.upload", "store_product", productId, { count: files.length });
+function filesFrom(formData: FormData) {
+  return formData.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
+}
+
+/** Envia uma ou mais fotos de uma vez (Storage primeiro, banco depois). */
+export async function uploadStoreProductImages(productId: string, formData: FormData) {
+  const user = await requireAdminSession();
+  const result = await saveStoreProductImages(productId, filesFrom(formData));
+  if (!result.ok) redirect(editPath(productId, result.error));
+
+  await logAdminAction(user, "store_product_image.upload", "store_product", productId, { count: result.added });
   notifyStoreProduct(productId);
   redirect(editPath(productId));
+}
+
+/**
+ * Envio em lote (tela "Enviar fotos em lote"): mesma gravação, mas devolve o
+ * resultado em vez de mudar de página, para a tela seguir com o próximo produto.
+ */
+export async function addStoreProductImagesBatch(productId: string, formData: FormData): Promise<SaveImagesResult> {
+  const user = await requireAdminSession();
+  const result = await saveStoreProductImages(productId, filesFrom(formData));
+  if (result.added > 0) {
+    await logAdminAction(user, "store_product_image.batch_upload", "store_product", productId, { count: result.added });
+    notifyStoreProduct(productId);
+  }
+  return result;
 }
 
 /** Remove a foto (banco primeiro, depois o arquivo). */

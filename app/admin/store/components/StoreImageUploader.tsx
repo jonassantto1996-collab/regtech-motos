@@ -12,7 +12,7 @@ const MAX_FILES_PER_SEND = 6;
  * passa do limite da hospedagem e a loja carrega rápido.
  * Fundo transparente (PNG do fabricante) vira branco.
  */
-async function shrink(file: File): Promise<File> {
+export async function shrink(file: File): Promise<File> {
   const bitmap = await createImageBitmap(file);
   const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
   const width = Math.round(bitmap.width * scale);
