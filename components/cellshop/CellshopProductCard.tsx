@@ -52,21 +52,13 @@ export default function CellshopProductCard({
       className="group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white outline-none transition duration-300 hover:-translate-y-0.5 hover:border-[#0a6cff]/40 hover:shadow-[0_18px_40px_-24px_rgba(10,60,160,0.45)] focus-visible:ring-2 focus-visible:ring-[#0a6cff] focus-visible:ring-offset-2"
     >
       <div className="relative isolate aspect-square w-full bg-[#f3f5f8]">
-        <span
-          className={`absolute left-3 top-3 z-10 inline-flex min-h-7 items-center gap-1.5 rounded-full border bg-white/95 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] ${
-            inStock ? "border-emerald-200 text-emerald-700" : "border-slate-200 text-slate-500"
-          }`}
-        >
-          <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${inStock ? "bg-emerald-500" : "bg-slate-400"}`} />
-          {inStock ? "Disponível" : "Esgotado"}
-        </span>
         {image ? (
           <Image
             src={getPublicImageUrl(image.storage_path)}
             alt={image.alt_text || `${product.brand} ${product.name}`}
             fill
             sizes="(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 22rem"
-            className="object-contain p-5 mix-blend-multiply transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.04] sm:p-7"
+            className={`object-contain p-5 mix-blend-multiply transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.04] sm:p-7 ${inStock ? "" : "opacity-60"}`}
           />
         ) : (
           <ProductPlaceholder />
@@ -80,6 +72,18 @@ export default function CellshopProductCard({
         </div>
         <h3 className="mt-1 text-base font-semibold leading-snug tracking-tight text-slate-950 sm:text-lg">{product.name}</h3>
         {versions && <p className="mt-1 line-clamp-1 text-xs text-slate-500 sm:text-sm">{versions}</p>}
+        {/* Disponibilidade fica no texto (não em cima da foto do aparelho). */}
+        <p
+          className={`mt-3 inline-flex items-center gap-2 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] ${
+            inStock ? "text-emerald-700" : "text-slate-500"
+          }`}
+        >
+          <span
+            aria-hidden
+            className={`h-2 w-2 shrink-0 rounded-full ${inStock ? "bg-emerald-500 ring-4 ring-emerald-500/15" : "bg-slate-400 ring-4 ring-slate-400/15"}`}
+          />
+          {inStock ? "Disponível" : "Esgotado"}
+        </p>
 
         <div className="mt-auto pt-4">
           {minPrice !== null ? (
