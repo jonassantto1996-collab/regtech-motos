@@ -12,7 +12,7 @@ export default function CellshopGallery({ images, productName }: { images: Cells
 
   return (
     <div>
-      <div className="relative aspect-square w-full overflow-hidden rounded-3xl border border-slate-200 bg-[#f3f5f8]">
+      <div className="relative isolate aspect-square w-full overflow-hidden rounded-3xl border border-slate-200 bg-[#f3f5f8]">
         {selected ? (
           <Image
             key={selected.id}
@@ -22,7 +22,7 @@ export default function CellshopGallery({ images, productName }: { images: Cells
             priority
             quality={90}
             sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-contain p-6 sm:p-10"
+            className="object-contain p-6 mix-blend-multiply sm:p-10"
           />
         ) : (
           <ProductPlaceholder />
@@ -38,7 +38,7 @@ export default function CellshopGallery({ images, productName }: { images: Cells
               onClick={() => setIndex(i)}
               aria-label={`Ver foto ${i + 1} de ${productName}`}
               aria-pressed={i === index}
-              className={`relative aspect-square w-20 flex-shrink-0 snap-start overflow-hidden rounded-xl border-2 bg-[#f3f5f8] transition-colors sm:w-24 ${
+              className={`relative isolate aspect-square w-20 flex-shrink-0 snap-start overflow-hidden rounded-xl border-2 bg-[#f3f5f8] transition-colors sm:w-24 ${
                 i === index ? "border-[#0a6cff]" : "border-transparent hover:border-slate-300"
               }`}
             >
@@ -47,7 +47,7 @@ export default function CellshopGallery({ images, productName }: { images: Cells
                 alt=""
                 fill
                 sizes="96px"
-                className="object-contain p-2"
+                className="object-contain p-2 mix-blend-multiply"
               />
             </button>
           ))}
