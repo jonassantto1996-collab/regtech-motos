@@ -86,6 +86,12 @@ export function buildProductImagePath(
 }
 
 
+/** Caminho das fotos dos produtos da loja de tecnologia: store-products/{id}/{uuid}.ext */
+export function buildStoreProductImagePath(productId: string, mimeType: string): string {
+  const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
+  return `store-products/${productId}/${crypto.randomUUID()}.${extension}`;
+}
+
 /** Gera um caminho isolado para uma imagem exclusiva do Hero da Home. */
 export function buildHeroImagePath(mimeType: string): string {
   const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
