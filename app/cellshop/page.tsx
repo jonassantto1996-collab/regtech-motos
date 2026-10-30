@@ -154,7 +154,7 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
             <div className="mt-10 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
               <p className="text-lg font-semibold">Nenhum produto encontrado.</p>
               <p className="mt-2 text-sm text-slate-600">Tente outra busca ou fale com a loja: a gente procura para você.</p>
-              <Link href={hrefFor()} className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-slate-300 px-5 text-sm font-semibold hover:border-[#0a6cff]">
+              <Link href={`${home}#vitrine`} className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-slate-300 px-5 text-sm font-semibold hover:border-[#0a6cff]">
                 Ver todos os produtos
               </Link>
             </div>
