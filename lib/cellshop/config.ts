@@ -16,11 +16,12 @@ export const CELLSHOP = {
   // Mesmo atendimento da loja física enquanto a Cell Shop não tiver número próprio.
   whatsapp: REGTECH_MOTORS.whatsapp,
   telephone: REGTECH_MOTORS.telephone,
-  streetAddress: REGTECH_MOTORS.streetAddress,
-  addressLocality: REGTECH_MOTORS.addressLocality,
-  addressRegion: REGTECH_MOTORS.addressRegion,
+  // Endereço próprio da Cell Shop (a loja de motos fica no nº 216).
+  streetAddress: "Av. dos Estados, 241",
+  addressLocality: "Tucumã",
+  addressRegion: "PA",
   postalCode: REGTECH_MOTORS.postalCode,
-  mapUrl: REGTECH_MOTORS.mapUrl,
+  mapUrl: "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%20-%20PA",
   openingHours: REGTECH_MOTORS.openingHours,
 } as const;
 
