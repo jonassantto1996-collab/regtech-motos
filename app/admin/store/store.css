@@ -69,7 +69,6 @@
 .store-form-section-title p{margin:5px 0 0;font-size:11px;color:#758397;line-height:1.5}
 .store-price-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
 .variant-price-form{grid-column:3/4;grid-template-columns:minmax(110px,1fr) minmax(110px,1fr) auto!important}
-.polished-variant-row{grid-template-columns:minmax(180px,1fr) auto minmax(370px,1.35fr)}
 .polished-variant-row .variant-price-form{grid-column:1/-1}
 .store-upload-status{margin:4px 0 0;font-size:11px;color:#455468}
 .store-price-mode{margin:16px 0;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:18px;border-radius:12px}
