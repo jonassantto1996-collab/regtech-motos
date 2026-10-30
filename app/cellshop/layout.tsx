@@ -98,12 +98,13 @@ export default async function CellshopLayout({ children }: { children: ReactNode
         </div>
       </footer>
 
+      {/* Botão flutuante: aparece no celular e no tablet (telas de toque); some no computador com mouse. */}
       <a
         href={CELLSHOP.whatsapp}
         target="_blank"
         rel="noreferrer"
         aria-label="Falar com a Regtech Cell Shop no WhatsApp"
-        className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#15803d] text-white shadow-[0_12px_30px_-8px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-0.5 sm:hidden"
+        className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#15803d] text-white shadow-[0_12px_30px_-8px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-0.5 [@media(hover:hover)_and_(pointer:fine)]:hidden"
       >
         <WhatsAppIcon className="h-7 w-7" />
       </a>
