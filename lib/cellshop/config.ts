@@ -13,9 +13,9 @@ export const MOTORS_URL = "https://regtechmotors.com.br";
 
 export const CELLSHOP = {
   name: "Regtech Cell Shop",
-  // Mesmo atendimento da loja física enquanto a Cell Shop não tiver número próprio.
-  whatsapp: REGTECH_MOTORS.whatsapp,
-  telephone: REGTECH_MOTORS.telephone,
+  // WhatsApp próprio da Cell Shop (o da Regtech Motors é outro número).
+  whatsapp: "https://wa.me/5594992989833",
+  telephone: "+55 94 99298-9833",
   // Endereço próprio da Cell Shop (a loja de motos fica no nº 216).
   streetAddress: "Av. dos Estados, 241",
   addressLocality: "Tucumã",
