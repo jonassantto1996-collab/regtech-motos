@@ -113,6 +113,11 @@ export default function CellshopHeroCarousel({ intro, banners, ratios, interval 
             go(dx < 0 ? active + 1 : active - 1);
           }
         }}
+        onTouchCancel={() => {
+          // Gesto interrompido pelo navegador: solta a pausa do toque.
+          touch.current = null;
+          setHovering(false);
+        }}
         onClickCapture={(e) => {
           // Um arraste para o lado troca o slide; não abre o link do banner.
           if (touch.current?.swiped) {
