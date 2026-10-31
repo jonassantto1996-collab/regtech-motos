@@ -85,6 +85,24 @@ test("endereço final do banner no domínio da loja e no caminho /cellshop", () 
   assert.equal(bannerHref(null, "/"), null);
 });
 
+test("nome de produto não é confundido com a tela", () => {
+  const f = (path: string, width: number, height: number) => ({ file: path, path, width, height });
+  const plan = planBanners(
+    [
+      f("banner-smartphone-desktop.jpg", 1920, 700),
+      f("banner-smartphone-tablet.jpg", 1536, 1024),
+      f("banner-smartphone-mobile.jpg", 1080, 1350),
+    ],
+    categories,
+  );
+  assert.equal(plan.length, 1);
+  assert.equal(plan[0].key, "smartphone");
+  assert.deepEqual(Object.keys(plan[0].versions).sort(), ["desktop", "mobile", "tablet"]);
+  assert.equal(plan[0].link, "?categoria=smartphones#vitrine");
+  // Sem a tela escrita, a palavra fraca ainda vale.
+  assert.equal(detectDevice("iphone-phone.jpg", 1920, 700), "mobile");
+});
+
 test("proporção mais comum", () => {
   assert.equal(commonRatio([{ width: 1920, height: 700 }, { width: 1920, height: 700 }, { width: 1080, height: 1350 }]), 2.74);
   assert.equal(commonRatio([{ width: null, height: null }]), null);
