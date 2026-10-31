@@ -19,10 +19,19 @@ export const DEVICE_RANGE: Record<BannerDevice, string> = {
   mobile: "até 639 px",
 };
 
+// Palavras que dizem a tela com certeza ("iphone-desktop.jpg").
 const DEVICE_WORDS: Record<BannerDevice, string[]> = {
-  desktop: ["desktop", "pc", "computador", "notebook", "web", "wide"],
-  tablet: ["tablet", "tab"],
-  mobile: ["mobile", "mobi", "mob", "celular", "cel", "phone", "smartphone", "movel"],
+  desktop: ["desktop", "computador", "notebook", "pc"],
+  tablet: ["tablet"],
+  mobile: ["mobile", "celular", "movel"],
+};
+
+// Palavras que também podem ser nome de produto ("smartphone", "phone"): só
+// valem como tela quando o arquivo não tem nenhuma das palavras acima.
+const WEAK_DEVICE_WORDS: Record<BannerDevice, string[]> = {
+  desktop: ["web", "wide"],
+  tablet: ["tab"],
+  mobile: ["mobi", "mob", "cel", "phone", "smartphone"],
 };
 
 const NOISE_WORDS = new Set(["banner", "banners", "hero", "slide", "slides", "img", "imagem", "image", "versao", "final", "copia", "copy", "de", "do", "da"]);
@@ -31,8 +40,19 @@ function tokens(text: string): string[] {
   return normalizeFileBase(text).split("-").filter(Boolean);
 }
 
-function deviceOfToken(token: string): BannerDevice | null {
-  for (const device of BANNER_DEVICES) if (DEVICE_WORDS[device].includes(token)) return device;
+function deviceOfToken(token: string, words: Record<BannerDevice, string[]> = DEVICE_WORDS): BannerDevice | null {
+  for (const device of BANNER_DEVICES) if (words[device].includes(token)) return device;
+  return null;
+}
+
+/** Procura a tela nas partes do caminho, do nome do arquivo para as pastas. */
+function findDevice(parts: string[], words: Record<BannerDevice, string[]>): BannerDevice | null {
+  for (let i = parts.length - 1; i >= 0; i -= 1) {
+    for (const token of tokens(parts[i])) {
+      const device = deviceOfToken(token, words);
+      if (device) return device;
+    }
+  }
   return null;
 }
 
@@ -50,13 +70,7 @@ export function deviceFromSize(width: number, height: number): BannerDevice {
  */
 export function detectDevice(path: string, width: number, height: number): BannerDevice {
   const parts = path.split("/").filter(Boolean);
-  for (let i = parts.length - 1; i >= 0; i -= 1) {
-    for (const token of tokens(parts[i])) {
-      const device = deviceOfToken(token);
-      if (device) return device;
-    }
-  }
-  return deviceFromSize(width, height);
+  return findDevice(parts, DEVICE_WORDS) ?? findDevice(parts, WEAK_DEVICE_WORDS) ?? deviceFromSize(width, height);
 }
 
 /**
@@ -67,11 +81,14 @@ export function detectDevice(path: string, width: number, height: number): Banne
 export function bannerKey(path: string, commonPrefix: string[] = []): string {
   const parts = path.split("/").filter(Boolean);
   const kept = parts.slice(commonPrefix.length);
+  // Palavra fraca ("smartphone") só sai do nome quando foi ela que disse a tela.
+  const strong = findDevice(parts, DEVICE_WORDS) !== null;
   const words: string[] = [];
   for (const part of kept) {
     // "iphone-mobile (1).jpg" é cópia do mesmo arquivo, não outro banner.
     for (const token of tokens(part.replace(/\s*\(\d+\)(?=\.[^.]+$|$)/, ""))) {
-      if (deviceOfToken(token) || NOISE_WORDS.has(token) || /^\d+x\d+$/.test(token)) continue;
+      if (deviceOfToken(token) || (!strong && deviceOfToken(token, WEAK_DEVICE_WORDS))) continue;
+      if (NOISE_WORDS.has(token) || /^\d+x\d+$/.test(token)) continue;
       words.push(token);
     }
   }
