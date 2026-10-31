@@ -149,3 +149,54 @@
   .batch-thumbs img{height:64px}
   .batch-codes{overflow-x:auto}
 }
+
+/* Banners do topo da loja */
+.banner-reading{margin-top:12px!important}
+.banner-zip-note{margin-top:10px!important;font-size:11px!important}
+.banner-slots{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1.3fr) minmax(0,.9fr);gap:10px;margin-top:12px;align-items:start}
+.banner-slot{margin:0;display:grid;gap:6px;min-width:0}
+.banner-slot figcaption{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.banner-slot figcaption strong{font-size:11px;color:#172436}
+.banner-slot figcaption small{font-size:9px;color:#758397}
+.banner-slot img{display:block;width:100%;height:auto;max-height:220px;object-fit:contain;background:#070a12;border:1px solid #e3e8ef;border-radius:8px}
+.banner-slot.is-empty .banner-slot-missing{display:flex;align-items:center;justify-content:center;text-align:center;min-height:90px;padding:10px;border:1px dashed #cfd9e6;border-radius:8px;background:#f8fafc;font-size:10px;color:#758397}
+.banner-slot.is-desktop.is-empty .banner-slot-missing{border-color:#ffc9c9;background:#fff6f6;color:#a52323;font-weight:700}
+.banner-slot-meta{display:flex;flex-wrap:wrap;white-space:nowrap;align-items:center;justify-content:space-between;gap:6px;font-size:10px;color:#455468;font-variant-numeric:tabular-nums}
+.banner-slot-select{min-height:30px;border:1px solid #d7dfe9;border-radius:6px;background:#fff;font:inherit;font-size:10px;padding:0 6px;color:#172436}
+.banner-slot-file{font-size:9px;color:#758397;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.banner-slot-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.banner-slot-actions form{margin:0}
+.banner-mini-button{position:relative;overflow:hidden;display:inline-flex;align-items:center;min-height:30px;padding:0 10px;border:1px solid #cfd9e6;border-radius:6px;background:#fff;color:#075ad7;font-size:10px;font-weight:800;cursor:pointer}
+.banner-mini-button:hover{border-color:#8fb5e8;background:#f6faff}
+.banner-mini-button.is-quiet{color:#5d6b7e}
+.banner-mini-button.is-busy{opacity:.6;cursor:progress}
+.banner-mini-button input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.banner-replace{display:inline-grid;gap:3px}
+.banner-replace small{font-size:9px}
+.banner-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:12px;align-items:end;margin-top:14px}
+.banner-fields .admin-field{margin:0}
+.banner-fieldset{border:0;margin:0;padding:0;min-width:0}
+.banner-link-picker{display:grid;gap:6px}
+.banner-save{min-height:44px}
+.banner-list{list-style:none;margin:18px 0 0;padding:0;display:grid;gap:12px}
+.banner-row{border:1px solid #e5ebf2;border-radius:10px;padding:14px 15px;background:#fbfdff}
+.banner-row.is-paused{background:#f8fafc}
+.banner-row.is-paused .banner-slot img{opacity:.55}
+.banner-row-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.banner-row-order{font-size:11px;font-weight:800;color:#172436;letter-spacing:.04em}
+.banner-row-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid #edf0f4;align-items:flex-start}
+.banner-row-actions form{margin:0}
+.banner-row-actions button:disabled{opacity:.4;cursor:not-allowed}
+.banner-delete summary{list-style:none;color:#b42318}
+.banner-delete summary::-webkit-details-marker{display:none}
+.banner-delete[open] summary{border-color:#ffc9c9;background:#fff6f6}
+.banner-delete form{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px!important;font-size:11px;color:#7a1d1d}
+.banner-delete-confirm{background:#b42318!important}
+.banner-delete-confirm:hover{background:#912018!important}
+@media(max-width:800px){
+  .banner-slots{grid-template-columns:1fr 1fr}
+  .banner-slot.is-desktop{grid-column:1/-1}
+  .banner-fields{grid-template-columns:1fr}
+  .banner-row-actions{display:grid;grid-template-columns:1fr 1fr}
+  .banner-delete{grid-column:1/-1}
+}
