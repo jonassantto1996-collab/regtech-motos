@@ -92,6 +92,12 @@ export function buildStoreProductImagePath(productId: string, mimeType: string):
   return `store-products/${productId}/${crypto.randomUUID()}.${extension}`;
 }
 
+/** Banners do topo da Cell Shop: store-banners/{tela}/{uuid}.ext */
+export function buildStoreBannerPath(device: "desktop" | "tablet" | "mobile", mimeType: string): string {
+  const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
+  return `store-banners/${device}/${crypto.randomUUID()}.${extension}`;
+}
+
 /** Gera um caminho isolado para uma imagem exclusiva do Hero da Home. */
 export function buildHeroImagePath(mimeType: string): string {
   const extension = MIME_TO_EXTENSION[mimeType] ?? "bin";
