@@ -112,3 +112,33 @@ export function matchesSearch(product: CellshopProduct, query: string): boolean 
     .filter(Boolean)
     .every((term) => haystack.includes(term));
 }
+
+export type CellshopBanner = {
+  id: string;
+  title: string;
+  link_url: string | null;
+  desktop_path: string;
+  desktop_width: number | null;
+  desktop_height: number | null;
+  tablet_path: string | null;
+  tablet_width: number | null;
+  tablet_height: number | null;
+  mobile_path: string | null;
+  mobile_width: number | null;
+  mobile_height: number | null;
+};
+
+/** Banners ativos do topo da loja, na ordem do painel. */
+export const getCellshopBanners = cache(async (): Promise<CellshopBanner[]> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("store_banners")
+    .select("id,title,link_url,desktop_path,desktop_width,desktop_height,tablet_path,tablet_width,tablet_height,mobile_path,mobile_width,mobile_height")
+    .eq("is_active", true)
+    .order("display_order")
+    .order("created_at")
+    .limit(12);
+  // Sem banners (ou tabela ainda não criada): o topo mostra só o texto da loja.
+  if (error) return [];
+  return (data ?? []) as CellshopBanner[];
+});
