@@ -26,6 +26,16 @@ export function BannerLinkPicker({
   const [custom, setCustom] = useState(!known.has(value));
   const [current, setCurrent] = useState(value);
 
+  // Quando o valor muda de fora (ex.: escolheu outras imagens), a tela mostra o novo link.
+  const [lastValue, setLastValue] = useState(value);
+  if (value !== lastValue) {
+    setLastValue(value);
+    if (value !== current) {
+      setCurrent(value);
+      setCustom(!known.has(value));
+    }
+  }
+
   function update(link: string) {
     setCurrent(link);
     onChange?.(link);
