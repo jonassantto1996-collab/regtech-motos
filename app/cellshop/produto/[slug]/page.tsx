@@ -66,35 +66,37 @@ export default async function CellshopProductPage({ params }: { params: Params }
     })
     .slice(0, 4);
 
-  const shownPrice = variants.length
-    ? Math.min(...variants.map((v) => variantPrice(product, v, mode) ?? Infinity))
-    : productPrice(product, mode) ?? Infinity;
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: title,
-    brand: { "@type": "Brand", name: product.brand },
-    description: product.description || undefined,
-    image: product.store_product_images.map((img) => getPublicImageUrl(img.storage_path)),
-    url: pageUrl,
-    ...(Number.isFinite(shownPrice)
-      ? {
+  // Dados para o Google (resultado com preço). O Google exige preço na oferta:
+  // produto sem preço ("Consulte o valor" / "Aguardando preço") não leva esse bloco,
+  // senão o Search Console acusa erro crítico ("Especifique offers").
+  const prices = (variants.length ? variants.map((v) => variantPrice(product, v, mode)) : [productPrice(product, mode)]).filter(
+    (p): p is number => typeof p === "number" && Number.isFinite(p) && p > 0,
+  );
+  const lowestPrice = prices.length ? Math.min(...prices) : null;
+  const jsonLd =
+    lowestPrice === null
+      ? null
+      : {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: title,
+          brand: { "@type": "Brand", name: product.brand },
+          description: product.description || undefined,
+          image: product.store_product_images.map((img) => getPublicImageUrl(img.storage_path)),
+          url: pageUrl,
           offers: {
             "@type": "Offer",
             priceCurrency: "BRL",
-            price: shownPrice,
+            price: lowestPrice.toFixed(2),
             availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
             url: pageUrl,
             seller: { "@type": "Organization", name: CELLSHOP.name },
           },
-        }
-      : {}),
-  };
+        };
 
   return (
     <main className="bg-white">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}
 
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-5 sm:px-6 sm:pb-24 sm:pt-8 lg:px-8">
         <nav aria-label="Você está em" className="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
