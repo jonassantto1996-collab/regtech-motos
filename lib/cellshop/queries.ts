@@ -1,10 +1,14 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { PriceMode } from "@/lib/cellshop/pricing";
+import type { ResellerStatus } from "@/lib/store/resellers";
 
 /**
  * Leitura pública da Regtech Cell Shop. Usa a chave pública (anon): as regras
  * do banco (RLS) só liberam produtos ativos, suas fotos, ficha e versões ativas.
+ * O preço de atacado NÃO é público: só é buscado pelo servidor, e só para
+ * lojistas aprovados (ver getCellshopViewer e withWholesalePrices).
  */
 export type CellshopCategory = { id: string; name: string; slug: string };
 
@@ -34,6 +38,8 @@ export type CellshopProduct = {
   created_at: string;
   store_product_images: CellshopImage[];
   store_product_variants: CellshopVariant[];
+  /** Condição especial de atacado (só para lojistas aprovados). */
+  wholesale_note?: string | null;
 };
 
 export type CellshopProductDetail = CellshopProduct & {
@@ -41,22 +47,69 @@ export type CellshopProductDetail = CellshopProduct & {
 };
 
 const PRODUCT_FIELDS =
-  "id,slug,brand,name,description,price,wholesale_price,card_price,card_installments,warranty,availability,category_id,created_at," +
+  "id,slug,brand,name,description,price,card_price,card_installments,warranty,availability,category_id,created_at," +
   "store_product_images(id,storage_path,alt_text,display_order)," +
-  "store_product_variants(id,name,price,wholesale_price,stock_quantity)";
+  "store_product_variants(id,name,price,stock_quantity)";
 
 function sortProduct<T extends CellshopProduct>(product: T): T {
   return {
     ...product,
+    // Sem o atacado por padrão: só lojista aprovado recebe esses valores.
+    wholesale_price: null,
+    wholesale_note: null,
+    store_product_variants: (product.store_product_variants ?? []).map((v) => ({ ...v, wholesale_price: null })),
     store_product_images: [...(product.store_product_images ?? [])].sort((a, b) => a.display_order - b.display_order),
   };
 }
 
-export const getPriceMode = cache(async (): Promise<PriceMode> => {
+export type CellshopViewer = {
+  id: string;
+  store_name: string;
+  contact_name: string;
+  status: ResellerStatus;
+};
+
+/** Lojista logado (ou null para o cliente final). O lojista só lê o próprio cadastro (RLS). */
+export const getCellshopViewer = cache(async (): Promise<CellshopViewer | null> => {
   const supabase = await createClient();
-  const { data } = await supabase.from("catalog_settings").select("store_price_mode").eq("id", true).maybeSingle();
-  return data?.store_price_mode === "retail" ? "retail" : "wholesale";
+  const { data } = await supabase.auth.getClaims();
+  const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+  if (!userId) return null;
+  const { data: reseller } = await supabase
+    .from("store_resellers")
+    .select("id,store_name,contact_name,status")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return (reseller as CellshopViewer | null) ?? null;
 });
+
+/** Cliente final vê varejo; lojista aprovado vê atacado. */
+export const getPriceMode = cache(async (): Promise<PriceMode> => {
+  const viewer = await getCellshopViewer();
+  return viewer?.status === "approved" ? "wholesale" : "retail";
+});
+
+/**
+ * Coloca os preços de atacado nos produtos. Chamar só depois de confirmar que
+ * o visitante é lojista aprovado (getPriceMode() === "wholesale").
+ */
+export async function withWholesalePrices<T extends CellshopProduct>(products: T[]): Promise<T[]> {
+  if (!products.length) return products;
+  const ids = products.map((p) => p.id);
+  const admin = createAdminClient();
+  const [{ data: rows }, { data: variants }] = await Promise.all([
+    admin.from("store_products").select("id,wholesale_price,wholesale_note").in("id", ids),
+    admin.from("store_product_variants").select("id,wholesale_price").in("product_id", ids),
+  ]);
+  const byProduct = new Map((rows ?? []).map((r) => [r.id as string, r]));
+  const byVariant = new Map((variants ?? []).map((v) => [v.id as string, v.wholesale_price as number | string | null]));
+  return products.map((p) => ({
+    ...p,
+    wholesale_price: (byProduct.get(p.id)?.wholesale_price as number | string | null) ?? null,
+    wholesale_note: (byProduct.get(p.id)?.wholesale_note as string | null) ?? null,
+    store_product_variants: p.store_product_variants.map((v) => ({ ...v, wholesale_price: byVariant.get(v.id) ?? null })),
+  }));
+}
 
 export const getCellshopCategories = cache(async (): Promise<CellshopCategory[]> => {
   const supabase = await createClient();

@@ -73,3 +73,32 @@ export async function updateSession(request: NextRequest) {
   // servidor.
   return supabaseResponse;
 }
+
+/**
+ * Renova a sessão (cookies do Supabase) mantendo a resposta já montada, ex.:
+ * o "rewrite" do domínio da Cell Shop. Sem cookie de sessão, não faz nada.
+ * Usado pela Área do Lojista para o login não cair depois de 1 hora.
+ */
+export async function refreshSessionInto(request: NextRequest, response: NextResponse): Promise<NextResponse> {
+  const hasSession = request.cookies.getAll().some((c) => c.name.startsWith("sb-"));
+  if (!hasSession) return response;
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet, headers) {
+          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+          Object.entries(headers).forEach(([key, value]) => response.headers.set(key, value));
+        },
+      },
+    }
+  );
+  await supabase.auth.getClaims();
+  response.headers.set("Cache-Control", "private, no-store");
+  return response;
+}

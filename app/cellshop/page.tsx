@@ -4,7 +4,7 @@ import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import CellshopProductCard from "@/components/cellshop/CellshopProductCard";
 import { CELLSHOP, getCellshopBase } from "@/lib/cellshop/config";
 import CellshopHeroCarousel, { type HeroBanner } from "@/components/cellshop/CellshopHeroCarousel";
-import { getCellshopBanners, getCellshopCategories, getCellshopProducts, getPriceMode, matchesSearch, type CellshopBanner } from "@/lib/cellshop/queries";
+import { getCellshopBanners, getCellshopCategories, getCellshopProducts, getPriceMode, matchesSearch, withWholesalePrices, type CellshopBanner } from "@/lib/cellshop/queries";
 import { bannerHref, commonRatio } from "@/lib/store/banners";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 
@@ -37,7 +37,7 @@ function heroBanners(list: CellshopBanner[], home: string) {
 }
 
 export default async function CellshopHome({ searchParams }: { searchParams: SearchParams }) {
-  const [{ categoria, q }, base, categories, products, mode, rawBanners] = await Promise.all([
+  const [{ categoria, q }, base, categories, publicProducts, mode, rawBanners] = await Promise.all([
     searchParams,
     getCellshopBase(),
     getCellshopCategories(),
@@ -45,6 +45,8 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
     getPriceMode(),
     getCellshopBanners(),
   ]);
+  // Lojista aprovado vê o atacado; o cliente final, o varejo.
+  const products = mode === "wholesale" ? await withWholesalePrices(publicProducts) : publicProducts;
 
   const home = base || "/";
   const { banners, ratios } = heroBanners(rawBanners, home);

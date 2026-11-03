@@ -25,6 +25,7 @@ export default function ProductBuyBox({
   mode,
   whatsapp,
   pageUrl,
+  resellerName = null,
 }: {
   product: PricedProduct;
   productTitle: string;
@@ -32,6 +33,8 @@ export default function ProductBuyBox({
   mode: PriceMode;
   whatsapp: string;
   pageUrl: string;
+  /** Lojista aprovado: a mensagem do WhatsApp já sai como pedido de atacado. */
+  resellerName?: string | null;
 }) {
   const firstAvailable = variants.find((v) => v.stock_quantity > 0) ?? variants[0] ?? null;
   const [variantId, setVariantId] = useState<string | null>(firstAvailable?.id ?? null);
@@ -46,6 +49,12 @@ export default function ProductBuyBox({
 
   const message = useMemo(() => {
     const item = variant && variants.length > 1 ? `${productTitle} (${variant.name})` : productTitle;
+    if (resellerName) {
+      const how = price !== null ? ` por ${formatBRL(price)} (atacado)` : "";
+      return variantSoldOut
+        ? `Olá! Sou da ${resellerName} (lojista). Quando chega de novo o ${item}?\n${pageUrl}`
+        : `Olá! Sou da ${resellerName} (lojista) e quero comprar no atacado: ${item}${how}. Quantas unidades tem disponível?\n${pageUrl}`;
+    }
     if (variantSoldOut) return `Olá! Vi o ${item} no site da Regtech Cell Shop. Quando chega de novo?\n${pageUrl}`;
     let how = "";
     if (card && chosen) {
@@ -54,7 +63,7 @@ export default function ProductBuyBox({
       how = ` por ${formatBRL(price)}`;
     }
     return `Olá! Vi o ${item} no site da Regtech Cell Shop e quero comprar${how}. Ainda tem disponível?\n${pageUrl}`;
-  }, [variant, variants.length, productTitle, variantSoldOut, card, chosen, price, pageUrl]);
+  }, [variant, variants.length, productTitle, variantSoldOut, card, chosen, price, pageUrl, resellerName]);
 
   const href = `${whatsapp}?text=${encodeURIComponent(message)}`;
 

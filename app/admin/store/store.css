@@ -200,3 +200,39 @@
   .banner-row-actions{display:grid;grid-template-columns:1fr 1fr}
   .banner-delete{grid-column:1/-1}
 }
+
+/* Lojistas (atacado) */
+.reseller-filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.reseller-filters a{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 14px;border:1px solid #d7dfe9;border-radius:999px;background:#fff;color:#263548;font-size:11px;font-weight:800;text-decoration:none}
+.reseller-filters a span{min-width:20px;padding:2px 7px;border-radius:999px;background:#f1f5f9;color:#455468;font-size:10px;text-align:center}
+.reseller-filters a.is-active{border-color:#075ad7;background:#075ad7;color:#fff}
+.reseller-filters a.is-active span{background:#ffffff26;color:#fff}
+.reseller-list{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.reseller-row{border:1px solid #e5ebf2;border-radius:10px;padding:14px 15px;background:#fbfdff}
+.reseller-row.is-pending{border-color:#fde3a7;background:#fffcf3}
+.reseller-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.reseller-head strong{display:block;font-size:14px;color:#172436}
+.reseller-head small{display:block;margin-top:3px;font-size:11px;color:#5d6b7e}
+.reseller-status{flex-shrink:0;border-radius:999px;padding:5px 10px;font-size:10px;font-weight:800;letter-spacing:.04em}
+.reseller-status.is-pending{background:#fff1d6;color:#9a5b00}
+.reseller-status.is-approved{background:#eaf8f0;color:#147a49}
+.reseller-status.is-rejected,.reseller-status.is-blocked{background:#f1f5f9;color:#5d6b7e}
+.reseller-data{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 16px;margin:14px 0 0}
+.reseller-data div{min-width:0}
+.reseller-data dt{font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#758397}
+.reseller-data dd{margin:3px 0 0;font-size:12px;color:#172436;overflow-wrap:anywhere}
+.reseller-data a{color:#075ad7;font-weight:700;text-decoration:none}
+.reseller-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid #edf0f4}
+.reseller-actions form{margin:0}
+.reseller-danger{color:#b42318!important}
+.reseller-password{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:11px;color:#263548}
+.reseller-password code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;background:#f1f5f9;border:1px solid #e0e7ef;border-radius:6px;padding:4px 8px;color:#172436}
+.reseller-notes{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end;margin-top:16px}
+.reseller-notes .admin-field{margin:0}
+.store-price-mode .admin-primary-button{justify-self:end}
+@media(max-width:800px){
+  .reseller-data{grid-template-columns:1fr 1fr}
+  .reseller-head{flex-direction:column}
+  .reseller-actions{display:grid;grid-template-columns:1fr}
+  .reseller-notes{grid-template-columns:1fr}
+}
