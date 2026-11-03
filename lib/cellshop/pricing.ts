@@ -56,10 +56,10 @@ export function cardCondition(product: PricedProduct, shownPrice: number | null,
   return { total, installments, parcel: Math.round((total / installments) * 100) / 100 };
 }
 
-export  function  installmentValue ( total : number , n : number ) : number  {
-  retornar  Math.round ( ( total / n ) * 100 ) / 100 ;​​
+export function installmentValue(total: number, n: number): number {
+  return Math.round((total / n) * 100) / 100;
 }
 
-export  function  priceLabel ( mode : PriceMode ) : string  {
-   modo de retorno === "atacado" ? "no atacado" : "à vista" ;
+export function priceLabel(mode: PriceMode): string {
+  return mode === "wholesale" ? "no atacado" : "à vista";
 }
