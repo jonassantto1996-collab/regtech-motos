@@ -10,7 +10,9 @@ import {
   getCellshopCategories,
   getCellshopProduct,
   getCellshopProducts,
+  getCellshopViewer,
   getPriceMode,
+  withWholesalePrices,
 } from "@/lib/cellshop/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 
@@ -40,14 +42,19 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 export default async function CellshopProductPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const [product, base, mode, categories, all] = await Promise.all([
+  const [publicProduct, base, mode, categories, publicAll, viewer] = await Promise.all([
     getCellshopProduct(slug),
     getCellshopBase(),
     getPriceMode(),
     getCellshopCategories(),
     getCellshopProducts(),
+    getCellshopViewer(),
   ]);
-  if (!product) notFound();
+  if (!publicProduct) notFound();
+  // Lojista aprovado vê o atacado; o cliente final, o varejo.
+  const wholesale = mode === "wholesale";
+  const [product] = wholesale ? await withWholesalePrices([publicProduct]) : [publicProduct];
+  const all = wholesale ? await withWholesalePrices(publicAll) : publicAll;
 
   const home = base || "/";
   const title = `${product.brand} ${product.name}`;
@@ -69,7 +76,7 @@ export default async function CellshopProductPage({ params }: { params: Params }
   // Dados para o Google (resultado com preço). O Google exige preço na oferta:
   // produto sem preço ("Consulte o valor" / "Aguardando preço") não leva esse bloco,
   // senão o Search Console acusa erro crítico ("Especifique offers").
-  const prices = (variants.length ? variants.map((v) => variantPrice(product, v, mode)) : [productPrice(product, mode)]).filter(
+  const prices = (variants.length ? variants.map((v) => variantPrice(publicProduct, v, "retail")) : [productPrice(publicProduct, "retail")]).filter(
     (p): p is number => typeof p === "number" && Number.isFinite(p) && p > 0,
   );
   const lowestPrice = prices.length ? Math.min(...prices) : null;
@@ -143,7 +150,15 @@ export default async function CellshopProductPage({ params }: { params: Params }
               mode={mode}
               whatsapp={CELLSHOP.whatsapp}
               pageUrl={pageUrl}
+              resellerName={wholesale ? viewer?.store_name ?? null : null}
             />
+
+            {wholesale && product.wholesale_note && (
+              <p className="mt-5 rounded-xl border border-[#0a6cff]/20 bg-[#0a6cff]/5 px-4 py-3 text-sm leading-6 text-slate-700">
+                <strong className="font-semibold text-[#0a5cff]">Condição de atacado: </strong>
+                {product.wholesale_note}
+              </p>
+            )}
 
             <dl className="mt-8 divide-y divide-slate-200 border-y border-slate-200 text-sm">
               {product.warranty && (
