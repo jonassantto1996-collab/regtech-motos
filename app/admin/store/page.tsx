@@ -4,7 +4,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import { AdminShell } from "../AdminShell";
 import { requireAdminSession } from "../products/actions";
-import { setStorePriceMode } from "./actions";
 import { InventoryAlerts } from "./components/InventoryAlerts";
 import { InventoryMetrics } from "./components/InventoryMetrics";
 import { StoreProductTable } from "./components/StoreProductTable";
@@ -23,23 +22,23 @@ export default async function StoreAdminPage({
   if (!data?.claims) redirect("/admin/login");
 
   const admin = createAdminClient();
-  const [{ data: categories }, { data: products }, { data: overviewRaw, error: overviewError }, { data: settings }] = await Promise.all([
+  const [{ data: categories }, { data: products }, { data: overviewRaw, error: overviewError }, { count: pendingResellers }] = await Promise.all([
     admin.from("store_categories").select("id,name,slug,is_active,sort_order").order("sort_order"),
     admin.from("store_products").select("id,category_id,brand,name,price,wholesale_price,availability,is_active,created_at").order("created_at",{ascending:false}).limit(500),
     admin.rpc("get_store_admin_overview",{p_alert_limit:4}),
-    admin.from("catalog_settings").select("store_price_mode").eq("id", true).maybeSingle(),
+    admin.from("store_resellers").select("id",{count:"exact",head:true}).eq("status","pending"),
   ]);
 
   if(overviewError) throw new Error("Não foi possível carregar o resumo operacional da loja.");
   const overview=overviewRaw as unknown as StoreAdminOverview;
   const categoryName=new Map((categories ?? []).map(c=>[c.id,c.name]));
-  const priceMode=settings?.store_price_mode==="retail"?"retail":"wholesale";
   const { saved, error } = await searchParams;
 
   return <AdminShell active="store" email={typeof data.claims.email === "string" ? data.claims.email : undefined}>
     <section className="admin-content admin-page">
       <div className="page-heading"><div><span>REGTECH CELL SHOP</span><h1>Loja completa</h1><p>Celulares, tablets, carregadores, Bombox, Starlink e acessórios.</p></div>
         <div className="store-heading-actions">
+          <Link href="/admin/store/lojistas" className="secondary-action">Lojistas{pendingResellers?` (${pendingResellers} novo${pendingResellers===1?"":"s"})`:""}</Link>
           <Link href="/admin/store/banners" className="secondary-action">Banners do topo</Link>
           <Link href="/admin/store/fotos" className="secondary-action">Enviar fotos em lote</Link>
           <a href="/admin/store/export" className="secondary-action">Exportar planilha</a>
@@ -47,7 +46,6 @@ export default async function StoreAdminPage({
         </div>
       </div>
 
-      {saved==="price_mode"&&<p className="admin-alert success" role="status">Preço exibido na loja online atualizado.</p>}
       {error&&<p className="admin-alert error" role="alert">Não foi possível salvar. Tente de novo.</p>}
 
       <InventoryMetrics metrics={overview.metrics} />
@@ -55,20 +53,12 @@ export default async function StoreAdminPage({
       <article className="panel store-price-mode">
         <div>
           <span>LOJA ONLINE</span>
-          <h2>Preço exibido na loja online</h2>
-          <p>Escolha qual preço o cliente vê no site. Produto sem esse preço aparece como “Consulte o valor”.</p>
+          <h2>Preços no site</h2>
+          <p>O cliente final vê o <strong>preço de varejo</strong>. Lojistas aprovados entram na “Área do Lojista” e veem o <strong>preço de atacado</strong>.</p>
         </div>
-        <form action={setStorePriceMode} className="store-price-mode-form">
-          <label className={priceMode==="wholesale"?"is-selected":""}>
-            <input type="radio" name="store_price_mode" value="wholesale" defaultChecked={priceMode==="wholesale"} />
-            <span><strong>Atacado</strong><small>Mostra o preço de atacado</small></span>
-          </label>
-          <label className={priceMode==="retail"?"is-selected":""}>
-            <input type="radio" name="store_price_mode" value="retail" defaultChecked={priceMode==="retail"} />
-            <span><strong>Varejo</strong><small>Mostra o preço de varejo</small></span>
-          </label>
-          <button type="submit" className="admin-primary-button">Salvar</button>
-        </form>
+        <Link href="/admin/store/lojistas" className="admin-primary-button">
+          {pendingResellers?`${pendingResellers} lojista${pendingResellers===1?"":"s"} para aprovar`:"Ver lojistas"}
+        </Link>
       </article>
 
       <div className="store-category-grid">
