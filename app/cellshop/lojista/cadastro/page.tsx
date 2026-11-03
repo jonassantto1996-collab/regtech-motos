@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     siteName: "Regtech Cell Shop",
     locale: "pt_BR",
     type: "website",
-    images: [{ url: "/og-cellshop-lojista.jpg", width: 1200, height: 630, alt: "Área do Lojista Regtech Cell Shop" }],
+    images: [{ url: "/og-cellshop-lojista.png", width: 1200, height: 630, alt: "Área do Lojista Regtech Cell Shop" }],
   },
-  twitter: { card: "summary_large_image", images: ["/og-cellshop-lojista.jpg"] },
+  twitter: { card: "summary_large_image", images: ["/og-cellshop-lojista.png"] },
 };
 
 export default async function ResellerSignupPage() {
