@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { updateSession } from "@/lib/supabase/proxy";
+import { refreshSessionInto, updateSession } from "@/lib/supabase/proxy";
 
 // No Next.js 16, "proxy.ts" substitui o antigo "middleware.ts" (mesma função,
 // nome renomeado). Roda em toda requisição que casar com o matcher abaixo.
@@ -41,7 +41,8 @@ export async function proxy(request: NextRequest) {
     }
     const url = request.nextUrl.clone();
     url.pathname = `/cellshop${pathname === "/" ? "" : pathname}`;
-    return NextResponse.rewrite(url);
+    // Lojista logado: renova a sessão junto com o rewrite.
+    return refreshSessionInto(request, NextResponse.rewrite(url));
   }
 
   return await updateSession(request);
