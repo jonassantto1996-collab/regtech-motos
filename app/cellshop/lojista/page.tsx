@@ -12,6 +12,16 @@ export const metadata: Metadata = {
   title: "Área do Lojista",
   description: "Lojistas cadastrados e aprovados veem os preços de atacado da Regtech Cell Shop.",
   alternates: { canonical: "/lojista" },
+  openGraph: {
+    title: "Área do Lojista | Regtech Cell Shop",
+    description: "Cadastre sua loja e compre no atacado. Preços exclusivos para lojistas aprovados.",
+    url: "/lojista",
+    siteName: "Regtech Cell Shop",
+    locale: "pt_BR",
+    type: "website",
+    images: [{ url: "/og-cellshop-lojista.jpg", width: 1200, height: 630, alt: "Área do Lojista Regtech Cell Shop" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og-cellshop-lojista.jpg"] },
 };
 
 type SearchParams = Promise<{ novo?: string }>;
