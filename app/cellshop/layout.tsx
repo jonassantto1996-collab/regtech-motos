@@ -22,7 +22,14 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Smartphones, tablets, carregadores, Bombox, Starlink e acessórios na Regtech Cell Shop, em Tucumã, Pará. Simule as parcelas e compre pelo WhatsApp.",
     robots: ownDomain ? { index: true, follow: true } : { index: false, follow: false },
-    openGraph: { siteName: "Regtech Cell Shop", locale: "pt_BR", type: "website" },
+    // Imagem que aparece ao compartilhar o link (WhatsApp, Instagram etc.), com o "R" da Regtech.
+    openGraph: {
+      siteName: "Regtech Cell Shop",
+      locale: "pt_BR",
+      type: "website",
+      images: [{ url: "/og-cellshop.png", width: 1200, height: 630, alt: "Regtech Cell Shop" }],
+    },
+    twitter: { card: "summary_large_image", images: ["/og-cellshop.png"] },
   };
 }
 

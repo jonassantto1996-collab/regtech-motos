@@ -11,6 +11,16 @@ export const metadata: Metadata = {
   title: "Cadastro de lojista",
   description: "Cadastre a sua loja para ver os preços de atacado da Regtech Cell Shop.",
   alternates: { canonical: "/lojista/cadastro" },
+  openGraph: {
+    title: "Cadastre sua loja | Regtech Cell Shop",
+    description: "Lojista: faça o cadastro e, depois da aprovação, veja os preços de atacado da Regtech Cell Shop.",
+    url: "/lojista/cadastro",
+    siteName: "Regtech Cell Shop",
+    locale: "pt_BR",
+    type: "website",
+    images: [{ url: "/og-cellshop-lojista.png", width: 1200, height: 630, alt: "Área do Lojista Regtech Cell Shop" }],
+  },
+  twitter: { card: "summary_large_image", images: ["/og-cellshop-lojista.png"] },
 };
 
 export default async function ResellerSignupPage() {
