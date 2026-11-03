@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       // Sem foto do produto, usa a imagem da loja com o "R".
       images: image
         ? [{ url: getPublicImageUrl(image.storage_path) }]
-        : [{ url: "/og-cellshop.jpg", width: 1200, height: 630, alt: "Regtech Cell Shop" }],
+        : [{ url: "/og-cellshop.png", width: 1200, height: 630, alt: "Regtech Cell Shop" }],
     },
   };
 }
