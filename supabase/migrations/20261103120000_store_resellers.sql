@@ -29,7 +29,9 @@ on public.store_resellers for select to authenticated
 using (user_id = (select auth.uid()));
 
 revoke all on table public.store_resellers from anon, authenticated;
-grant select on table public.store_resellers to authenticated;
+-- O lojista lê só o próprio cadastro e sem a observação interna (admin_notes).
+grant select (id, user_id, contact_name, store_name, document, whatsapp, city, email, status, approved_at, created_at, updated_at)
+  on table public.store_resellers to authenticated;
 grant select, insert, update, delete on table public.store_resellers to service_role;
 
 -- Condição especial de atacado (ex.: "1 unidade R$ 599; acima de 10, R$ 499"),
