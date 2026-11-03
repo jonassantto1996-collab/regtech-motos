@@ -2,7 +2,7 @@
  * Regras de preço da Regtech Cell Shop (sem dependência de servidor: usado
  * nas páginas e no simulador de parcelas).
  *
- * - O painel escolhe qual preço o site mostra: atacado ou varejo.
+ * - Cliente final vê o preço de varejo; lojista aprovado (Área do Lojista) vê o de atacado.
  * - A versão (variante) pode ter preço próprio; vazio = mesmo preço do produto.
  * - Preço vazio ou zero = "Consulte o valor" (na versão, só o zero; o vazio herda).
  * - A condição no cartão (total + parcelas) é do produto; só aparece quando
@@ -47,6 +47,8 @@ export type CardCondition = { total: number; installments: number; parcel: numbe
 
 /** Condição no cartão válida para o preço mostrado (ou null). */
 export function cardCondition(product: PricedProduct, shownPrice: number | null, mode: PriceMode): CardCondition | null {
+  // O total no cartão é do preço de varejo: não vale para o atacado.
+  if (mode === "wholesale") return null;
   const total = toNumber(product.card_price);
   const installments = product.card_installments ?? 0;
   if (!total || installments < 1) return null;
@@ -54,10 +56,10 @@ export function cardCondition(product: PricedProduct, shownPrice: number | null,
   return { total, installments, parcel: Math.round((total / installments) * 100) / 100 };
 }
 
-export function installmentValue(total: number, n: number): number {
-  return Math.round((total / n) * 100) / 100;
+export  function  installmentValue ( total : number , n : number ) : number  {
+  retornar  Math.round ( ( total / n ) * 100 ) / 100 ;​​
 }
 
-export function priceLabel(mode: PriceMode): string {
-  return mode === "wholesale" ? "no atacado" : "à vista";
+export  function  priceLabel ( mode : PriceMode ) : string  {
+   modo de retorno === "atacado" ? "no atacado" : "à vista" ;
 }
