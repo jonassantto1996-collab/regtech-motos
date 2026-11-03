@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { WhatsAppIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 import { CELLSHOP, CELLSHOP_URL, MOTORS_URL, getCellshopBase, isCellshopHost } from "@/lib/cellshop/config";
+import { getCellshopViewer } from "@/lib/cellshop/queries";
 
 /**
  * Layout da Regtech Cell Shop (loja de tecnologia). Fica fora do grupo (site)
@@ -29,8 +30,9 @@ const NAV_LINK =
   "inline-flex min-h-11 items-center text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-[#22d3ee] focus-visible:outline-none focus-visible:text-[#22d3ee] sm:text-xs";
 
 export default async function CellshopLayout({ children }: { children: ReactNode }) {
-  const base = await getCellshopBase();
+  const [base, viewer] = await Promise.all([getCellshopBase(), getCellshopViewer()]);
   const home = base || "/";
+  const approved = viewer?.status === "approved";
 
   return (
     <div className="min-h-screen bg-white text-slate-950">
@@ -43,9 +45,17 @@ export default async function CellshopLayout({ children }: { children: ReactNode
             <Link href={base ? `${base}#vitrine` : "/#vitrine"} className={`${NAV_LINK} hidden sm:inline-flex`}>
               Produtos
             </Link>
-            <a href={MOTORS_URL} className={NAV_LINK}>
+            <a href={MOTORS_URL} className={`${NAV_LINK} hidden sm:inline-flex`}>
               Motos
             </a>
+            <Link href={`${base}/lojista`} className={NAV_LINK}>
+              {approved ? "Lojista" : (
+                <>
+                  <span className="sm:hidden">Lojista</span>
+                  <span className="hidden sm:inline">Área do Lojista</span>
+                </>
+              )}
+            </Link>
             <a
               href={CELLSHOP.whatsapp}
               target="_blank"
@@ -58,6 +68,25 @@ export default async function CellshopLayout({ children }: { children: ReactNode
           </nav>
         </div>
       </header>
+
+      {viewer?.status === "approved" && (
+        <div className="border-b border-[#0a6cff]/20 bg-[#0a5cff] text-white">
+          <p className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-2 gap-y-1 px-4 py-2.5 text-sm sm:px-6 lg:px-8">
+            <strong className="font-semibold">Preços de atacado</strong>
+            <span className="text-white/80">· você está como {viewer.store_name}.</span>
+            <Link href={`${base}/lojista`} className="font-semibold underline-offset-4 hover:underline">
+              Minha conta
+            </Link>
+          </p>
+        </div>
+      )}
+      {viewer?.status === "pending" && (
+        <div className="border-b border-amber-200 bg-amber-50 text-amber-900">
+          <p className="mx-auto max-w-7xl px-4 py-2.5 text-sm sm:px-6 lg:px-8">
+            <strong className="font-semibold">Cadastro de lojista em análise.</strong> Enquanto isso, os preços são de varejo.
+          </p>
+        </div>
+      )}
 
       {children}
 
