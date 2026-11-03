@@ -1,4 +1,4 @@
-export type StoreProductInput={category_id:string;brand:string;name:string;slug:string;sku:string|null;description:string;price:number;wholesale_price:number|null;card_price:number|null;card_installments:number|null;warranty:string;availability:string;is_active:boolean};
+export type StoreProductInput={category_id:string;brand:string;name:string;slug:string;sku:string|null;description:string;price:number;wholesale_price:number|null;card_price:number|null;card_installments:number|null;warranty:string;availability:string;is_active:boolean;wholesale_note:string|null};
 export type StoreProductParseResult={ok:true;data:StoreProductInput}|{ok:false;error:string};
 export function storeSlugify(text:string){return text.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
 
@@ -23,7 +23,8 @@ export function parseStoreProductForm(formData:FormData,mode:"create"|"edit"):St
  let card_installments:number|null=null;
  if(installmentsRaw){const n=Number(installmentsRaw);if(!Number.isInteger(n)||n<1||n>24)return {ok:false,error:"invalid_installments"};card_installments=n;}
  if((card_price===null)!==(card_installments===null))return {ok:false,error:"card_incomplete"};
- return {ok:true,data:{category_id,brand,name,slug,sku:skuRaw||null,description,price,wholesale_price,card_price,card_installments,warranty,availability,is_active:formData.get("is_active")==="on"}};
+ const wholesaleNote=String(formData.get("wholesale_note")??"").trim();if(wholesaleNote.length>300)return {ok:false,error:"field_too_long"};
+ return {ok:true,data:{category_id,brand,name,slug,sku:skuRaw||null,description,price,wholesale_price,card_price,card_installments,warranty,availability,is_active:formData.get("is_active")==="on",wholesale_note:wholesaleNote||null}};
 }
 export type StoreVariantInput={name:string;sku:string|null;price:number|null;wholesale_price:number|null;stock_quantity:number;low_stock_threshold:number};
 export type StoreVariantParseResult={ok:true;data:StoreVariantInput}|{ok:false;error:string};
