@@ -8,6 +8,8 @@ import { getCellshopViewer } from "@/lib/cellshop/queries";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
+  // Página só para quem recebeu o link no grupo de lojistas: fora do Google.
+  robots: { index: false, follow: false },
   title: "Cadastro de lojista",
   description: "Cadastre a sua loja para ver os preços de atacado da Regtech Cell Shop.",
   alternates: { canonical: "/lojista/cadastro" },
