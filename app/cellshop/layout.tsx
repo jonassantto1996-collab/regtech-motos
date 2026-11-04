@@ -55,14 +55,12 @@ export default async function CellshopLayout({ children }: { children: ReactNode
             <a href={MOTORS_URL} className={`${NAV_LINK} hidden sm:inline-flex`}>
               Motos
             </a>
-            <Link href={`${base}/lojista`} className={NAV_LINK}>
-              {approved ? "Lojista" : (
-                <>
-                  <span className="sm:hidden">Lojista</span>
-                  <span className="hidden sm:inline">Área do Lojista</span>
-                </>
-              )}
-            </Link>
+            {/* A Área do Lojista não aparece para o cliente final: o link é enviado só no grupo de lojistas. */}
+            {viewer && (
+              <Link href={`${base}/lojista`} className={NAV_LINK}>
+                {approved ? "Minha conta" : "Lojista"}
+              </Link>
+            )}
             <a
               href={CELLSHOP.whatsapp}
               target="_blank"
