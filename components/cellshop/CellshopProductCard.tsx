@@ -69,6 +69,11 @@ export default function CellshopProductCard({
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-[#0a6cff]">{product.brand}</span>
           {categoryName && <span className="text-[0.625rem] uppercase tracking-[0.14em] text-slate-500">{categoryName}</span>}
+          {product.wholesale_only && (
+            <span className="rounded-full bg-[#0a6cff]/10 px-2 py-0.5 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-[#0a4fc4]">
+              Exclusivo lojista
+            </span>
+          )}
         </div>
         <h3 className="mt-1 text-base font-semibold leading-snug tracking-tight text-slate-950 sm:text-lg">{product.name}</h3>
         {versions && <p className="mt-1 line-clamp-1 text-xs text-slate-500 sm:text-sm">{versions}</p>}
