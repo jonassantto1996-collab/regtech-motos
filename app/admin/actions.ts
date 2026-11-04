@@ -5,14 +5,28 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAuthorizedAdmin } from "@/lib/admin/authorization";
 import { resolveAuthBaseUrl } from "@/lib/admin/auth-url";
 import { OFFICIAL_SITE_URL } from "@/lib/site-url";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { hashRateLimitKey, isRateLimitAllowed } from "@/lib/leads/rate-limit";
 
 /**
  * Autentica um administrador por e-mail e senha (Supabase Auth).
  * Não há cadastro público — contas são criadas manualmente no painel do
  * Supabase. Erros de credencial usam uma mensagem genérica de propósito
  * (evita indicar se um e-mail existe ou não na base).
+ * Contra tentativa de adivinhar senha: no máximo 10 tentativas por endereço
+ * de internet e 5 por e-mail a cada 15 minutos.
  */
+async function loginAllowed(key: string, max: number) {
+  const { data, error } = await createAdminClient().rpc("consume_lead_rate_limit", {
+    p_key_hash: hashRateLimitKey(`admin-login:${key}`, process.env.SUPABASE_SERVICE_ROLE_KEY),
+    p_window_seconds: 900,
+    p_max_requests: max,
+  });
+  if (error) console.error("[admin] limite de tentativas:", error.message);
+  return isRateLimitAllowed(data, error);
+}
+
 export async function login(formData: FormData) {
   const email = formData.get("email");
   const password = formData.get("password");
@@ -24,6 +38,11 @@ export async function login(formData: FormData) {
     !password
   ) {
     redirect("/admin/login?error=missing_fields");
+  }
+
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  if (!(await loginAllowed(`ip:${ip}`, 10)) || !(await loginAllowed(`email:${email.trim().toLowerCase()}`, 5))) {
+    redirect("/admin/login?error=rate_limited");
   }
 
   const supabase = await createClient();
