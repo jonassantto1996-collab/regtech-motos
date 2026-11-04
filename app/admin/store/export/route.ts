@@ -30,7 +30,7 @@ export async function GET() {
     admin.from("store_categories").select("id,name"),
     admin
       .from("store_products")
-      .select("id,category_id,brand,name,sku,price,wholesale_price,card_price,card_installments,warranty,availability,is_active,slug")
+      .select("id,category_id,brand,name,sku,price,wholesale_price,card_price,card_installments,warranty,availability,is_active,wholesale_only,slug")
       .order("brand")
       .order("name"),
     admin
@@ -50,7 +50,7 @@ export async function GET() {
   const header = [
     "Categoria", "Marca", "Produto", "Versão", "Código", "Estoque",
     "Preço varejo", "Preço atacado", "Total no cartão", "Parcelas",
-    "Garantia", "Disponibilidade", "Ativo no site", "Endereço da página",
+    "Garantia", "Disponibilidade", "Ativo no site", "Só atacado", "Endereço da página",
   ];
   const rows: string[] = [header.join(";")];
 
@@ -73,6 +73,7 @@ export async function GET() {
           cell(p.warranty),
           cell(p.availability),
           p.is_active ? "Sim" : "Não",
+          p.wholesale_only ? "Sim" : "Não",
           cell(`/produto/${p.slug}`),
         ].join(";")
       );
