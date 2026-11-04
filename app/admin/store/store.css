@@ -236,3 +236,44 @@
   .reseller-actions{display:grid;grid-template-columns:1fr}
   .reseller-notes{grid-template-columns:1fr}
 }
+
+/* Produto só atacado (selo) */
+.store-badge-wholesale{margin-left:8px;background:#e8f0ff;color:#0a4fc4;font-style:normal;font-weight:700;vertical-align:middle}
+
+/* Lista para WhatsApp */
+.wa-list{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:16px;align-items:start}
+.wa-list-picker,.wa-list-preview{min-height:0}
+.wa-list-filters{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+.wa-list-filters .admin-field{margin-bottom:6px}
+.wa-list-check{margin:4px 0 12px}
+.wa-list-bulk{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #edf0f4;border-bottom:1px solid #edf0f4}
+.wa-list-bulk span{margin-right:auto;font-size:11px;color:#5d6b7e;font-weight:700}
+.wa-list-bulk .admin-secondary-button{min-height:34px;padding:0 12px}
+.wa-list-items{list-style:none;margin:0;padding:0;max-height:62vh;overflow-y:auto}
+.wa-list-items li{border-bottom:1px solid #f0f2f5}
+.wa-list-items label{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:11px 4px;cursor:pointer}
+.wa-list-items label:hover{background:#f8fafc}
+.wa-list-items input{width:17px;height:17px;accent-color:#075ad7}
+.wa-list-name{min-width:0}
+.wa-list-name strong{display:block;font-size:12px;color:#172436;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wa-list-name small{display:flex;align-items:center;margin-top:2px;font-size:10px;color:#7a8796}
+.wa-list-price{font-size:12px;font-weight:800;color:#0f5132;white-space:nowrap}
+.wa-list-price.is-empty{color:#8a96a6;font-weight:600}
+.wa-list-empty{padding:22px 4px;font-size:12px;color:#687789}
+.wa-list-preview{position:sticky;top:16px}
+.wa-list-preview-head span{font-size:10px;letter-spacing:.22em;color:#087cff;font-weight:800}
+.wa-list-preview-head h2{margin:6px 0 10px;font-size:18px;color:#07111f}
+.wa-list-options{display:flex;flex-wrap:wrap;gap:4px 18px}
+.wa-list-options .form-check{margin:4px 0 10px}
+.wa-list-text{min-height:46vh;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.55;background:#f8fafc;white-space:pre-wrap}
+.wa-list-actions{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.wa-list-actions button:disabled{opacity:.55;cursor:not-allowed}
+.wa-list-hint{margin-top:10px;line-height:1.5}
+@media(max-width:900px){
+  .wa-list{grid-template-columns:1fr}
+  .wa-list-preview{position:static}
+  .wa-list-items{max-height:none}
+  .wa-list-filters{grid-template-columns:1fr}
+  .wa-list-bulk{flex-wrap:wrap}
+  .wa-list-bulk span{width:100%}
+}
