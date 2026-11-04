@@ -8,6 +8,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   missing_fields: "Preencha e-mail e senha.",
   invalid_credentials: "E-mail ou senha inválidos.",
   not_authorized: "Esta conta não possui permissão administrativa.",
+  rate_limited: "Muitas tentativas. Por segurança, aguarde 15 minutos e tente de novo.",
 };
 
 export default async function LoginPage({
