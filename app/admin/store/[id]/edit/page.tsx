@@ -57,7 +57,7 @@ export default async function EditStoreProduct({
     admin.from("store_categories").select("id,name").eq("is_active", true).order("sort_order"),
     admin
       .from("store_products")
-      .select("category_id,brand,name,slug,sku,description,price,wholesale_price,card_price,card_installments,warranty,availability,is_active,wholesale_note")
+      .select("category_id,brand,name,slug,sku,description,price,wholesale_price,card_price,card_installments,warranty,availability,is_active,wholesale_note,wholesale_only")
       .eq("id", id)
       .maybeSingle(),
   ]);

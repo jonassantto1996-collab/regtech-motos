@@ -24,7 +24,7 @@ export default async function StoreAdminPage({
   const admin = createAdminClient();
   const [{ data: categories }, { data: products }, { data: overviewRaw, error: overviewError }, { count: pendingResellers }] = await Promise.all([
     admin.from("store_categories").select("id,name,slug,is_active,sort_order").order("sort_order"),
-    admin.from("store_products").select("id,category_id,brand,name,price,wholesale_price,availability,is_active,created_at").order("created_at",{ascending:false}).limit(500),
+    admin.from("store_products").select("id,category_id,brand,name,price,wholesale_price,availability,is_active,wholesale_only,created_at").order("created_at",{ascending:false}).limit(500),
     admin.rpc("get_store_admin_overview",{p_alert_limit:4}),
     admin.from("store_resellers").select("id",{count:"exact",head:true}).eq("status","pending"),
   ]);
@@ -41,6 +41,7 @@ export default async function StoreAdminPage({
           <Link href="/admin/store/lojistas" className="secondary-action">Lojistas{pendingResellers?` (${pendingResellers} novo${pendingResellers===1?"":"s"})`:""}</Link>
           <Link href="/admin/store/banners" className="secondary-action">Banners do topo</Link>
           <Link href="/admin/store/fotos" className="secondary-action">Enviar fotos em lote</Link>
+          <Link href="/admin/store/lista-whatsapp" className="secondary-action">Lista para WhatsApp</Link>
           <a href="/admin/store/export" className="secondary-action">Exportar planilha</a>
           <Link href="/admin/store/new" className="primary-action">+ Cadastrar produto</Link>
         </div>

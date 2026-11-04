@@ -2,14 +2,14 @@ import Link from "next/link";
 import {toggleStoreProduct} from "../actions";
 
 type Money=number|string|null;
-type Product={id:string;brand:string;name:string;price:Money;wholesale_price:Money;availability:string;is_active:boolean;category:string|null};
+type Product={id:string;brand:string;name:string;price:Money;wholesale_price:Money;availability:string;is_active:boolean;wholesale_only?:boolean;category:string|null};
 const brl=(v:Money)=>v===null||Number(v)===0?"—":Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 
 export function StoreProductTable({products}:{products:Product[]}){
  return <article className="panel admin-table-wrap">
   <div className="panel-title store-table-title"><h2>Produtos da loja</h2><span className="status-badge active">{products.length} cadastrados</span></div>
   {products.length?<table className="admin-table"><thead><tr><th>Produto</th><th>Categoria</th><th>Varejo</th><th>Atacado</th><th>Disponibilidade</th><th>Status</th><th>Ações</th></tr></thead><tbody>{products.map(product=><tr key={product.id}>
-   <td><strong>{product.brand} {product.name}</strong></td>
+   <td><strong>{product.brand} {product.name}</strong>{product.wholesale_only&&<span className="status-badge store-badge-wholesale">Só atacado</span>}</td>
    <td>{product.category??"—"}</td>
    <td>{brl(product.price)}</td>
    <td>{brl(product.wholesale_price)}</td>

@@ -40,6 +40,8 @@ export type CellshopProduct = {
   store_product_variants: CellshopVariant[];
   /** Condição especial de atacado (só para lojistas aprovados). */
   wholesale_note?: string | null;
+  /** Produto "só atacado": fora do site público, só lojista aprovado vê. */
+  wholesale_only?: boolean;
 };
 
 export type CellshopProductDetail = CellshopProduct & {
@@ -122,16 +124,55 @@ export const getCellshopCategories = cache(async (): Promise<CellshopCategory[]>
   return data ?? [];
 });
 
+/**
+ * Produtos "só atacado" (fora do site público). As regras do banco escondem
+ * esses produtos da chave pública; o servidor só os busca com a chave de
+ * serviço depois de confirmar que o visitante é lojista aprovado.
+ */
+async function getWholesaleOnlyProducts(slug?: string): Promise<CellshopProductDetail[]> {
+  if ((await getPriceMode()) !== "wholesale") return [];
+  let query = createAdminClient()
+    .from("store_products")
+    .select(PRODUCT_FIELDS + ",store_product_specs(id,spec_key,spec_value,display_order)")
+    .eq("is_active", true)
+    .eq("wholesale_only", true)
+    // Com a chave de serviço, as versões desativadas precisam ser filtradas aqui.
+    .eq("store_product_variants.is_active", true);
+  if (slug) query = query.eq("slug", slug);
+  const { data, error } = await query.order("created_at", { ascending: false }).limit(500);
+  if (error) console.error("[cellshop] produtos só atacado:", error);
+  return ((data ?? []) as unknown as CellshopProductDetail[]).map((p) => ({ ...sortProduct(p), wholesale_only: true }));
+}
+
+/** O endereço é de um produto "só atacado" ativo? (Para mandar o visitante à Área do Lojista.) */
+export async function isWholesaleOnlySlug(slug: string): Promise<boolean> {
+  if (!/^[a-z0-9-]{1,180}$/.test(slug)) return false;
+  const { data } = await createAdminClient()
+    .from("store_products")
+    .select("id")
+    .eq("slug", slug)
+    .eq("is_active", true)
+    .eq("wholesale_only", true)
+    .maybeSingle();
+  return Boolean(data);
+}
+
 export async function getCellshopProducts(): Promise<CellshopProduct[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("store_products")
-    .select(PRODUCT_FIELDS)
-    .eq("is_active", true)
-    .order("created_at", { ascending: false })
-    .limit(500);
+  const [{ data, error }, wholesaleOnly] = await Promise.all([
+    supabase
+      .from("store_products")
+      .select(PRODUCT_FIELDS)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
+      .limit(500),
+    getWholesaleOnlyProducts(),
+  ]);
   if (error) console.error("[cellshop] produtos:", error);
-  const list = ((data ?? []) as unknown as CellshopProduct[]).map(sortProduct);
+  const publicList = ((data ?? []) as unknown as CellshopProduct[]).map(sortProduct);
+  const list = [...publicList, ...wholesaleOnly].sort(
+    (a, b) => b.created_at.localeCompare(a.created_at),
+  );
   // Produtos com foto aparecem primeiro na vitrine (dentro de cada grupo, os mais novos primeiro).
   const hasPhoto = (p: CellshopProduct) => (p.store_product_images.length > 0 ? 1 : 0);
   return list.sort((a, b) => hasPhoto(b) - hasPhoto(a));
@@ -146,8 +187,9 @@ export async function getCellshopProduct(slug: string): Promise<CellshopProductD
     .eq("is_active", true)
     .maybeSingle();
   if (error) console.error("[cellshop] produto:", error);
-  if (!data) return null;
-  const product = sortProduct(data as unknown as CellshopProductDetail);
+  // Fora do site público: só o lojista aprovado encontra o produto "só atacado".
+  const product = data ? sortProduct(data as unknown as CellshopProductDetail) : (await getWholesaleOnlyProducts(slug))[0];
+  if (!product) return null;
   return {
     ...product,
     store_product_specs: [...(product.store_product_specs ?? [])].sort((a, b) => a.display_order - b.display_order),

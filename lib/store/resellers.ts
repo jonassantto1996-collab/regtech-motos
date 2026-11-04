@@ -131,3 +131,9 @@ export function temporaryPassword(random: (max: number) => number): string {
   for (let i = 0; i < 10; i += 1) out += alphabet[random(alphabet.length)];
   return out;
 }
+
+/** Endereço seguro para voltar depois de entrar: só a página de um produto da loja. */
+export function safeResellerNext(raw: unknown): string | null {
+  const text = typeof raw === "string" ? raw.trim() : "";
+  return /^\/produto\/[a-z0-9-]{1,180}$/.test(text) ? text : null;
+}

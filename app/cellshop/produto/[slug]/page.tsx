@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import CellshopGallery from "@/components/cellshop/CellshopGallery";
 import CellshopProductCard from "@/components/cellshop/CellshopProductCard";
 import ProductBuyBox from "@/components/cellshop/ProductBuyBox";
@@ -12,6 +12,7 @@ import {
   getCellshopProducts,
   getCellshopViewer,
   getPriceMode,
+  isWholesaleOnlySlug,
   withWholesalePrices,
 } from "@/lib/cellshop/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
@@ -32,6 +33,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       product.description.slice(0, 155) ||
       `${title} na Regtech Cell Shop, em Tucumã, PA. Simule as parcelas e compre pelo WhatsApp.`,
     alternates: { canonical: `/produto/${product.slug}` },
+    // Produto "só atacado" fica fora do Google (só lojista logado vê).
+    ...(product.wholesale_only ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       title,
       url: `/produto/${product.slug}`,
@@ -53,7 +56,11 @@ export default async function CellshopProductPage({ params }: { params: Params }
     getCellshopProducts(),
     getCellshopViewer(),
   ]);
-  if (!publicProduct) notFound();
+  if (!publicProduct) {
+    // Produto exclusivo para lojistas: quem não entrou vai para a Área do Lojista e volta depois.
+    if (await isWholesaleOnlySlug(slug)) redirect(`${base}/lojista?produto=${encodeURIComponent(slug)}`);
+    notFound();
+  }
   // Lojista aprovado vê o atacado; o cliente final, o varejo.
   const wholesale = mode === "wholesale";
   const [product] = wholesale ? await withWholesalePrices([publicProduct]) : [publicProduct];
@@ -84,7 +91,7 @@ export default async function CellshopProductPage({ params }: { params: Params }
   );
   const lowestPrice = prices.length ? Math.min(...prices) : null;
   const jsonLd =
-    lowestPrice === null
+    lowestPrice === null || product.wholesale_only
       ? null
       : {
           "@context": "https://schema.org",

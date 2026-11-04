@@ -13,7 +13,9 @@ export function notifyStoreProduct(productId: string) {
   if (!isProductionSite()) return;
   after(async () => {
     try {
-      const { data } = await createAdminClient().from("store_products").select("slug").eq("id", productId).maybeSingle();
+      const { data } = await createAdminClient().from("store_products").select("slug,wholesale_only").eq("id", productId).maybeSingle();
+      // Produto "só atacado" não vai para o Bing (a página é só para lojistas).
+      if (data?.wholesale_only) return;
       await sendIndexNow(CELLSHOP_URL, data?.slug ? [`/produto/${data.slug}`, "/"] : ["/"]);
     } catch {
       // Silencioso: o Bing ainda lê a loja pelo mapa do site.
@@ -26,7 +28,7 @@ export function notifyAllStoreProducts() {
   if (!isProductionSite()) return;
   after(async () => {
     try {
-      const { data } = await createAdminClient().from("store_products").select("slug").eq("is_active", true).limit(1000);
+      const { data } = await createAdminClient().from("store_products").select("slug").eq("is_active", true).eq("wholesale_only", false).limit(1000);
       await sendIndexNow(CELLSHOP_URL, ["/", ...(data ?? []).map((p) => `/produto/${p.slug}`)]);
     } catch {
       // Silencioso.

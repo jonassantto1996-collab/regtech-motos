@@ -67,10 +67,12 @@ function FormError({ message }: { message: string | null }) {
   );
 }
 
-export function ResellerLoginForm({ footer }: { footer?: ReactNode }) {
+export function ResellerLoginForm({ footer, next }: { footer?: ReactNode; next?: string }) {
   const { error, pending, onSubmit } = useResellerForm(loginReseller);
   return (
     <form onSubmit={onSubmit} className="space-y-5" noValidate={false}>
+      {/* Depois de entrar, volta para o produto que o lojista abriu (ex.: link da lista do WhatsApp). */}
+      {next && <input type="hidden" name="next" value={next} />}
       <div>
         <label htmlFor="login-email" className={LABEL}>
           E-mail
