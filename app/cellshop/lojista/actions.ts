@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCellshopBase } from "@/lib/cellshop/config";
 import { hashRateLimitKey, isRateLimitAllowed } from "@/lib/leads/rate-limit";
-import { parseResellerSignup } from "@/lib/store/resellers";
+import { parseResellerSignup, safeResellerNext } from "@/lib/store/resellers";
 
 /**
  * Área do Lojista: cadastro, entrada e saída.
@@ -101,7 +101,9 @@ export async function loginReseller(formData: FormData): Promise<ResellerFormRes
     await supabase.auth.signOut();
     return { error: "not_reseller" };
   }
-  redirect(await lojistaPath());
+  // Veio de um produto (link da lista do WhatsApp)? Volta para ele.
+  const next = safeResellerNext(formData.get("next"));
+  redirect(next ? `${await getCellshopBase()}${next}` : await lojistaPath());
 }
 
 export async function logoutReseller() {
