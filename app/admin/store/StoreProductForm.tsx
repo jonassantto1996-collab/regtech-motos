@@ -2,7 +2,7 @@ import Link from "next/link";
 
 type Category={id:string;name:string};
 type Money=number|string|null;
-type Product={category_id:string;brand:string;name:string;slug:string;sku:string|null;description:string;price:Money;wholesale_price:Money;card_price:Money;card_installments:number|null;warranty:string;availability:string;is_active:boolean;wholesale_note?:string|null};
+type Product={category_id:string;brand:string;name:string;slug:string;sku:string|null;description:string;price:Money;wholesale_price:Money;card_price:Money;card_installments:number|null;warranty:string;availability:string;is_active:boolean;wholesale_note?:string|null;wholesale_only?:boolean};
 
 /** Mostra o valor no campo no formato brasileiro (1299.9 → "1299,90"). */
 function money(value:Money|undefined){
@@ -29,7 +29,7 @@ export function StoreProductForm({action,categories,product,errorMessage,mode}:{
   <div className="store-form-section">
    <div className="store-form-section-title"><span>PREÇOS</span><p>Use vírgula para os centavos (ex.: 1.299,90). O cliente final vê o varejo; lojistas aprovados (Área do Lojista) veem o atacado.</p></div>
    <div className="store-form-grid store-price-grid">
-    <label className="admin-field">Preço varejo (R$) *<input name="price" required inputMode="decimal" defaultValue={money(product?.price??null)} className="admin-control" placeholder="0,00"/></label>
+    <label className="admin-field">Preço varejo (R$) *<input name="price" inputMode="decimal" defaultValue={money(product?.price??null)} className="admin-control" placeholder="0,00"/><small className="field-hint">Produto só atacado pode ficar sem varejo.</small></label>
     <label className="admin-field">Preço atacado (R$)<input name="wholesale_price" inputMode="decimal" defaultValue={money(product?.wholesale_price)} className="admin-control" placeholder="Opcional"/></label>
     <label className="admin-field">Total no cartão (R$)<input name="card_price" inputMode="decimal" defaultValue={money(product?.card_price)} className="admin-control" placeholder="Opcional"/><small className="field-hint">Valor total parcelado. Preencha junto com as parcelas.</small></label>
     <label className="admin-field">Parcelas no cartão<input name="card_installments" type="number" min="1" max="24" step="1" defaultValue={product?.card_installments??""} className="admin-control" placeholder="Ex: 12"/></label>
@@ -47,6 +47,11 @@ export function StoreProductForm({action,categories,product,errorMessage,mode}:{
     <input type="checkbox" name="is_active" defaultChecked={product?.is_active??true}/>
     <span className="store-toggle" aria-hidden="true"></span>
     <span><strong>Produto ativo</strong><small>Quando ativo, o item pode aparecer na loja online.</small></span>
+   </label>
+   <label className="store-toggle-row">
+    <input type="checkbox" name="wholesale_only" defaultChecked={product?.wholesale_only??false}/>
+    <span className="store-toggle" aria-hidden="true"></span>
+    <span><strong>Só atacado</strong><small>Não aparece no site para o cliente final. Só lojistas aprovados veem (na vitrine, na busca e no link do produto).</small></span>
    </label>
   </div>
 
