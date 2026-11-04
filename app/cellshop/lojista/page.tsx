@@ -10,6 +10,8 @@ import { logoutReseller } from "./actions";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
+  // Página só para quem recebeu o link no grupo de lojistas: fora do Google.
+  robots: { index: false, follow: false },
   title: "Área do Lojista",
   description: "Lojistas cadastrados e aprovados veem os preços de atacado da Regtech Cell Shop.",
   alternates: { canonical: "/lojista" },
