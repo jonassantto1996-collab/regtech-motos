@@ -4,6 +4,7 @@ import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { ResellerLoginForm } from "@/components/cellshop/ResellerForms";
 import { CELLSHOP, getCellshopBase } from "@/lib/cellshop/config";
 import { getCellshopViewer } from "@/lib/cellshop/queries";
+import { safeResellerNext } from "@/lib/store/resellers";
 import { logoutReseller } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: ["/og-cellshop-lojista.png"] },
 };
 
-type SearchParams = Promise<{ novo?: string }>;
+type SearchParams = Promise<{ novo?: string; produto?: string }>;
 
 const CARD = "rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-40px_rgba(7,10,18,0.45)] sm:p-9";
 
@@ -33,8 +34,10 @@ function whatsappLink(text: string) {
 }
 
 export default async function ResellerAreaPage({ searchParams }: { searchParams: SearchParams }) {
-  const [{ novo }, base, viewer] = await Promise.all([searchParams, getCellshopBase(), getCellshopViewer()]);
+  const [{ novo, produto }, base, viewer] = await Promise.all([searchParams, getCellshopBase(), getCellshopViewer()]);
   const home = base || "/";
+  // Link de um produto exclusivo para lojistas: depois de entrar, volta para ele.
+  const next = safeResellerNext(produto ? `/produto/${produto}` : null) ?? undefined;
 
   return (
     <main className="bg-[#f6f8fb]">
@@ -49,6 +52,12 @@ export default async function ResellerAreaPage({ searchParams }: { searchParams:
       </section>
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        {!viewer && next && (
+          <p role="status" className="mb-8 rounded-2xl border border-[#0a6cff]/25 bg-[#0a6cff]/[0.06] px-5 py-4 text-sm leading-6 text-slate-800 sm:text-base">
+            <strong className="text-slate-950">Este produto é exclusivo para lojistas.</strong> Entre com o seu e-mail e senha para ver o produto e o preço de atacado.
+          </p>
+        )}
+
         {!viewer && (
           <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
             <div className="order-2 lg:order-1">
@@ -83,6 +92,7 @@ export default async function ResellerAreaPage({ searchParams }: { searchParams:
               <h2 className="mt-2 text-2xl font-bold tracking-tight">Entrar</h2>
               <div className="mt-6">
                 <ResellerLoginForm
+                  next={next}
                   footer={
                     <div className="space-y-2 pt-1 text-center text-sm text-slate-600">
                       <p>
