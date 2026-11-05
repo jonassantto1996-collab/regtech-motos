@@ -154,6 +154,9 @@ export default async function CellshopProductPage({ params }: { params: Params }
             {variants.length === 1 && <p className="mt-2 text-base text-slate-600">{variants[0].name}</p>}
 
             <ProductBuyBox
+              productId={product.id}
+              slug={product.slug}
+              imagePath={product.store_product_images[0]?.storage_path ?? null}
               product={product}
               productTitle={title}
               variants={variants}

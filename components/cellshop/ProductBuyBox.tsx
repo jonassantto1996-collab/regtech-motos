@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
+import { useCart } from "@/components/cellshop/Cart";
 import {
   cardCondition,
   cardPlan,
@@ -20,6 +21,9 @@ type Variant = { id: string; name: string; price: number | string | null; wholes
  * de parcelas e botão do WhatsApp com a mensagem já pronta.
  */
 export default function ProductBuyBox({
+  productId,
+  slug,
+  imagePath,
   product,
   productTitle,
   variants,
@@ -28,6 +32,10 @@ export default function ProductBuyBox({
   pageUrl,
   resellerName = null,
 }: {
+  productId: string;
+  slug: string;
+  /** Foto principal (aparece no carrinho). */
+  imagePath: string | null;
   product: PricedProduct;
   productTitle: string;
   variants: Variant[];
@@ -72,6 +80,19 @@ export default function ProductBuyBox({
   }, [variant, variants.length, productTitle, variantSoldOut, chosen, price, pageUrl, resellerName]);
 
   const href = `${whatsapp}?text=${encodeURIComponent(message)}`;
+  const cart = useCart();
+
+  function addToCart() {
+    cart?.add({
+      productId,
+      variantId: variant?.id ?? null,
+      slug,
+      title: productTitle,
+      variantName: variant && variants.length > 1 ? variant.name : null,
+      price,
+      imagePath,
+    });
+  }
 
   return (
     <div>
@@ -163,6 +184,19 @@ export default function ProductBuyBox({
           <WhatsAppIcon className="h-5 w-5 shrink-0" />
           {variantSoldOut ? "Avise-me pelo WhatsApp" : "Comprar pelo WhatsApp"}
         </a>
+        {cart && !variantSoldOut && (
+          <button
+            type="button"
+            onClick={addToCart}
+            className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-xl border-2 border-[#070a12] bg-white px-6 text-sm font-semibold uppercase tracking-[0.14em] text-[#070a12] transition-colors hover:bg-[#070a12] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a6cff] focus-visible:ring-offset-2"
+          >
+            <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.9">
+              <path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z" strokeLinejoin="round" />
+              <path d="M9 8V6.5a3 3 0 0 1 6 0V8" strokeLinecap="round" />
+            </svg>
+            Adicionar ao carrinho
+          </button>
+        )}
         <p className="mt-3 text-sm text-slate-500">
           A mensagem já vai pronta com o produto{variants.length > 1 ? ", a versão" : ""}{card && !variantSoldOut ? " e a parcela escolhida" : ""}.
         </p>
