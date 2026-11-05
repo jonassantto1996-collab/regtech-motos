@@ -5,6 +5,7 @@ import Link from "next/link";
 import { WhatsAppIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 import { CELLSHOP, CELLSHOP_URL, MOTORS_URL, getCellshopBase, isCellshopHost } from "@/lib/cellshop/config";
 import { getCellshopViewer } from "@/lib/cellshop/queries";
+import { CartButton, CartProvider } from "@/components/cellshop/Cart";
 
 /**
  * Layout da Regtech Cell Shop (loja de tecnologia). Fica fora do grupo (site)
@@ -45,13 +46,20 @@ export default async function CellshopLayout({ children }: { children: ReactNode
   const telephone = approved ? CELLSHOP.wholesaleTelephone : CELLSHOP.telephone;
 
   return (
+    <CartProvider
+      mode={approved ? "wholesale" : "retail"}
+      whatsapp={whatsapp}
+      baseUrl={CELLSHOP_URL}
+      base={base}
+      resellerName={approved ? viewer?.store_name ?? null : null}
+    >
     <div className="min-h-screen bg-white text-slate-950">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070a12]/95 text-white backdrop-blur">
         <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-5 px-4 sm:min-h-20 sm:px-6 lg:px-8">
           <Link href={home} aria-label="Regtech Cell Shop — início" className="shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-[#22d3ee]">
             <Image src="/cellshop-logo.svg" alt="Regtech Cell Shop" width={1439} height={418} priority unoptimized className="h-9 w-auto sm:h-11" />
           </Link>
-          <nav aria-label="Navegação principal" className="flex items-center gap-5 sm:gap-8">
+          <nav aria-label="Navegação principal" className="flex items-center gap-3 sm:gap-6">
             <Link href={base ? `${base}#vitrine` : "/#vitrine"} className={`${NAV_LINK} hidden sm:inline-flex`}>
               Produtos
             </Link>
@@ -64,6 +72,7 @@ export default async function CellshopLayout({ children }: { children: ReactNode
                 {approved ? "Minha conta" : "Lojista"}
               </Link>
             )}
+            <CartButton />
             <a
               href={whatsapp}
               target="_blank"
@@ -146,5 +155,6 @@ export default async function CellshopLayout({ children }: { children: ReactNode
         <WhatsAppIcon className="h-7 w-7" />
       </a>
     </div>
+    </CartProvider>
   );
 }
