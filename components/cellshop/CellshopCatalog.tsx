@@ -9,6 +9,116 @@ import { matchesSearch } from "@/lib/cellshop/search";
 
 type Category = { id: string; name: string; slug: string };
 
+/** Quantos produtos aparecem em cada carrossel antes do cartão "Ver todos". */
+const ROW_LIMIT = 12;
+
+/**
+ * Uma categoria em carrossel: arrasta para o lado no celular; no computador,
+ * setas para avançar. O último cartão leva para a categoria inteira.
+ */
+function CategoryRow({
+  category,
+  products,
+  mode,
+  base,
+  onSeeAll,
+}: {
+  category: Category;
+  products: CellshopProduct[];
+  mode: PriceMode;
+  base: string;
+  onSeeAll: () => void;
+}) {
+  const trackRef = useRef<HTMLUListElement>(null);
+  const [edges, setEdges] = useState({ start: true, end: false });
+  const shown = products.slice(0, ROW_LIMIT);
+  const headingId = `linha-${category.slug}`;
+
+  const updateEdges = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    setEdges({ start: el.scrollLeft <= 4, end: el.scrollLeft + el.clientWidth >= el.scrollWidth - 4 });
+  };
+
+  useEffect(() => {
+    updateEdges();
+    const el = trackRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(updateEdges);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const scroll = (direction: 1 | -1) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direction * el.clientWidth * 0.85, behavior: "smooth" });
+  };
+
+  const arrow =
+    "hidden h-10 w-10 items-center justify-center rounded-full border border-slate-300 bg-white text-slate-900 transition-colors hover:border-[#0a6cff] hover:text-[#0a5cff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a6cff] disabled:cursor-default disabled:opacity-35 disabled:hover:border-slate-300 disabled:hover:text-slate-900 md:inline-flex";
+
+  return (
+    <section aria-labelledby={headingId} className="mt-10 first:mt-8">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h3 id={headingId} className="text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">
+            {category.name}
+          </h3>
+          <p className="mt-0.5 text-sm text-slate-500">
+            {products.length} {products.length === 1 ? "produto" : "produtos"}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onSeeAll}
+            className="min-h-10 rounded-full px-3 text-sm font-semibold text-[#0a5cff] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a6cff]"
+          >
+            Ver todos<span className="sr-only"> de {category.name}</span>
+          </button>
+          <button type="button" className={arrow} onClick={() => scroll(-1)} disabled={edges.start} aria-label={`Voltar em ${category.name}`}>
+            <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4">
+              <path d="m15 6-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <button type="button" className={arrow} onClick={() => scroll(1)} disabled={edges.end} aria-label={`Avançar em ${category.name}`}>
+            <svg aria-hidden viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.4">
+              <path d="m9 6 6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <ul
+        ref={trackRef}
+        onScroll={updateEdges}
+        className="-mx-4 mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-3 [scrollbar-width:none] sm:mx-0 sm:gap-5 sm:px-0 [&::-webkit-scrollbar]:hidden"
+      >
+        {shown.map((product) => (
+          <li key={product.id} className="grid w-[46%] shrink-0 snap-start sm:w-[31%] lg:w-[23.5%]">
+            <CellshopProductCard product={product} mode={mode} base={base} />
+          </li>
+        ))}
+        {products.length > ROW_LIMIT && (
+          <li className="grid w-[46%] shrink-0 snap-start sm:w-[31%] lg:w-[23.5%]">
+            <button
+              type="button"
+              onClick={onSeeAll}
+              className="flex w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center transition-colors hover:border-[#0a6cff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a6cff]"
+            >
+              <span className="text-base font-semibold text-slate-950">Ver todos</span>
+              <span className="text-sm text-slate-500">
+                mais {products.length - ROW_LIMIT} em {category.name}
+              </span>
+            </button>
+          </li>
+        )}
+      </ul>
+    </section>
+  );
+}
+
 /**
  * Vitrine com busca instantânea: filtra enquanto o cliente digita, sem
  * recarregar a página. Digitar busca em todas as categorias; as abas mostram
@@ -90,7 +200,7 @@ export default function CellshopCatalog({
   }
 
   const q = deferredQuery.trim();
-  const title = active ? active.name : searching ? "Resultados da busca" : "Todos os produtos";
+  const title = active ? active.name : searching ? "Resultados da busca" : "Nossos produtos";
   const summary = `${list.length} ${list.length === 1 ? "produto" : "produtos"}${q ? ` para “${q}”` : ""}${active && q ? ` em ${active.name}` : ""}`;
   const askMessage = `Olá! Procurei "${q}" no site e não achei. Vocês têm?`;
 
@@ -175,7 +285,22 @@ export default function CellshopCatalog({
         )}
 
         <div id="vitrine-resultados" className="scroll-mt-24">
-          {list.length ? (
+          {!searching && !active ? (
+            // Sem busca e sem aba escolhida: um carrossel por categoria.
+            tabs.map((category) => (
+              <CategoryRow
+                key={category.id}
+                category={category}
+                products={matched.filter((p) => p.category_id === category.id)}
+                mode={mode}
+                base={base}
+                onSeeAll={() => {
+                  setCategorySlug(category.slug);
+                  document.getElementById("vitrine")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
+              />
+            ))
+          ) : list.length ? (
             <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
               {list.map((product) => (
                 <CellshopProductCard
