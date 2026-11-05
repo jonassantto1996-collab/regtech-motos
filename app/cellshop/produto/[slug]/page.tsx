@@ -179,11 +179,24 @@ export default async function CellshopProductPage({ params }: { params: Params }
               )}
               <div className="flex justify-between gap-6 py-4">
                 <dt className="text-slate-500">Retirada</dt>
-                <dd className="text-right font-semibold">Na loja, em {CELLSHOP.addressLocality}</dd>
+                <dd className="text-right">
+                  <span className="block font-semibold">Na loja, {CELLSHOP.streetAddress}, {CELLSHOP.addressLocality}</span>
+                  <a
+                    href={CELLSHOP.mapUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-[#0a5cff] underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a6cff]"
+                  >
+                    Como chegar
+                    <svg aria-hidden viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2.4">
+                      <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </a>
+                </dd>
               </div>
               <div className="flex justify-between gap-6 py-4">
-                <dt className="text-slate-500">Atendimento</dt>
-                <dd className="text-right font-semibold">WhatsApp {CELLSHOP.telephone}</dd>
+                <dt className="text-slate-500">Loja</dt>
+                <dd className="text-right font-semibold">Mais de 14 anos em {CELLSHOP.addressLocality}</dd>
               </div>
             </dl>
           </div>

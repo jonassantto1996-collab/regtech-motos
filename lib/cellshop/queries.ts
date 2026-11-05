@@ -196,17 +196,8 @@ export async function getCellshopProduct(slug: string): Promise<CellshopProductD
   };
 }
 
-/** Busca simples por marca, nome ou versão (sem acento e sem diferenciar maiúsculas). */
-export function matchesSearch(product: CellshopProduct, query: string): boolean {
-  const normalize = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
-  const haystack = normalize(
-    [product.brand, product.name, ...product.store_product_variants.map((v) => v.name)].join(" ")
-  );
-  return normalize(query)
-    .split(/\s+/)
-    .filter(Boolean)
-    .every((term) => haystack.includes(term));
-}
+/** Busca da vitrine: ver lib/cellshop/search.ts (roda também no navegador). */
+export { matchesSearch } from "@/lib/cellshop/search";
 
 export type CellshopBanner = {
   id: string;

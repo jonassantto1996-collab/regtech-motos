@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
-import CellshopProductCard from "@/components/cellshop/CellshopProductCard";
+import CellshopCatalog from "@/components/cellshop/CellshopCatalog";
 import { CELLSHOP, getCellshopBase } from "@/lib/cellshop/config";
 import CellshopHeroCarousel, { type HeroBanner } from "@/components/cellshop/CellshopHeroCarousel";
-import { getCellshopBanners, getCellshopCategories, getCellshopProducts, getPriceMode, matchesSearch, withWholesalePrices, type CellshopBanner } from "@/lib/cellshop/queries";
+import { getCellshopBanners, getCellshopCategories, getCellshopProducts, getPriceMode, withWholesalePrices, type CellshopBanner } from "@/lib/cellshop/queries";
 import { bannerHref, commonRatio } from "@/lib/store/banners";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 
@@ -51,24 +51,6 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
   const home = base || "/";
   const { banners, ratios } = heroBanners(rawBanners, home);
   const query = (q ?? "").trim().slice(0, 80);
-  const activeCategory = categories.find((c) => c.slug === categoria) ?? null;
-  const categoryName = new Map(categories.map((c) => [c.id, c.name]));
-  const countByCategory = new Map<string, number>();
-  for (const p of products) countByCategory.set(p.category_id, (countByCategory.get(p.category_id) ?? 0) + 1);
-  const visibleCategories = categories.filter((c) => (countByCategory.get(c.id) ?? 0) > 0);
-
-  const list = products
-    .filter((p) => !activeCategory || p.category_id === activeCategory.id)
-    .filter((p) => !query || matchesSearch(p, query));
-
-  const hrefFor = (slug?: string) => {
-    const params = new URLSearchParams();
-    if (slug) params.set("categoria", slug);
-    if (query) params.set("q", query);
-    const qs = params.toString();
-    return `${home}${qs ? `?${qs}` : ""}#vitrine`;
-  };
-
   const intro = (
     <div className="relative isolate flex h-full items-center">
       <div
@@ -129,77 +111,15 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
         </dl>
       </section>
 
-      <section id="vitrine" className="scroll-mt-20 bg-[#f6f8fb]">
-        <div className="mx-auto max-w-7xl px-4 pb-20 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0a6cff]">Vitrine</p>
-              <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                {activeCategory ? activeCategory.name : "Todos os produtos"}
-              </h2>
-              <p className="mt-2 text-sm text-slate-600">
-                {list.length} {list.length === 1 ? "produto" : "produtos"}
-                {query ? ` para “${query}”` : ""}
-              </p>
-            </div>
-            <form action={home} method="get" role="search" className="flex w-full gap-2 lg:w-[26rem]">
-              {activeCategory && <input type="hidden" name="categoria" value={activeCategory.slug} />}
-              <label htmlFor="cs-search" className="sr-only">Buscar produto</label>
-              <input
-                id="cs-search"
-                name="q"
-                defaultValue={query}
-                placeholder="Buscar: Galaxy, Poco, carregador…"
-                className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-base text-slate-950 outline-none transition focus:border-[#0a6cff] focus:ring-2 focus:ring-[#0a6cff]/20"
-              />
-              <button type="submit" className="min-h-12 shrink-0 rounded-xl bg-[#070a12] px-5 text-sm font-semibold text-white hover:bg-[#151b2b]">
-                Buscar
-              </button>
-            </form>
-          </div>
-
-          <nav aria-label="Categorias" className="-mx-4 mt-8 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:px-0">
-            {[{ slug: undefined as string | undefined, name: "Todos", count: products.length }, ...visibleCategories.map((c) => ({ slug: c.slug, name: c.name, count: countByCategory.get(c.id) ?? 0 }))].map((c) => {
-              const active = (c.slug ?? null) === (activeCategory?.slug ?? null);
-              return (
-                <Link
-                  key={c.name}
-                  href={hrefFor(c.slug)}
-                  aria-current={active ? "page" : undefined}
-                  className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors ${
-                    active ? "border-[#070a12] bg-[#070a12] text-white" : "border-slate-300 bg-white text-slate-800 hover:border-[#0a6cff]"
-                  }`}
-                >
-                  {c.name}
-                  <span className={`text-xs ${active ? "text-slate-300" : "text-slate-500"}`}>{c.count}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {list.length ? (
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-              {list.map((product) => (
-                <CellshopProductCard
-                  key={product.id}
-                  product={product}
-                  mode={mode}
-                  base={base}
-                  categoryName={activeCategory ? undefined : categoryName.get(product.category_id)}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-10 rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
-              <p className="text-lg font-semibold">Nenhum produto encontrado.</p>
-              <p className="mt-2 text-sm text-slate-600">Tente outra busca ou fale com a loja: a gente procura para você.</p>
-              <Link href={`${home}#vitrine`} className="mt-5 inline-flex min-h-11 items-center rounded-xl border border-slate-300 px-5 text-sm font-semibold hover:border-[#0a6cff]">
-                Ver todos os produtos
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
+      <CellshopCatalog
+        products={products}
+        categories={categories}
+        mode={mode}
+        base={base}
+        whatsapp={mode === "wholesale" ? CELLSHOP.wholesaleWhatsapp : CELLSHOP.whatsapp}
+        initialQuery={query}
+        initialCategory={categories.some((c) => c.slug === categoria) ? (categoria as string) : null}
+      />
 
       <section className="bg-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
