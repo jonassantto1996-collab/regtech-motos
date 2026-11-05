@@ -158,7 +158,7 @@ export default async function CellshopProductPage({ params }: { params: Params }
               productTitle={title}
               variants={variants}
               mode={mode}
-              whatsapp={CELLSHOP.whatsapp}
+              whatsapp={wholesale ? CELLSHOP.wholesaleWhatsapp : CELLSHOP.whatsapp}
               pageUrl={pageUrl}
               resellerName={wholesale ? viewer?.store_name ?? null : null}
             />
