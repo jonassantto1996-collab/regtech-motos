@@ -5,8 +5,8 @@
  * - Cliente final vê o preço de varejo; lojista aprovado (Área do Lojista) vê o de atacado.
  * - A versão (variante) pode ter preço próprio; vazio = mesmo preço do produto.
  * - Preço vazio ou zero = "Consulte o valor" (na versão, só o zero; o vazio herda).
- * - A condição no cartão (total + parcelas) é do produto; só aparece quando
- *   a versão escolhida custa o mesmo que o produto, para não mostrar parcela errada.
+ * - Cartão (só no varejo): a tabela de tarifas da loja (CARD_RATES) vale para
+ *   todos os produtos, de 1x a 18x, sobre o preço da versão escolhida.
  */
 export type PriceMode = "wholesale" | "retail";
 export type Money = number | string | null | undefined;
@@ -45,15 +45,42 @@ export function variantPrice(product: PricedProduct, variant: PricedVariant | nu
 
 export type CardCondition = { total: number; installments: number; parcel: number };
 
-/** Condição no cartão válida para o preço mostrado (ou null). */
-export function cardCondition(product: PricedProduct, shownPrice: number | null, mode: PriceMode): CardCondition | null {
-  // O total no cartão é do preço de varejo: não vale para o atacado.
-  if (mode === "wholesale") return null;
-  const total = toNumber(product.card_price);
-  const installments = product.card_installments ?? 0;
-  if (!total || installments < 1) return null;
-  if (shownPrice !== null && shownPrice !== productPrice(product, mode)) return null;
-  return { total, installments, parcel: Math.round((total / installments) * 100) / 100 };
+/**
+ * Tarifas da maquininha no crédito (tabela da loja), em %: posição 0 = 1x,
+ * posição 17 = 18x. Para mudar as taxas, é só trocar os números aqui.
+ */
+export const CARD_RATES = [4.8, 6.26, 6.9, 7.49, 8.65, 8.65, 9.56, 11.73, 11.73, 12.5, 13.7, 14.3, 15.6, 16.3, 17.8, 18.5, 19.1, 20.5] as const;
+export const MAX_INSTALLMENTS = CARD_RATES.length;
+
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+/**
+ * Total no cartão em N vezes: preço ÷ (1 − taxa). Assim, depois que a
+ * maquininha desconta a taxa, a loja recebe o preço à vista inteiro.
+ * Ex.: R$ 1.000 em 10x (12,5%) = R$ 1.142,86 (10x de R$ 114,29).
+ */
+export function cardTotal(price: number, installments: number): number {
+  const rate = CARD_RATES[installments - 1];
+  if (rate === undefined || !(price > 0)) return price;
+  return round2(price / (1 - rate / 100));
+}
+
+/** Todas as opções de parcelamento (1x até 18x) para um preço à vista. */
+export function cardPlan(price: number): CardCondition[] {
+  return CARD_RATES.map((_, i) => {
+    const installments = i + 1;
+    const total = cardTotal(price, installments);
+    return { installments, total, parcel: round2(total / installments) };
+  });
+}
+
+/**
+ * Maior parcelamento (18x) do preço mostrado, para a vitrine e o topo da
+ * página. Vale só para o cliente final (varejo): atacado não tem cartão.
+ */
+export function cardCondition(_product: PricedProduct, shownPrice: number | null, mode: PriceMode): CardCondition | null {
+  if (mode === "wholesale" || shownPrice === null || !(shownPrice > 0)) return null;
+  return cardPlan(shownPrice)[MAX_INSTALLMENTS - 1];
 }
 
 export function installmentValue(total: number, n: number): number {
