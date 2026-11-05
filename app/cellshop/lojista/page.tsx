@@ -32,7 +32,8 @@ type SearchParams = Promise<{ novo?: string; produto?: string }>;
 const CARD = "rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-40px_rgba(7,10,18,0.45)] sm:p-9";
 
 function whatsappLink(text: string) {
-  return `${CELLSHOP.whatsapp}?text=${encodeURIComponent(text)}`;
+  // Assuntos de lojista vão para o atendimento do atacado.
+  return `${CELLSHOP.wholesaleWhatsapp}?text=${encodeURIComponent(text)}`;
 }
 
 export default async function ResellerAreaPage({ searchParams }: { searchParams: SearchParams }) {
