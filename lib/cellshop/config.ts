@@ -16,6 +16,9 @@ export const CELLSHOP = {
   // WhatsApp próprio da Cell Shop (o da Regtech Motors é outro número).
   whatsapp: "https://wa.me/5594992989833",
   telephone: "+55 94 99298-9833",
+  // Atendimento do atacado: é para onde vão os lojistas aprovados.
+  wholesaleWhatsapp: "https://wa.me/5594992955996",
+  wholesaleTelephone: "+55 94 99295-5996",
   // Endereço próprio da Cell Shop (a loja de motos fica no nº 216).
   streetAddress: "Av. dos Estados, 241",
   addressLocality: "Tucumã",
