@@ -40,6 +40,9 @@ export default async function CellshopLayout({ children }: { children: ReactNode
   const [base, viewer] = await Promise.all([getCellshopBase(), getCellshopViewer()]);
   const home = base || "/";
   const approved = viewer?.status === "approved";
+  // Lojista aprovado fala com o atendimento do atacado; o cliente final, com a loja.
+  const whatsapp = approved ? CELLSHOP.wholesaleWhatsapp : CELLSHOP.whatsapp;
+  const telephone = approved ? CELLSHOP.wholesaleTelephone : CELLSHOP.telephone;
 
   return (
     <div className="min-h-screen bg-white text-slate-950">
@@ -62,7 +65,7 @@ export default async function CellshopLayout({ children }: { children: ReactNode
               </Link>
             )}
             <a
-              href={CELLSHOP.whatsapp}
+              href={whatsapp}
               target="_blank"
               rel="noreferrer"
               className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:border-[#22d3ee] hover:text-[#22d3ee]"
@@ -105,8 +108,8 @@ export default async function CellshopLayout({ children }: { children: ReactNode
           </div>
           <div>
             <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-slate-500">Atendimento</p>
-            <a href={CELLSHOP.whatsapp} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#22d3ee]">
-              <WhatsAppIcon className="h-4 w-4" /> {CELLSHOP.telephone}
+            <a href={whatsapp} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#22d3ee]">
+              <WhatsAppIcon className="h-4 w-4" /> {telephone}
             </a>
             <ul className="mt-4 space-y-1.5 text-sm text-slate-400">
               {CELLSHOP.openingHours.map((h) => (
@@ -134,7 +137,7 @@ export default async function CellshopLayout({ children }: { children: ReactNode
 
       {/* Botão flutuante: aparece no celular e no tablet (telas de toque); some no computador com mouse. */}
       <a
-        href={CELLSHOP.whatsapp}
+        href={whatsapp}
         target="_blank"
         rel="noreferrer"
         aria-label="Falar com a Regtech Cell Shop no WhatsApp"
