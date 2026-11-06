@@ -162,14 +162,17 @@ export async function moveStoreProductImage(imageId: string, productId: string, 
   redirect(editPath(productId));
 }
 
-/** Texto alternativo da foto (acessibilidade e Google Imagens). */
+/** Texto alternativo da foto (acessibilidade e Google Imagens) e cor da foto. */
 export async function updateStoreImageAltText(imageId: string, productId: string, formData: FormData) {
   await requireAdminSession();
   const raw = String(formData.get("alt_text") ?? "").trim().slice(0, 200);
+  const changes: { alt_text: string | null; color?: string | null } = { alt_text: raw || null };
+  // A cor só vem quando o produto tem versões com cor; sem o campo, não mexe.
+  if (formData.has("color")) changes.color = String(formData.get("color") ?? "").trim().slice(0, 60) || null;
   const admin = createAdminClient();
   const { error } = await admin
     .from("store_product_images")
-    .update({ alt_text: raw || null })
+    .update(changes)
     .eq("id", imageId)
     .eq("product_id", productId);
   if (error) redirect(editPath(productId, "server_error"));
