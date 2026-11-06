@@ -12,15 +12,19 @@ export type StoreImage = {
   storage_path: string;
   display_order: number;
   alt_text: string | null;
+  color?: string | null;
 };
 
 export function StoreImagesManager({
   productId,
   images,
+  colors = [],
   errorMessage,
 }: {
   productId: string;
   images: StoreImage[];
+  /** Cores das versões do produto (para ligar cada foto a uma cor). */
+  colors?: string[];
   errorMessage?: string | null;
 }) {
   return (
@@ -31,6 +35,9 @@ export function StoreImagesManager({
             <span>FOTOS DO PRODUTO</span>
             <h2>Fotos</h2>
             <p>A primeira foto é a principal e aparece na vitrine. Sugestão: produto inteiro, detalhes e verso.</p>
+            {colors.length > 0 && (
+              <p>Escolha a <strong>cor de cada foto</strong>: quando o cliente escolhe a versão, o site mostra a foto daquela cor. Foto da caixa ou geral: deixe em “Todas as versões”.</p>
+            )}
           </div>
           <span className="status-badge active">{images.length} fotos</span>
         </div>
@@ -72,6 +79,18 @@ export function StoreImagesManager({
                     </form>
                   </div>
                   <form action={updateStoreImageAltText.bind(null, image.id, productId)} className="product-image-alt-form">
+                    {(colors.length > 0 || image.color) && (
+                      <label className="product-image-color-field">
+                        <span>Cor da foto</span>
+                        <select name="color" defaultValue={image.color ?? ""} className="admin-control">
+                          <option value="">Todas as versões</option>
+                          {colors.map((color) => (
+                            <option key={color} value={color}>{color}</option>
+                          ))}
+                          {image.color && !colors.includes(image.color) && <option value={image.color}>{image.color}</option>}
+                        </select>
+                      </label>
+                    )}
                     <label>
                       <span>Descrição da foto</span>
                       <input type="text" name="alt_text" maxLength={200} defaultValue={image.alt_text ?? ""} placeholder="Ex: Galaxy A17 preto, vista do verso" className="admin-control" />
