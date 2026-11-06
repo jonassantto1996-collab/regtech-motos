@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import CellshopGallery from "@/components/cellshop/CellshopGallery";
 import CellshopProductCard from "@/components/cellshop/CellshopProductCard";
 import ProductBuyBox from "@/components/cellshop/ProductBuyBox";
+import { VariantColorProvider } from "@/components/cellshop/VariantColor";
+import { defaultVariant, variantColor } from "@/lib/cellshop/variant-photo";
 import { CELLSHOP, CELLSHOP_URL, getCellshopBase } from "@/lib/cellshop/config";
 import { productPrice, variantPrice } from "@/lib/cellshop/pricing";
 import {
@@ -128,6 +130,7 @@ export default async function CellshopProductPage({ params }: { params: Params }
           )}
         </nav>
 
+        <VariantColorProvider initialColor={variantColor(defaultVariant(variants)?.name)}>
         <div className="mt-3 grid gap-8 sm:mt-5 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <div className="lg:sticky lg:top-28 lg:self-start">
             <CellshopGallery images={product.store_product_images} productName={title} />
@@ -157,6 +160,7 @@ export default async function CellshopProductPage({ params }: { params: Params }
               productId={product.id}
               slug={product.slug}
               imagePath={product.store_product_images[0]?.storage_path ?? null}
+              photos={product.store_product_images}
               product={product}
               productTitle={title}
               variants={variants}
@@ -204,6 +208,7 @@ export default async function CellshopProductPage({ params }: { params: Params }
             </dl>
           </div>
         </div>
+        </VariantColorProvider>
 
         {(product.description || product.store_product_specs.length > 0) && (
           <div className="mt-14 grid gap-12 border-t border-slate-200 pt-10 sm:mt-20 lg:grid-cols-2 lg:gap-16">

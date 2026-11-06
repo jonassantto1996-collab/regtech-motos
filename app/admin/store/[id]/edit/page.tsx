@@ -7,6 +7,7 @@ import { requireAdminSession } from "../../../products/actions";
 import { updateStoreProduct } from "../../actions";
 import { InventoryHistory } from "../../components/InventoryHistory";
 import { StoreImagesManager } from "../../components/StoreImagesManager";
+import { colorOptions } from "@/lib/cellshop/variant-photo";
 import { StoreSpecsPanel } from "../../components/StoreSpecsPanel";
 import { VariantInventoryPanel } from "../../components/VariantInventoryPanel";
 import { StoreProductForm } from "../../StoreProductForm";
@@ -78,7 +79,7 @@ export default async function EditStoreProduct({
       .limit(30),
     admin
       .from("store_product_images")
-      .select("id,storage_path,display_order,alt_text")
+      .select("id,storage_path,display_order,alt_text,color")
       .eq("product_id", id)
       .order("display_order")
       .order("created_at"),
@@ -121,7 +122,7 @@ export default async function EditStoreProduct({
           />
         </article>
 
-        <StoreImagesManager productId={id} images={images ?? []} errorMessage={errorMessage} />
+        <StoreImagesManager productId={id} images={images ?? []} colors={colorOptions((variants ?? []).filter((v) => v.is_active).map((v) => v.name))} errorMessage={errorMessage} />
         <StoreSpecsPanel productId={id} specs={specs ?? []} />
         <VariantInventoryPanel productId={id} variants={variants ?? []} />
         <InventoryHistory variants={variants ?? []} movements={movements ?? []} />

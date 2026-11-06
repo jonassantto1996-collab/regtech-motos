@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { useCart } from "@/components/cellshop/Cart";
+import { useVariantColor } from "@/components/cellshop/VariantColor";
+import { defaultVariant, photoIndexForColor, variantColor, type ColoredPhoto } from "@/lib/cellshop/variant-photo";
 import {
   cardCondition,
   cardPlan,
@@ -24,6 +26,7 @@ export default function ProductBuyBox({
   productId,
   slug,
   imagePath,
+  photos = [],
   product,
   productTitle,
   variants,
@@ -36,6 +39,8 @@ export default function ProductBuyBox({
   slug: string;
   /** Foto principal (aparece no carrinho). */
   imagePath: string | null;
+  /** Fotos com a cor de cada uma: o carrinho usa a foto da cor escolhida. */
+  photos?: ColoredPhoto[];
   product: PricedProduct;
   productTitle: string;
   variants: Variant[];
@@ -45,7 +50,8 @@ export default function ProductBuyBox({
   /** Lojista aprovado: a mensagem do WhatsApp já sai como pedido de atacado. */
   resellerName?: string | null;
 }) {
-  const firstAvailable = variants.find((v) => v.stock_quantity > 0) ?? variants[0] ?? null;
+  const firstAvailable = defaultVariant(variants);
+  const variantColorState = useVariantColor();
   const [variantId, setVariantId] = useState<string | null>(firstAvailable?.id ?? null);
   const variant = variants.find((v) => v.id === variantId) ?? null;
 
@@ -90,7 +96,7 @@ export default function ProductBuyBox({
       title: productTitle,
       variantName: variant && variants.length > 1 ? variant.name : null,
       price,
-      imagePath,
+      imagePath: photos[photoIndexForColor(photos, variantColor(variant?.name))]?.storage_path ?? imagePath,
     });
   }
 
@@ -123,7 +129,10 @@ export default function ProductBuyBox({
                 <button
                   key={v.id}
                   type="button"
-                  onClick={() => setVariantId(v.id)}
+                  onClick={() => {
+                    setVariantId(v.id);
+                    variantColorState?.setColor(variantColor(v.name));
+                  }}
                   aria-pressed={active}
                   className={`min-h-12 rounded-xl border px-4 py-2 text-left text-sm font-semibold transition-colors ${
                     active

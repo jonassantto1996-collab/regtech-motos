@@ -4,10 +4,21 @@ import { useState } from "react";
 import Image from "next/image";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import type { CellshopImage } from "@/lib/cellshop/queries";
+import { initialPhotoIndex, photoIndexForColor } from "@/lib/cellshop/variant-photo";
 import { ProductPlaceholder } from "./CellshopProductCard";
+import { useVariantColor } from "./VariantColor";
 
 export default function CellshopGallery({ images, productName }: { images: CellshopImage[]; productName: string }) {
-  const [index, setIndex] = useState(0);
+  // Cor da versão escolhida no bloco de compra (quando a foto tem cor cadastrada).
+  const color = useVariantColor()?.color ?? null;
+  const [index, setIndex] = useState(() => initialPhotoIndex(images, color));
+  const [shownColor, setShownColor] = useState(color);
+  if (color !== shownColor) {
+    // Trocou a versão: vai para a foto daquela cor (se existir).
+    setShownColor(color);
+    const photo = photoIndexForColor(images, color);
+    if (photo >= 0) setIndex(photo);
+  }
   const selected = images[index] ?? images[0];
 
   return (

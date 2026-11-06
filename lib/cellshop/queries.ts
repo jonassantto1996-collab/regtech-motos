@@ -12,7 +12,7 @@ import type { ResellerStatus } from "@/lib/store/resellers";
  */
 export type CellshopCategory = { id: string; name: string; slug: string };
 
-export type CellshopImage = { id: string; storage_path: string; alt_text: string | null; display_order: number };
+export type CellshopImage = { id: string; storage_path: string; alt_text: string | null; display_order: number; color?: string | null };
 
 export type CellshopVariant = {
   id: string;
@@ -50,7 +50,7 @@ export type CellshopProductDetail = CellshopProduct & {
 
 const PRODUCT_FIELDS =
   "id,slug,brand,name,description,price,card_price,card_installments,warranty,availability,category_id,created_at," +
-  "store_product_images(id,storage_path,alt_text,display_order)," +
+  "store_product_images(id,storage_path,alt_text,display_order,color)," +
   "store_product_variants(id,name,price,stock_quantity)";
 
 function sortProduct<T extends CellshopProduct>(product: T): T {
