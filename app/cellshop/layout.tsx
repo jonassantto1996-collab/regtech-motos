@@ -6,6 +6,7 @@ import { WhatsAppIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 import { CELLSHOP, CELLSHOP_URL, MOTORS_URL, getCellshopBase, isCellshopHost } from "@/lib/cellshop/config";
 import { getCellshopViewer } from "@/lib/cellshop/queries";
 import { CartButton, CartProvider } from "@/components/cellshop/Cart";
+import { OutsideResellerLogin } from "@/components/cellshop/ResellerLoginAware";
 
 /**
  * Layout da Regtech Cell Shop (loja de tecnologia). Fica fora do grupo (site)
@@ -44,6 +45,40 @@ export default async function CellshopLayout({ children }: { children: ReactNode
   // Lojista aprovado fala com o atendimento do atacado; o cliente final, com a loja.
   const whatsapp = approved ? CELLSHOP.wholesaleWhatsapp : CELLSHOP.whatsapp;
   const telephone = approved ? CELLSHOP.wholesaleTelephone : CELLSHOP.telephone;
+  // Tela de entrada do lojista: só a área do lojista, sem links para o varejo.
+  const loggedIn = !!viewer;
+  const logo = (href: string) => (
+    <Link href={href} aria-label="Regtech Cell Shop — início" className="shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-[#22d3ee]">
+      <Image src="/cellshop-logo.svg" alt="Regtech Cell Shop" width={1439} height={418} priority unoptimized className="h-9 w-auto sm:h-11" />
+    </Link>
+  );
+  const headerWhatsapp = (link: string) => (
+    <a
+      href={link}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:border-[#22d3ee] hover:text-[#22d3ee]"
+    >
+      <WhatsAppIcon className="h-4 w-4" />
+      <span className="hidden sm:inline">WhatsApp</span>
+    </a>
+  );
+  const footerWhatsapp = (link: string, phone: string) => (
+    <a href={link} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#22d3ee]">
+      <WhatsAppIcon className="h-4 w-4" /> {phone}
+    </a>
+  );
+  const floatingWhatsapp = (link: string) => (
+    <a
+      href={link}
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Falar com a Regtech Cell Shop no WhatsApp"
+      className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#15803d] text-white shadow-[0_12px_30px_-8px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-0.5 [@media(hover:hover)_and_(pointer:fine)]:hidden"
+    >
+      <WhatsAppIcon className="h-7 w-7" />
+    </a>
+  );
 
   return (
     <CartProvider
@@ -56,32 +91,28 @@ export default async function CellshopLayout({ children }: { children: ReactNode
     <div className="min-h-screen bg-white text-slate-950">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070a12]/95 text-white backdrop-blur">
         <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-5 px-4 sm:min-h-20 sm:px-6 lg:px-8">
-          <Link href={home} aria-label="Regtech Cell Shop — início" className="shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-[#22d3ee]">
-            <Image src="/cellshop-logo.svg" alt="Regtech Cell Shop" width={1439} height={418} priority unoptimized className="h-9 w-auto sm:h-11" />
-          </Link>
+          <OutsideResellerLogin loggedIn={loggedIn} onLogin={logo(`${base}/lojista`)}>
+            {logo(home)}
+          </OutsideResellerLogin>
           <nav aria-label="Navegação principal" className="flex items-center gap-3 sm:gap-6">
-            <Link href={base ? `${base}#vitrine` : "/#vitrine"} className={`${NAV_LINK} hidden sm:inline-flex`}>
-              Produtos
-            </Link>
-            <a href={MOTORS_URL} className={`${NAV_LINK} hidden sm:inline-flex`}>
-              Motos
-            </a>
+            <OutsideResellerLogin loggedIn={loggedIn}>
+              <Link href={base ? `${base}#vitrine` : "/#vitrine"} className={`${NAV_LINK} hidden sm:inline-flex`}>
+                Produtos
+              </Link>
+              <a href={MOTORS_URL} className={`${NAV_LINK} hidden sm:inline-flex`}>
+                Motos
+              </a>
+            </OutsideResellerLogin>
             {/* A Área do Lojista não aparece para o cliente final: o link é enviado só no grupo de lojistas. */}
             {viewer && (
               <Link href={`${base}/lojista`} className={NAV_LINK}>
                 {approved ? "Minha conta" : "Lojista"}
               </Link>
             )}
-            <CartButton />
-            <a
-              href={whatsapp}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:border-[#22d3ee] hover:text-[#22d3ee]"
-            >
-              <WhatsAppIcon className="h-4 w-4" />
-              <span className="hidden sm:inline">WhatsApp</span>
-            </a>
+            <OutsideResellerLogin loggedIn={loggedIn} onLogin={headerWhatsapp(CELLSHOP.wholesaleWhatsapp)}>
+              <CartButton />
+              {headerWhatsapp(whatsapp)}
+            </OutsideResellerLogin>
           </nav>
         </div>
       </header>
@@ -117,9 +148,12 @@ export default async function CellshopLayout({ children }: { children: ReactNode
           </div>
           <div>
             <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-slate-500">Atendimento</p>
-            <a href={whatsapp} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#22d3ee]">
-              <WhatsAppIcon className="h-4 w-4" /> {telephone}
-            </a>
+            <OutsideResellerLogin
+              loggedIn={loggedIn}
+              onLogin={footerWhatsapp(CELLSHOP.wholesaleWhatsapp, CELLSHOP.wholesaleTelephone)}
+            >
+              {footerWhatsapp(whatsapp, telephone)}
+            </OutsideResellerLogin>
             <ul className="mt-4 space-y-1.5 text-sm text-slate-400">
               {CELLSHOP.openingHours.map((h) => (
                 <li key={h.label}>{h.label}: {h.hours}</li>
@@ -132,9 +166,11 @@ export default async function CellshopLayout({ children }: { children: ReactNode
               <MapPinIcon className="mt-1 h-4 w-4 shrink-0" />
               <span>{CELLSHOP.streetAddress}, Centro<br />{CELLSHOP.addressLocality}, {CELLSHOP.addressRegion} · CEP {CELLSHOP.postalCode}</span>
             </a>
-            <a href={MOTORS_URL} className="mt-5 block text-sm font-semibold text-white hover:text-[#22d3ee]">
-              Conheça também a Regtech Motors →
-            </a>
+            <OutsideResellerLogin loggedIn={loggedIn}>
+              <a href={MOTORS_URL} className="mt-5 block text-sm font-semibold text-white hover:text-[#22d3ee]">
+                Conheça também a Regtech Motors →
+              </a>
+            </OutsideResellerLogin>
           </div>
         </div>
         <div className="border-t border-white/10">
@@ -145,15 +181,9 @@ export default async function CellshopLayout({ children }: { children: ReactNode
       </footer>
 
       {/* Botão flutuante: aparece no celular e no tablet (telas de toque); some no computador com mouse. */}
-      <a
-        href={whatsapp}
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Falar com a Regtech Cell Shop no WhatsApp"
-        className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#15803d] text-white shadow-[0_12px_30px_-8px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-0.5 [@media(hover:hover)_and_(pointer:fine)]:hidden"
-      >
-        <WhatsAppIcon className="h-7 w-7" />
-      </a>
+      <OutsideResellerLogin loggedIn={loggedIn} onLogin={floatingWhatsapp(CELLSHOP.wholesaleWhatsapp)}>
+        {floatingWhatsapp(whatsapp)}
+      </OutsideResellerLogin>
     </div>
     </CartProvider>
   );
