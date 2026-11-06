@@ -31,3 +31,15 @@ test("referência: só o número, sem traço ou pelo código interno", () => {
   assert.equal(matchesSearch(cabo, "6505"), false);
   assert.equal(matchesSearch({ ...p("Multilaser", "Cartão de Memória 32GB"), sku: "MC-504" }, "504"), true);
 });
+
+test("referência incompleta: FN-18 acha FN-A18 sem confundir", () => {
+  const fone = p("A'Gold", "Fone de Ouvido com Fio Lightning FN-A18");
+  for (const q of ["FN-18", "fn18", "FN_18", "FN 18", "FN-A18", "fone fn-18"]) assert.equal(matchesSearch(fone, q), true, q);
+  assert.equal(matchesSearch(p("A'Gold", "Fone Esportivo FN-B31"), "FN-18"), false);
+  assert.equal(matchesSearch(p("Oberon", "Suporte OR-SP18"), "FN-18"), false);
+  assert.equal(matchesSearch(p("A'Gold", "Fone sem Fio Mini FN-BT28"), "FN-28"), true);
+  assert.equal(matchesSearch(p("Hrebos", "Carregador Veicular CRV-205CC"), "CRV-205"), true);
+  assert.equal(matchesSearch(p("Hrebos", "Carregador Veicular CRV-205CC"), "205cc"), true);
+  assert.equal(matchesSearch(p("Samsung", "Galaxy A07"), "a17"), false);
+  assert.equal(matchesSearch(p("Samsung", "Galaxy A17"), "a18"), false);
+});
