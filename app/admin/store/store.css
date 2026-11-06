@@ -277,3 +277,13 @@
   .wa-list-bulk{flex-wrap:wrap}
   .wa-list-bulk span{width:100%}
 }
+
+/* Busca nos produtos cadastrados */
+.store-table-search{display:flex;align-items:center;gap:10px;margin:0 20px 14px;padding:0 12px;min-height:44px;border:1px solid #d7dfe9;border-radius:8px;background:#f8fafc;color:#6b7a8c}
+.store-table-search:focus-within{border-color:#075ad7;background:#fff;box-shadow:0 0 0 3px #075ad71f}
+.store-table-search input{flex:1;min-width:0;height:42px;border:0;background:transparent;font:inherit;font-size:13px;color:#111827;outline:none}
+.store-table-search input::-webkit-search-cancel-button{display:none}
+.store-table-search button{border:0;background:#e8eef5;color:#455468;width:26px;height:26px;border-radius:50%;cursor:pointer;font-size:11px}
+.store-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.store-search-empty{margin:8px 20px 20px;padding:18px;border:1px dashed #d7dfe9;border-radius:8px;color:#566475;font-size:13px;text-align:center}
+@media(max-width:800px){.store-table-search{margin:0 0 12px}.store-search-empty{margin:8px 0 12px}}

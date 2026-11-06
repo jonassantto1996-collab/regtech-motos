@@ -22,3 +22,12 @@ test("apelidos: apple, tablet, celular", () => {
   assert.equal(matchesSearch(p("Xiaomi", "Redmi A5"), "celular", "Smartphones"), true);
   assert.equal(matchesSearch(p("JBL", "Flip 7"), "celular", "Bombox"), false);
 });
+
+test("referência: só o número, sem traço ou pelo código interno", () => {
+  const cabo = p("Newion", "Cabo Inversor para Starlink Mini 3 m NCB-6504");
+  assert.equal(matchesSearch(cabo, "6504"), true);
+  assert.equal(matchesSearch(cabo, "ncb6504"), true);
+  assert.equal(matchesSearch(cabo, "NCB 6504"), true);
+  assert.equal(matchesSearch(cabo, "6505"), false);
+  assert.equal(matchesSearch({ ...p("Multilaser", "Cartão de Memória 32GB"), sku: "MC-504" }, "504"), true);
+});
