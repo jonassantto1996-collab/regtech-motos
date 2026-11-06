@@ -5,6 +5,8 @@
  * - Sem acento e sem diferenciar maiúsculas ("iphone" acha "iPhone").
  * - Procura na marca, no nome, nas versões e na categoria do produto.
  * - Todas as palavras precisam aparecer ("galaxy a17" não traz o A07).
+ * - Referência com ou sem traço/espaço: "6504", "ncb6504" e "NCB-6504" acham o
+ *   mesmo produto (também procura no código interno, quando houver).
  * - Alguns apelidos comuns: "apple" acha iPhone e iPad; "tablet" acha iPad;
  *   "celular" acha smartphones e iPhone; "caixa de som" acha Bombox.
  */
@@ -12,6 +14,8 @@ export type SearchableProduct = {
   brand: string;
   name: string;
   store_product_variants: { name: string }[];
+  /** Código interno (só o painel usa). */
+  sku?: string | null;
 };
 
 export function normalizeSearch(text: string): string {
@@ -39,11 +43,20 @@ const ALIASES: Record<string, string[]> = {
   antena: ["starlink"],
 };
 
+/** Só letras e números: "NCB-6504" → "ncb6504". */
+const compact = (text: string) => text.replace(/[^a-z0-9]/g, "");
+
 export function matchesSearch(product: SearchableProduct, query: string, categoryName = ""): boolean {
   const terms = normalizeSearch(query).split(/\s+/).filter(Boolean);
   if (!terms.length) return true;
   const haystack = normalizeSearch(
-    [product.brand, product.name, categoryName, ...product.store_product_variants.map((v) => v.name)].join(" "),
+    [product.brand, product.name, product.sku ?? "", categoryName, ...product.store_product_variants.map((v) => v.name)].join(" "),
   );
-  return terms.every((term) => haystack.includes(term) || (ALIASES[term] ?? []).some((alias) => haystack.includes(alias)));
+  const compactHaystack = compact(haystack);
+  return terms.every((term) => {
+    if (haystack.includes(term)) return true;
+    const short = compact(term);
+    if (short.length >= 2 && compactHaystack.includes(short)) return true;
+    return (ALIASES[term] ?? []).some((alias) => haystack.includes(alias));
+  });
 }
