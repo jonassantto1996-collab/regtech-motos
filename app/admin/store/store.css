@@ -287,3 +287,6 @@
 .store-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .store-search-empty{margin:8px 20px 20px;padding:18px;border:1px dashed #d7dfe9;border-radius:8px;color:#566475;font-size:13px;text-align:center}
 @media(max-width:800px){.store-table-search{margin:0 0 12px}.store-search-empty{margin:8px 0 12px}}
+
+/* Cor da foto (liga a foto à versão) */
+.product-image-alt-form .product-image-color-field{grid-column:1/-1}
