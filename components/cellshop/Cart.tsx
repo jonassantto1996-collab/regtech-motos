@@ -128,7 +128,7 @@ export function CartProvider({
     <CartContext.Provider value={value}>
       {children}
 
-      <div className={`fixed inset-0 z-[60] ${isOpen ? "" : "pointer-events-none"}`} aria-hidden={!isOpen}>
+      <div className={`fixed inset-0 z-[60] ${isOpen ? "" : "pointer-events-none"}`} aria-hidden={!isOpen} inert={!isOpen}>
         <button
           type="button"
           tabIndex={-1}
