@@ -7,6 +7,8 @@
  * - Todas as palavras precisam aparecer ("galaxy a17" não traz o A07).
  * - Referência com ou sem traço/espaço: "6504", "ncb6504" e "NCB-6504" acham o
  *   mesmo produto (também procura no código interno, quando houver).
+ * - Referência digitada pela metade: "FN-18" acha o "FN-A18" (mesmas letras
+ *   iniciais, mesmo número; a letra do meio pode faltar). Não confunde com FN-B31.
  * - Alguns apelidos comuns: "apple" acha iPhone e iPad; "tablet" acha iPad;
  *   "celular" acha smartphones e iPhone; "caixa de som" acha Bombox.
  */
@@ -45,6 +47,30 @@ const ALIASES: Record<string, string[]> = {
 
 /** Só letras e números: "NCB-6504" → "ncb6504". */
 const compact = (text: string) => text.replace(/[^a-z0-9]/g, "");
+const digitsOf = (text: string) => text.replace(/[^0-9]/g, "");
+const lettersOf = (text: string) => text.replace(/[^a-z]/g, "");
+
+/** As letras de `small` aparecem em `big`, na mesma ordem (pode pular letras). */
+function inOrder(small: string, big: string): boolean {
+  let i = 0;
+  for (const ch of big) if (ch === small[i]) i++;
+  return i === small.length;
+}
+
+/**
+ * Referência digitada incompleta ("fn18" para "FN-A18"): mesma primeira letra,
+ * exatamente o mesmo número e as letras digitadas aparecendo na ordem.
+ */
+function matchesReference(term: string, words: string[]): boolean {
+  const ref = compact(term);
+  const digits = digitsOf(ref);
+  const letters = lettersOf(ref);
+  if (ref.length < 3 || !digits || !letters) return false;
+  return words.some((word) => {
+    const w = compact(word);
+    return w[0] === ref[0] && digitsOf(w) === digits && inOrder(letters, lettersOf(w));
+  });
+}
 
 export function matchesSearch(product: SearchableProduct, query: string, categoryName = ""): boolean {
   const terms = normalizeSearch(query).split(/\s+/).filter(Boolean);
@@ -53,10 +79,12 @@ export function matchesSearch(product: SearchableProduct, query: string, categor
     [product.brand, product.name, product.sku ?? "", categoryName, ...product.store_product_variants.map((v) => v.name)].join(" "),
   );
   const compactHaystack = compact(haystack);
+  const words = haystack.split(/\s+/);
   return terms.every((term) => {
     if (haystack.includes(term)) return true;
     const short = compact(term);
     if (short.length >= 2 && compactHaystack.includes(short)) return true;
+    if (matchesReference(term, words)) return true;
     return (ALIASES[term] ?? []).some((alias) => haystack.includes(alias));
   });
 }
