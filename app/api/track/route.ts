@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { DEVICES, TRACK_SOURCES, TRAFFIC_SOURCES, type TrackSource } from "@/lib/analytics/sources";
+import { DEVICES, STORE_TRACK_SOURCES, TRACK_SOURCES, TRAFFIC_SOURCES } from "@/lib/analytics/sources";
 
 /**
  * Recebe os eventos anônimos do site (visita de página e clique no WhatsApp)
@@ -15,6 +15,8 @@ import { DEVICES, TRACK_SOURCES, TRAFFIC_SOURCES, type TrackSource } from "@/lib
 const BOT_PATTERN = /bot|crawl|spider|slurp|preview|headless|lighthouse|facebookexternalhit|whatsapp|telegram/i;
 const SESSION_PATTERN = /^[a-z0-9]{8,40}$/;
 const PRODUCT_PATH = /^\/products\/([^/]+)$/;
+// Loja (Regtech Cell Shop): /produto/slug no domínio dela, /cellshop/produto/slug no das motos.
+const STORE_PRODUCT_PATH = /^(?:\/cellshop)?\/produto\/([^/]+)$/;
 
 function noContent() {
   return new NextResponse(null, { status: 204 });
@@ -45,18 +47,17 @@ export async function POST(request: NextRequest) {
   }
   if (!body || typeof body !== "object") return noContent();
 
-  const { type, path, source, sid, src, dev } = body as Record<string, unknown>;
-  if (type !== "page_view" && type !== "whatsapp_click") return noContent();
+  const { type, path, source, sid, src, dev, site } = body as Record<string, unknown>;
+  // Eventos da loja vão para outra tabela (store_site_events).
+  const store = site === "cellshop";
+  if (type !== "page_view" && type !== "whatsapp_click" && !(store && type === "add_to_cart")) return noContent();
   if (typeof path !== "string" || !path.startsWith("/") || path.length > 300) return noContent();
   if (path.startsWith("/admin") || path.startsWith("/api")) return noContent();
 
   const sessionId = typeof sid === "string" && SESSION_PATTERN.test(sid) ? sid : null;
-  const trackSource: TrackSource | null =
-    type === "whatsapp_click"
-      ? typeof source === "string" && (TRACK_SOURCES as readonly string[]).includes(source)
-        ? (source as TrackSource)
-        : "outros"
-      : null;
+  const allowedSources: readonly string[] = store ? STORE_TRACK_SOURCES : TRACK_SOURCES;
+  const trackSource: string | null =
+    type === "whatsapp_click" ? (typeof source === "string" && allowedSources.includes(source) ? source : "outros") : null;
   const trafficSource =
     type === "page_view" && typeof src === "string" && (TRAFFIC_SOURCES as readonly string[]).includes(src) ? src : null;
   const device =
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
     const admin = createAdminClient();
 
     let productId: string | null = null;
-    const match = PRODUCT_PATH.exec(path);
+    const match = (store ? STORE_PRODUCT_PATH : PRODUCT_PATH).exec(path);
     if (match) {
       let slug = match[1];
       try {
@@ -94,14 +95,14 @@ export async function POST(request: NextRequest) {
         return noContent();
       }
       const { data: product } = await admin
-        .from("products")
+        .from(store ? "store_products" : "products")
         .select("id")
         .eq("slug", slug)
         .maybeSingle();
       productId = product?.id ?? null;
     }
 
-    await admin.from("site_events").insert({
+    await admin.from(store ? "store_site_events" : "site_events").insert({
       event_type: type,
       path,
       product_id: productId,
