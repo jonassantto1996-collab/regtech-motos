@@ -161,3 +161,15 @@
     }
   }
 }
+
+/* Loja: faixa de marcas passando sem parar (BrandMarquee). */
+@keyframes cs-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.cs-marquee-track { animation: cs-marquee 45s linear infinite; }
+.cs-marquee:hover .cs-marquee-track { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .cs-marquee { overflow-x: auto; }
+  .cs-marquee-track { animation: none; }
+}
