@@ -202,6 +202,10 @@ export default async function CellshopProductPage({ params }: { params: Params }
                 </dd>
               </div>
               <div className="flex justify-between gap-6 py-4">
+                <dt className="text-slate-500">Envio</dt>
+                <dd className="text-right font-semibold">Para todo o sul do Pará</dd>
+              </div>
+              <div className="flex justify-between gap-6 py-4">
                 <dt className="text-slate-500">Loja</dt>
                 <dd className="text-right font-semibold">Mais de 14 anos em {CELLSHOP.addressLocality}</dd>
               </div>

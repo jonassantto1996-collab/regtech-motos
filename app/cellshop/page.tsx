@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import CellshopCatalog from "@/components/cellshop/CellshopCatalog";
+import BrandMarquee from "@/components/cellshop/BrandMarquee";
 import { CELLSHOP, getCellshopBase } from "@/lib/cellshop/config";
 import CellshopHeroCarousel, { type HeroBanner } from "@/components/cellshop/CellshopHeroCarousel";
 import { getCellshopBanners, getCellshopCategories, getCellshopProducts, getPriceMode, withWholesalePrices, type CellshopBanner } from "@/lib/cellshop/queries";
@@ -99,9 +100,9 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
         <dl className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-6 px-4 py-8 sm:grid-cols-4 sm:px-6 lg:px-8">
           {[
             ["+14 anos", "de loja na região"],
-            ["Cartão", "simule as parcelas no site"],
+            ["Suporte técnico", "assistência na própria loja"],
             ["WhatsApp", "com o produto na mensagem"],
-            ["Retirada", "na loja em Tucumã"],
+            ["Retirada e envio", "para todo o sul do Pará"],
           ].map(([title, text]) => (
             <div key={title}>
               <dt className="text-lg font-bold text-white sm:text-xl">{title}</dt>
@@ -110,6 +111,8 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
           ))}
         </dl>
       </section>
+
+      <BrandMarquee />
 
       <CellshopCatalog
         products={products}

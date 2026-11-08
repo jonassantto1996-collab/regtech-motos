@@ -38,3 +38,17 @@ export const DEVICE_LABELS: Record<Device | "sem_info", string> = {
   computador: "Computador",
   sem_info: "Sem registro (antes da atualização)",
 };
+
+/** Loja (Regtech Cell Shop): de onde veio o clique no WhatsApp. */
+export const STORE_TRACK_SOURCES = ["produto", "carrinho", "flutuante", "rodape", "home", "outros"] as const;
+
+export type StoreTrackSource = (typeof STORE_TRACK_SOURCES)[number];
+
+export const STORE_TRACK_SOURCE_LABELS: Record<StoreTrackSource, string> = {
+  produto: "Página do produto",
+  carrinho: "Carrinho (pedido completo)",
+  flutuante: "Botão flutuante",
+  rodape: "Rodapé",
+  home: "Página inicial",
+  outros: "Outros",
+};

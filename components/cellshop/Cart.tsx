@@ -7,6 +7,10 @@ import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { addItem, buildCartMessage, cartTotals, parseStoredCart, removeItem, setQty, type CartItem, type CartTotals, type NewCartItem } from "@/lib/cellshop/cart";
 import { cardPlan, formatBRL, MAX_INSTALLMENTS, type PriceMode } from "@/lib/cellshop/pricing";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
+import { formatPhone } from "@/lib/cellshop/cart-recovery";
+import { forgetCartContact, markCartCheckedOut, syncCart } from "@/app/cellshop/cart-actions";
+import { getDevice, getTrafficSource } from "@/components/analytics/SiteTracker";
+import { trackStoreEvent } from "@/components/cellshop/CellshopTracker";
 
 type CartContextValue = {
   items: CartItem[];
@@ -21,6 +25,36 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function useCart() {
   return useContext(CartContext);
 }
+
+/** Lê/grava no aparelho sem quebrar quando o armazenamento não está disponível. */
+function readLocal(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+function writeLocal(key: string, value: string | null) {
+  try {
+    if (value === null) window.localStorage.removeItem(key);
+    else window.localStorage.setItem(key, value);
+  } catch {
+    // Ignora: sem armazenamento, o carrinho vale só nesta visita.
+  }
+}
+
+/** Identificador aleatório do carrinho (não identifica a pessoa). */
+function cartToken(key: string): string {
+  const saved = readLocal(key);
+  if (saved && /^[a-z0-9]{24,64}$/.test(saved)) return saved;
+  const bytes = new Uint8Array(16);
+  crypto.getRandomValues(bytes);
+  const token = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+  writeLocal(key, token);
+  return token;
+}
+
+type SavedContact = { name: string; whatsapp: string };
 
 function BagIcon({ className = "" }: { className?: string }) {
   return (
@@ -59,17 +93,80 @@ export function CartProvider({
   const [installments, setInstallments] = useState(1);
   const triggerRef = useRef<HTMLElement | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const tokenKey = `${storageKey}-id`;
+  const syncKey = `${storageKey}-sync`;
+  const contactKey = `${storageKey}-contato`;
+  const [contact, setContact] = useState<SavedContact | null>(null);
 
   // Lê o carrinho guardado (depois de abrir a página, para não dar diferença com o servidor).
   useEffect(() => {
     try {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- o armazenamento só existe no navegador, depois da página abrir.
       setItems(parseStoredCart(window.localStorage.getItem(storageKey)));
+      const saved = JSON.parse(window.localStorage.getItem(contactKey) ?? "null") as SavedContact | null;
+      if (saved && typeof saved.name === "string" && typeof saved.whatsapp === "string") setContact(saved);
     } catch {
       // Sem acesso ao armazenamento (modo anônimo etc.): carrinho só desta visita.
     }
     setLoaded(true);
-  }, [storageKey]);
+  }, [storageKey, contactKey]);
+
+  // Cópia do carrinho para a loja (Carrinhos parados no painel): só ids e quantidades,
+  // e só quando o carrinho muda. Sem contato, a cópia é anônima.
+  useEffect(() => {
+    if (!loaded) return;
+    const signature = JSON.stringify(items.map((i) => [i.productId, i.variantId, i.qty]));
+    const last = readLocal(syncKey);
+    if (last === signature || (last === null && items.length === 0)) return;
+    const timer = window.setTimeout(() => {
+      const token = cartToken(tokenKey);
+      syncCart({
+        token,
+        items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, qty: i.qty })),
+        dev: getDevice(),
+        src: getTrafficSource(),
+      })
+        .then((result) => {
+          if (!result.ok) return;
+          writeLocal(syncKey, items.length ? signature : null);
+          if (!items.length) {
+            // Carrinho vazio: a cópia e o contato saem do painel.
+            writeLocal(contactKey, null);
+            setContact(null);
+          }
+        })
+        .catch(() => {});
+    }, 1500);
+    return () => window.clearTimeout(timer);
+  }, [items, loaded, syncKey, tokenKey, contactKey]);
+
+  const saveContact = useCallback(
+    async (name: string, whatsapp: string, consent: boolean) => {
+      const token = cartToken(tokenKey);
+      const result = await syncCart({
+        token,
+        items: items.map((i) => ({ productId: i.productId, variantId: i.variantId, qty: i.qty })),
+        dev: getDevice(),
+        src: getTrafficSource(),
+        contact: { name, whatsapp, consent },
+      });
+      if (result.ok) {
+        const saved = { name: name.replace(/\s+/g, " ").trim(), whatsapp: whatsapp.replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "") };
+        writeLocal(contactKey, JSON.stringify(saved));
+        writeLocal(syncKey, JSON.stringify(items.map((i) => [i.productId, i.variantId, i.qty])));
+        setContact(saved);
+      }
+      return result;
+    },
+    [items, tokenKey, contactKey, syncKey],
+  );
+
+  const removeContact = useCallback(() => {
+    const token = readLocal(tokenKey);
+    if (token) forgetCartContact(token).catch(() => {});
+    writeLocal(contactKey, null);
+    setContact(null);
+  }, [tokenKey, contactKey]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -95,6 +192,7 @@ export function CartProvider({
   const add = useCallback(
     (item: NewCartItem, qty = 1) => {
       setItems((prev) => addItem(prev, item, qty));
+      trackStoreEvent("add_to_cart");
       open();
     },
     [open],
@@ -245,6 +343,9 @@ export function CartProvider({
                 {totals.hasUnpriced && (
                   <p className="mt-1 text-xs text-slate-500">Os itens “consulte o valor” a loja passa pelo WhatsApp.</p>
                 )}
+                {!wholesale && (
+                  <CartContactBox contact={contact} isOpen={isOpen} onSave={saveContact} onRemove={removeContact} />
+                )}
                 {plan.length > 0 && (
                   <label className="mt-3 flex items-center justify-between gap-3 text-sm text-slate-700">
                     <span>Pagamento</span>
@@ -269,6 +370,10 @@ export function CartProvider({
                   rel="noreferrer"
                   tabIndex={isOpen ? 0 : -1}
                   data-track-source="carrinho"
+                  onClick={() => {
+                    const token = readLocal(tokenKey);
+                    if (token) markCartCheckedOut(token).catch(() => {});
+                  }}
                   className="mt-4 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-xl bg-[#15803d] px-6 text-center text-sm font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:bg-[#166534] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#15803d] focus-visible:ring-offset-2"
                 >
                   <WhatsAppIcon className="h-5 w-5 shrink-0" />
@@ -293,6 +398,104 @@ export function CartProvider({
         </aside>
       </div>
     </CartContext.Provider>
+  );
+}
+
+const CONTACT_ERRORS: Record<string, string> = {
+  name: "Escreva o seu nome.",
+  whatsapp: "Confira o WhatsApp com DDD. Ex.: (94) 99999-9999.",
+  consent: "Marque a autorização para a loja poder te chamar.",
+  rate_limited: "Muitas tentativas. Tente de novo em alguns minutos.",
+  server_error: "Não foi possível salvar agora. Tente de novo.",
+};
+
+/**
+ * Contato opcional no carrinho: com a autorização marcada, a loja pode chamar o
+ * cliente no WhatsApp se o pedido ficar parado. Dá para tirar a qualquer momento.
+ */
+function CartContactBox({
+  contact,
+  isOpen,
+  onSave,
+  onRemove,
+}: {
+  contact: SavedContact | null;
+  isOpen: boolean;
+  onSave: (name: string, whatsapp: string, consent: boolean) => Promise<{ ok: boolean; error?: string }>;
+  onRemove: () => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const tab = isOpen ? 0 : -1;
+
+  if (contact) {
+    return (
+      <p className="mb-3 flex items-start justify-between gap-3 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-xs leading-5 text-emerald-900">
+        <span>
+          <strong className="font-semibold">Contato salvo.</strong> A loja pode te chamar no {formatPhone(contact.whatsapp)} sobre este pedido.
+        </span>
+        <button type="button" tabIndex={tab} onClick={onRemove} className="shrink-0 font-semibold underline underline-offset-2 hover:text-emerald-700">
+          Remover
+        </button>
+      </p>
+    );
+  }
+
+  if (!expanded) {
+    return (
+      <button
+        type="button"
+        tabIndex={tab}
+        onClick={() => setExpanded(true)}
+        className="mb-3 flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 px-3.5 py-2.5 text-left text-xs leading-5 text-slate-700 transition-colors hover:border-[#0a6cff] hover:text-slate-950"
+      >
+        <span>
+          <strong className="font-semibold text-slate-950">Quer ajuda com o pedido?</strong> Deixe o seu WhatsApp e a loja te chama.
+        </span>
+        <span aria-hidden className="text-base text-[#0a5cff]">+</span>
+      </button>
+    );
+  }
+
+  return (
+    <form
+      className="mb-3 rounded-xl border border-slate-200 p-3.5"
+      onSubmit={async (event) => {
+        event.preventDefault();
+        const form = new FormData(event.currentTarget);
+        setSaving(true);
+        setError(null);
+        const result = await onSave(String(form.get("name") ?? ""), String(form.get("whatsapp") ?? ""), form.get("consent") === "on").catch(() => ({ ok: false, error: "server_error" }));
+        setSaving(false);
+        if (!result.ok) setError(CONTACT_ERRORS[result.error ?? "server_error"] ?? CONTACT_ERRORS.server_error);
+      }}
+    >
+      <p className="text-xs font-semibold text-slate-950">Deixe o seu contato (opcional)</p>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <label className="text-xs text-slate-600">
+          Nome
+          <input name="name" tabIndex={tab} autoComplete="given-name" maxLength={80} required className="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-950 focus:border-[#0a6cff] focus:outline-none focus:ring-2 focus:ring-[#0a6cff]/20" />
+        </label>
+        <label className="text-xs text-slate-600">
+          WhatsApp
+          <input name="whatsapp" tabIndex={tab} type="tel" inputMode="tel" autoComplete="tel-national" placeholder="(94) 99999-9999" maxLength={20} required className="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-950 focus:border-[#0a6cff] focus:outline-none focus:ring-2 focus:ring-[#0a6cff]/20" />
+        </label>
+      </div>
+      <label className="mt-2.5 flex items-start gap-2 text-[0.6875rem] leading-4 text-slate-600">
+        <input name="consent" type="checkbox" tabIndex={tab} required className="mt-0.5 h-4 w-4 shrink-0 accent-[#0a5cff]" />
+        <span>Autorizo a Regtech Cell Shop a me chamar no WhatsApp sobre este pedido. Os dados não são usados para mais nada e posso remover quando quiser.</span>
+      </label>
+      {error && <p role="alert" className="mt-2 text-xs font-semibold text-red-600">{error}</p>}
+      <div className="mt-2.5 flex items-center justify-end gap-3">
+        <button type="button" tabIndex={tab} onClick={() => setExpanded(false)} className="text-xs font-semibold text-slate-500 hover:text-slate-950">
+          Agora não
+        </button>
+        <button type="submit" tabIndex={tab} disabled={saving} className="inline-flex min-h-9 items-center rounded-lg bg-[#070a12] px-4 text-xs font-semibold text-white hover:bg-[#151b2b] disabled:opacity-60">
+          {saving ? "Salvando…" : "Salvar contato"}
+        </button>
+      </div>
+    </form>
   );
 }
 

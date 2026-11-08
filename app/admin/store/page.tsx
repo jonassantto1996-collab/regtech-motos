@@ -7,6 +7,7 @@ import { requireAdminSession } from "../products/actions";
 import { InventoryAlerts } from "./components/InventoryAlerts";
 import { InventoryMetrics } from "./components/InventoryMetrics";
 import { StoreProductTable } from "./components/StoreProductTable";
+import { staleCutoffIso } from "@/lib/cellshop/cart-recovery";
 import type { StoreAdminOverview } from "@/lib/store/admin-overview";
 import "../admin.css";
 import "./store.css";
@@ -28,6 +29,10 @@ export default async function StoreAdminPage({
     admin.rpc("get_store_admin_overview",{p_alert_limit:4}),
     admin.from("store_resellers").select("id",{count:"exact",head:true}).eq("status","pending"),
   ]);
+  // Carrinhos parados há mais de 24h com WhatsApp do cliente (para a equipe chamar).
+  const { count: cartsToCall } = await admin.from("store_carts").select("id",{count:"exact",head:true})
+    .eq("status","open").gt("item_count",0).not("whatsapp","is",null)
+    .lt("updated_at",staleCutoffIso());
 
   if(overviewError) throw new Error("Não foi possível carregar o resumo operacional da loja.");
   const overview=overviewRaw as unknown as StoreAdminOverview;
@@ -38,6 +43,8 @@ export default async function StoreAdminPage({
     <section className="admin-content admin-page">
       <div className="page-heading"><div><span>REGTECH CELL SHOP</span><h1>Loja completa</h1><p>Celulares, tablets, carregadores, Bombox, Starlink e acessórios.</p></div>
         <div className="store-heading-actions">
+          <Link href="/admin/store/resultados" className="secondary-action">Resultados da loja</Link>
+          <Link href="/admin/store/carrinhos" className="secondary-action">Carrinhos parados{cartsToCall?` (${cartsToCall} para chamar)`:""}</Link>
           <Link href="/admin/store/lojistas" className="secondary-action">Lojistas{pendingResellers?` (${pendingResellers} novo${pendingResellers===1?"":"s"})`:""}</Link>
           <Link href="/admin/store/banners" className="secondary-action">Banners do topo</Link>
           <Link href="/admin/store/fotos" className="secondary-action">Enviar fotos em lote</Link>
