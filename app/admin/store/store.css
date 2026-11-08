@@ -290,3 +290,17 @@
 
 /* Cor da foto (liga a foto à versão) */
 .product-image-alt-form .product-image-color-field{grid-column:1/-1}
+
+/* Carrinhos parados */
+.cart-items{list-style:none;margin:12px 0 0;padding:0;border:1px solid #e5e9ef;border-radius:8px;overflow:hidden}
+.cart-items li{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid #edf1f5;font-size:12px;color:#263548}
+.cart-items li:last-child{border-bottom:0}
+.cart-items a{color:#0f1f33;text-decoration:none;font-weight:600}
+.cart-items a:hover{color:#075ad7;text-decoration:underline}
+.cart-items span{white-space:nowrap;color:#455468}
+.cart-items .cart-total{background:#f8fafc;font-size:13px}
+.cart-status.is-open{background:#fff7e6;color:#9a5b00}
+.cart-status.is-checked_out{background:#e8f1ff;color:#075ad7}
+.cart-status.is-contacted{background:#eef2ff;color:#3b4cc0}
+.cart-status.is-won{background:#e7f8ef;color:#0f7a43}
+.cart-status.is-lost{background:#f1f5f9;color:#55657a}
