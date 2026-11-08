@@ -7,6 +7,8 @@ import { CELLSHOP, CELLSHOP_URL, MOTORS_URL, getCellshopBase, isCellshopHost } f
 import { getCellshopViewer } from "@/lib/cellshop/queries";
 import { CartButton, CartProvider } from "@/components/cellshop/Cart";
 import { OutsideResellerLogin } from "@/components/cellshop/ResellerLoginAware";
+import CellshopTracker from "@/components/cellshop/CellshopTracker";
+import CookieNotice from "@/components/cellshop/CookieNotice";
 
 /**
  * Layout da Regtech Cell Shop (loja de tecnologia). Fica fora do grupo (site)
@@ -74,6 +76,7 @@ export default async function CellshopLayout({ children }: { children: ReactNode
       target="_blank"
       rel="noreferrer"
       aria-label="Falar com a Regtech Cell Shop no WhatsApp"
+      data-track-source="flutuante"
       className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#15803d] text-white shadow-[0_12px_30px_-8px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-0.5 [@media(hover:hover)_and_(pointer:fine)]:hidden"
     >
       <WhatsAppIcon className="h-7 w-7" />
@@ -184,6 +187,8 @@ export default async function CellshopLayout({ children }: { children: ReactNode
       <OutsideResellerLogin loggedIn={loggedIn} onLogin={floatingWhatsapp(CELLSHOP.wholesaleWhatsapp)}>
         {floatingWhatsapp(whatsapp)}
       </OutsideResellerLogin>
+      <CookieNotice />
+      <CellshopTracker />
     </div>
     </CartProvider>
   );
