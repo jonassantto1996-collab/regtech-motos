@@ -22,7 +22,7 @@ export default function BrandMarquee() {
                 className="text-white/55 transition-colors duration-300 hover:text-white"
                 focusable="false"
               >
-                <path d={logo.d} />
+                <path d={logo.d} fillRule={logo.evenOdd ? "evenodd" : undefined} />
               </svg>
             </li>
           ))}
