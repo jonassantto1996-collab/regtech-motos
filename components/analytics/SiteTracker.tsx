@@ -43,7 +43,7 @@ function detectTrafficSource(): TrafficSource {
   return "outros";
 }
 
-function getTrafficSource(): TrafficSource {
+export function getTrafficSource(): TrafficSource {
   try {
     const saved = window.sessionStorage.getItem(ORIGIN_KEY) as TrafficSource | null;
     if (saved) return saved;
@@ -55,7 +55,7 @@ function getTrafficSource(): TrafficSource {
   }
 }
 
-function getDevice(): Device {
+export function getDevice(): Device {
   const ua = navigator.userAgent;
   const iPadOS = /Macintosh/i.test(ua) && navigator.maxTouchPoints > 1;
   if (iPadOS || /iPad|Tablet/i.test(ua) || (/Android/i.test(ua) && !/Mobile/i.test(ua))) return "tablet";
@@ -63,7 +63,7 @@ function getDevice(): Device {
   return "computador";
 }
 
-function getSessionId(): string | null {
+export function getSessionId(): string | null {
   try {
     let id = window.sessionStorage.getItem(SESSION_KEY);
     if (!id) {
@@ -79,7 +79,7 @@ function getSessionId(): string | null {
   }
 }
 
-function send(payload: Record<string, unknown>) {
+export function send(payload: Record<string, unknown>) {
   const body = JSON.stringify(payload);
   try {
     if (navigator.sendBeacon?.("/api/track", new Blob([body], { type: "application/json" }))) {
