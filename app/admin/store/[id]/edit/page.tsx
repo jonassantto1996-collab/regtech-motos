@@ -35,6 +35,7 @@ const errors: Record<string, string> = {
   invalid_stock: "Quantidade de estoque inválida.",
   note_too_long: "O motivo do ajuste excede 200 caracteres.",
   duplicate: "Slug ou SKU já cadastrado.",
+  retail_wholesale_conflict: 'Escolha só uma opção: "Só atacado" ou "Só varejo".',
   not_found: "Produto não encontrado.",
   server_error: "Não foi possível salvar.",
 };
@@ -58,7 +59,7 @@ export default async function EditStoreProduct({
     admin.from("store_categories").select("id,name").eq("is_active", true).order("sort_order"),
     admin
       .from("store_products")
-      .select("category_id,brand,name,slug,sku,description,price,wholesale_price,card_price,card_installments,warranty,availability,is_active,wholesale_note,wholesale_only")
+      .select("category_id,brand,name,slug,sku,description,price,wholesale_price,card_price,card_installments,warranty,availability,is_active,wholesale_note,wholesale_only,retail_only")
       .eq("id", id)
       .maybeSingle(),
   ]);
