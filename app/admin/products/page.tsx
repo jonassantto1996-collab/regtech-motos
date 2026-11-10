@@ -49,7 +49,10 @@ export default async function ProductsPage({
       <section className="admin-content admin-page">
         <div className="page-heading">
           <div><span>CATÁLOGO</span><h1>Motos</h1><p>Gerencie os modelos exibidos no catálogo público.</p></div>
-          <Link className="primary-action" href="/admin/products/new">+ Nova moto</Link>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
+            <Link className="secondary-action" href="/admin/catalogo">Catálogo em PDF</Link>
+            <Link className="primary-action" href="/admin/products/new">+ Nova moto</Link>
+          </div>
         </div>
 
         <div className="panel price-visibility-card">
