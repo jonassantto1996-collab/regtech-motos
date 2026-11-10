@@ -1,4 +1,4 @@
-export type StoreProductInput={category_id:string;brand:string;name:string;slug:string;sku:string|null;description:string;price:number;wholesale_price:number|null;card_price:number|null;card_installments:number|null;warranty:string;availability:string;is_active:boolean;wholesale_note:string|null;wholesale_only:boolean};
+export type StoreProductInput={category_id:string;brand:string;name:string;slug:string;sku:string|null;description:string;price:number;wholesale_price:number|null;card_price:number|null;card_installments:number|null;warranty:string;availability:string;is_active:boolean;wholesale_note:string|null;wholesale_only:boolean;retail_only:boolean};
 export type StoreProductParseResult={ok:true;data:StoreProductInput}|{ok:false;error:string};
 export function storeSlugify(text:string){return text.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
 
@@ -14,7 +14,9 @@ export function parseMoney(raw:FormDataEntryValue|null):number|null|"invalid"{
 
 export function parseStoreProductForm(formData:FormData,mode:"create"|"edit"):StoreProductParseResult{
  const category_id=String(formData.get("category_id")??"").trim(),brand=String(formData.get("brand")??"").trim(),name=String(formData.get("name")??"").trim(),slugInput=String(formData.get("slug")??"").trim(),skuRaw=String(formData.get("sku")??"").trim(),description=String(formData.get("description")??"").trim(),availability=String(formData.get("availability")??"").trim(),warranty=String(formData.get("warranty")??"").trim(),installmentsRaw=String(formData.get("card_installments")??"").trim();
- const wholesale_only=formData.get("wholesale_only")==="on";
+ const wholesale_only=formData.get("wholesale_only")==="on",retail_only=formData.get("retail_only")==="on";
+ // "Só atacado" e "só varejo" ao mesmo tempo esconderia o produto de todo mundo.
+ if(wholesale_only&&retail_only)return {ok:false,error:"retail_wholesale_conflict"};
  // Produto só atacado não aparece para o cliente final: o varejo pode ficar vazio (vira 0).
  const priceRaw=parseMoney(formData.get("price")),price=priceRaw===null&&wholesale_only?0:priceRaw;
  if(!category_id||!brand||!name||price===null||!availability)return {ok:false,error:"missing_fields"};
@@ -26,7 +28,7 @@ export function parseStoreProductForm(formData:FormData,mode:"create"|"edit"):St
  if(installmentsRaw){const n=Number(installmentsRaw);if(!Number.isInteger(n)||n<1||n>24)return {ok:false,error:"invalid_installments"};card_installments=n;}
  if((card_price===null)!==(card_installments===null))return {ok:false,error:"card_incomplete"};
  const wholesaleNote=String(formData.get("wholesale_note")??"").trim();if(wholesaleNote.length>300)return {ok:false,error:"field_too_long"};
- return {ok:true,data:{category_id,brand,name,slug,sku:skuRaw||null,description,price,wholesale_price,card_price,card_installments,warranty,availability,is_active:formData.get("is_active")==="on",wholesale_note:wholesaleNote||null,wholesale_only}};
+ return {ok:true,data:{category_id,brand,name,slug,sku:skuRaw||null,description,price,wholesale_price,card_price,card_installments,warranty,availability,is_active:formData.get("is_active")==="on",wholesale_note:wholesaleNote||null,wholesale_only,retail_only}};
 }
 export type StoreVariantInput={name:string;sku:string|null;price:number|null;wholesale_price:number|null;stock_quantity:number;low_stock_threshold:number};
 export type StoreVariantParseResult={ok:true;data:StoreVariantInput}|{ok:false;error:string};
