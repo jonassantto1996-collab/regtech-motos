@@ -159,13 +159,12 @@ export async function isWholesaleOnlySlug(slug: string): Promise<boolean> {
 
 export async function getCellshopProducts(): Promise<CellshopProduct[]> {
   const supabase = await createClient();
+  const mode = await getPriceMode();
+  let query = supabase.from("store_products").select(PRODUCT_FIELDS).eq("is_active", true);
+  // Produto "só varejo" não aparece para o lojista aprovado.
+  if (mode === "wholesale") query = query.eq("retail_only", false);
   const [{ data, error }, wholesaleOnly] = await Promise.all([
-    supabase
-      .from("store_products")
-      .select(PRODUCT_FIELDS)
-      .eq("is_active", true)
-      .order("created_at", { ascending: false })
-      .limit(500),
+    query.order("created_at", { ascending: false }).limit(500),
     getWholesaleOnlyProducts(),
   ]);
   if (error) console.error("[cellshop] produtos:", error);
@@ -180,12 +179,14 @@ export async function getCellshopProducts(): Promise<CellshopProduct[]> {
 
 export async function getCellshopProduct(slug: string): Promise<CellshopProductDetail | null> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("store_products")
     .select(PRODUCT_FIELDS + ",store_product_specs(id,spec_key,spec_value,display_order)")
     .eq("slug", slug)
-    .eq("is_active", true)
-    .maybeSingle();
+    .eq("is_active", true);
+  // O link de um produto "só varejo" não abre para o lojista aprovado.
+  if ((await getPriceMode()) === "wholesale") query = query.eq("retail_only", false);
+  const { data, error } = await query.maybeSingle();
   if (error) console.error("[cellshop] produto:", error);
   // Fora do site público: só o lojista aprovado encontra o produto "só atacado".
   const product = data ? sortProduct(data as unknown as CellshopProductDetail) : (await getWholesaleOnlyProducts(slug))[0];
