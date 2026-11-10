@@ -5,7 +5,7 @@ import {toggleStoreProduct} from "../actions";
 import {matchesSearch} from "@/lib/cellshop/search";
 
 type Money=number|string|null;
-type Product={id:string;brand:string;name:string;sku?:string|null;price:Money;wholesale_price:Money;availability:string;is_active:boolean;wholesale_only?:boolean;category:string|null;store_product_variants?:{name:string}[]|null};
+type Product={id:string;brand:string;name:string;sku?:string|null;price:Money;wholesale_price:Money;availability:string;is_active:boolean;wholesale_only?:boolean;retail_only?:boolean;category:string|null;store_product_variants?:{name:string}[]|null};
 const brl=(v:Money)=>v===null||Number(v)===0?"—":Number(v).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 
 export function StoreProductTable({products}:{products:Product[]}){
@@ -22,7 +22,7 @@ export function StoreProductTable({products}:{products:Product[]}){
    {query&&<button type="button" onClick={()=>setQuery("")} aria-label="Limpar busca">✕</button>}
   </div>}
   {products.length?(shown.length?<table className="admin-table"><thead><tr><th>Produto</th><th>Categoria</th><th>Varejo</th><th>Atacado</th><th>Disponibilidade</th><th>Status</th><th>Ações</th></tr></thead><tbody>{shown.map(product=><tr key={product.id}>
-   <td><strong>{product.brand} {product.name}</strong>{product.wholesale_only&&<span className="status-badge store-badge-wholesale">Só atacado</span>}</td>
+   <td><strong>{product.brand} {product.name}</strong>{product.wholesale_only&&<span className="status-badge store-badge-wholesale">Só atacado</span>}{product.retail_only&&<span className="status-badge store-badge-retail">Só varejo</span>}</td>
    <td>{product.category??"—"}</td>
    <td>{brl(product.price)}</td>
    <td>{brl(product.wholesale_price)}</td>
