@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import { AdminShell } from "../AdminShell";
 import { requireAdminSession } from "../products/actions";
+import { setStoreShowPrices } from "./actions";
 import { InventoryAlerts } from "./components/InventoryAlerts";
 import { InventoryMetrics } from "./components/InventoryMetrics";
 import { StoreProductTable } from "./components/StoreProductTable";
@@ -23,12 +24,14 @@ export default async function StoreAdminPage({
   if (!data?.claims) redirect("/admin/login");
 
   const admin = createAdminClient();
-  const [{ data: categories }, { data: products }, { data: overviewRaw, error: overviewError }, { count: pendingResellers }] = await Promise.all([
+  const [{ data: categories }, { data: products }, { data: overviewRaw, error: overviewError }, { count: pendingResellers }, { data: settings }] = await Promise.all([
     admin.from("store_categories").select("id,name,slug,is_active,sort_order").order("sort_order"),
     admin.from("store_products").select("id,category_id,brand,name,sku,price,wholesale_price,availability,is_active,wholesale_only,retail_only,created_at,store_product_variants(name)").order("created_at",{ascending:false}).limit(500),
     admin.rpc("get_store_admin_overview",{p_alert_limit:4}),
     admin.from("store_resellers").select("id",{count:"exact",head:true}).eq("status","pending"),
+    admin.from("catalog_settings").select("store_show_prices").eq("id",true).maybeSingle(),
   ]);
+  const showPrices=(settings as {store_show_prices?:boolean}|null)?.store_show_prices!==false;
   // Carrinhos parados há mais de 24h com WhatsApp do cliente (para a equipe chamar).
   const { count: cartsToCall } = await admin.from("store_carts").select("id",{count:"exact",head:true})
     .eq("status","open").gt("item_count",0).not("whatsapp","is",null)
@@ -61,12 +64,19 @@ export default async function StoreAdminPage({
       <article className="panel store-price-mode">
         <div>
           <span>LOJA ONLINE</span>
-          <h2>Preços no site</h2>
-          <p>O cliente final vê o <strong>preço de varejo</strong>. Lojistas aprovados entram na “Área do Lojista” e veem o <strong>preço de atacado</strong>.</p>
+          <h2>Preços no site <span className={showPrices?"status-badge active":"status-badge"}>{showPrices?"Visíveis":"Ocultos"}</span></h2>
+          {showPrices
+            ? <p>O cliente final vê o <strong>preço de varejo</strong>. Lojistas aprovados entram na “Área do Lojista” e veem o <strong>preço de atacado</strong>.</p>
+            : <p>O varejo está <strong>oculto</strong>: o cliente final vê “Consulte o valor”. Lojistas aprovados continuam vendo o <strong>preço de atacado</strong>.</p>}
         </div>
-        <Link href="/admin/store/lojistas" className="admin-primary-button">
-          {pendingResellers?`${pendingResellers} lojista${pendingResellers===1?"":"s"} para aprovar`:"Ver lojistas"}
-        </Link>
+        <div className="store-heading-actions">
+          <form action={setStoreShowPrices.bind(null,!showPrices)}>
+            <button type="submit" className={showPrices?"admin-secondary-button":"admin-primary-button"}>{showPrices?"Ocultar preços de varejo":"Mostrar preços de varejo"}</button>
+          </form>
+          <Link href="/admin/store/lojistas" className="admin-primary-button">
+            {pendingResellers?`${pendingResellers} lojista${pendingResellers===1?"":"s"} para aprovar`:"Ver lojistas"}
+          </Link>
+        </div>
       </article>
 
       <div className="store-category-grid">

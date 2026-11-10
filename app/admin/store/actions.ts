@@ -42,6 +42,16 @@ export async function updateVariantStock(productId:string,variantId:string,formD
  notifyStoreProduct(productId);
  redirect("/admin/store/"+productId+"/edit");
 }
+/** Chave "Preços no site" da loja: mostra ou oculta o varejo para o cliente final. */
+export async function setStoreShowPrices(nextValue:boolean){
+ const user=await requireAdminSession();
+ const admin=createAdminClient();const {error}=await admin.from("catalog_settings").update({store_show_prices:nextValue}).eq("id",true);
+ if(error)redirect("/admin/store?error=server_error");
+ await logAdminAction(user,nextValue?"store_settings.show_prices":"store_settings.hide_prices","catalog_settings");
+ revalidatePath("/","layout");
+ notifyAllStoreProducts();
+ redirect("/admin/store?saved=show_prices");
+}
 /** Escolhe qual preço a loja online mostra: atacado ou varejo. */
 export async function setStorePriceMode(formData:FormData){
  const user=await requireAdminSession();

@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { PriceMode } from "@/lib/cellshop/pricing";
+import { hidesRetailPrices, stripRetailPrices, type PriceMode } from "@/lib/cellshop/pricing";
 import type { ResellerStatus } from "@/lib/store/resellers";
 
 /**
@@ -53,13 +53,14 @@ const PRODUCT_FIELDS =
   "store_product_images(id,storage_path,alt_text,display_order,color)," +
   "store_product_variants(id,name,price,stock_quantity)";
 
-function sortProduct<T extends CellshopProduct>(product: T): T {
+function sortProduct<T extends CellshopProduct>(product: T, hidePrices = false): T {
+  const base = hidePrices ? stripRetailPrices(product) : product;
   return {
-    ...product,
+    ...base,
     // Sem o atacado por padrão: só lojista aprovado recebe esses valores.
     wholesale_price: null,
     wholesale_note: null,
-    store_product_variants: (product.store_product_variants ?? []).map((v) => ({ ...v, wholesale_price: null })),
+    store_product_variants: (base.store_product_variants ?? []).map((v) => ({ ...v, wholesale_price: null })),
     store_product_images: [...(product.store_product_images ?? [])].sort((a, b) => a.display_order - b.display_order),
   };
 }
@@ -89,6 +90,20 @@ export const getCellshopViewer = cache(async (): Promise<CellshopViewer | null> 
 export const getPriceMode = cache(async (): Promise<PriceMode> => {
   const viewer = await getCellshopViewer();
   return viewer?.status === "approved" ? "wholesale" : "retail";
+});
+
+/** Chave "Preços no site" da loja (painel). Sem a coluna ou com erro, mostra os preços. */
+export const getStoreShowPrices = cache(async (): Promise<boolean> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("catalog_settings").select("store_show_prices").eq("id", true).maybeSingle();
+  if (error || !data) return true;
+  return (data as { store_show_prices?: boolean }).store_show_prices !== false;
+});
+
+/** O visitante (cliente final) deve ver "Consulte o valor" no lugar dos preços? */
+export const getHideRetailPrices = cache(async (): Promise<boolean> => {
+  const [mode, show] = await Promise.all([getPriceMode(), getStoreShowPrices()]);
+  return hidesRetailPrices(mode, show);
 });
 
 /**
@@ -163,12 +178,13 @@ export async function getCellshopProducts(): Promise<CellshopProduct[]> {
   let query = supabase.from("store_products").select(PRODUCT_FIELDS).eq("is_active", true);
   // Produto "só varejo" não aparece para o lojista aprovado.
   if (mode === "wholesale") query = query.eq("retail_only", false);
-  const [{ data, error }, wholesaleOnly] = await Promise.all([
+  const [{ data, error }, wholesaleOnly, hidePrices] = await Promise.all([
     query.order("created_at", { ascending: false }).limit(500),
     getWholesaleOnlyProducts(),
+    getHideRetailPrices(),
   ]);
   if (error) console.error("[cellshop] produtos:", error);
-  const publicList = ((data ?? []) as unknown as CellshopProduct[]).map(sortProduct);
+  const publicList = ((data ?? []) as unknown as CellshopProduct[]).map((p) => sortProduct(p, hidePrices));
   const list = [...publicList, ...wholesaleOnly].sort(
     (a, b) => b.created_at.localeCompare(a.created_at),
   );
@@ -189,7 +205,9 @@ export async function getCellshopProduct(slug: string): Promise<CellshopProductD
   const { data, error } = await query.maybeSingle();
   if (error) console.error("[cellshop] produto:", error);
   // Fora do site público: só o lojista aprovado encontra o produto "só atacado".
-  const product = data ? sortProduct(data as unknown as CellshopProductDetail) : (await getWholesaleOnlyProducts(slug))[0];
+  const product = data
+    ? sortProduct(data as unknown as CellshopProductDetail, await getHideRetailPrices())
+    : (await getWholesaleOnlyProducts(slug))[0];
   if (!product) return null;
   return {
     ...product,

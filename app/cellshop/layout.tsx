@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { WhatsAppIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 import { CELLSHOP, CELLSHOP_URL, MOTORS_URL, getCellshopBase, isCellshopHost } from "@/lib/cellshop/config";
-import { getCellshopViewer } from "@/lib/cellshop/queries";
+import { getCellshopViewer, getHideRetailPrices } from "@/lib/cellshop/queries";
 import { CartButton, CartProvider } from "@/components/cellshop/Cart";
 import { OutsideResellerLogin } from "@/components/cellshop/ResellerLoginAware";
 import CellshopTracker from "@/components/cellshop/CellshopTracker";
@@ -41,7 +41,7 @@ const NAV_LINK =
   "inline-flex min-h-11 items-center text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-[#22d3ee] focus-visible:outline-none focus-visible:text-[#22d3ee] sm:text-xs";
 
 export default async function CellshopLayout({ children }: { children: ReactNode }) {
-  const [base, viewer] = await Promise.all([getCellshopBase(), getCellshopViewer()]);
+  const [base, viewer, hidePrices] = await Promise.all([getCellshopBase(), getCellshopViewer(), getHideRetailPrices()]);
   const home = base || "/";
   const approved = viewer?.status === "approved";
   // Lojista aprovado fala com o atendimento do atacado; o cliente final, com a loja.
@@ -86,6 +86,7 @@ export default async function CellshopLayout({ children }: { children: ReactNode
   return (
     <CartProvider
       mode={approved ? "wholesale" : "retail"}
+      hidePrices={hidePrices}
       whatsapp={whatsapp}
       baseUrl={CELLSHOP_URL}
       base={base}
