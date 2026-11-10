@@ -77,6 +77,7 @@ export function CartProvider({
   baseUrl,
   base,
   resellerName,
+  hidePrices = false,
 }: {
   children: ReactNode;
   mode: PriceMode;
@@ -85,9 +86,12 @@ export function CartProvider({
   /** Começo dos endereços da loja ("" no domínio próprio, "/cellshop" no das motos). */
   base: string;
   resellerName: string | null;
+  /** Chave "Preços no site" desligada: o carrinho mostra "Consulte o valor" (também em itens antigos). */
+  hidePrices?: boolean;
 }) {
   const storageKey = `regtech-cellshop-carrinho-${mode}`;
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [stored, setItems] = useState<CartItem[]>([]);
+  const items = useMemo(() => (hidePrices ? stored.map((i) => ({ ...i, price: null })) : stored), [stored, hidePrices]);
   const [loaded, setLoaded] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [installments, setInstallments] = useState(1);
@@ -171,11 +175,11 @@ export function CartProvider({
   useEffect(() => {
     if (!loaded) return;
     try {
-      window.localStorage.setItem(storageKey, JSON.stringify(items));
+      window.localStorage.setItem(storageKey, JSON.stringify(stored));
     } catch {
       // Ignora: o carrinho continua funcionando nesta visita.
     }
-  }, [items, loaded, storageKey]);
+  }, [stored, loaded, storageKey]);
 
   const totals = useMemo(() => cartTotals(items, mode), [items, mode]);
 
