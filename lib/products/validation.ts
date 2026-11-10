@@ -1,6 +1,6 @@
 export type ParsedProduct = {
   brand: string; model: string; slug: string; sku: string | null; category: string;
-  description: string; price: number; card_price: number | null; card_installments: number | null; availability: string; warranty: string;
+  description: string; price: number; card_price: number | null; card_installments: number | null; wholesale_price: number | null; availability: string; warranty: string;
   pickup_available: boolean; is_active: boolean;
 };
 export type ParseResult = { ok: true; data: ParsedProduct } | { ok: false; error: string };
@@ -26,7 +26,11 @@ export function parseProductForm(formData: FormData, mode: "create"|"edit"): Par
   const n=Number(cardInstallmentsRaw); if(!Number.isInteger(n)||n<1||n>24) return {ok:false,error:"invalid_card_installments"};
   card_price=Math.round(cp*100)/100; card_installments=n;
  }
- return {ok:true,data:{brand,model,slug,sku:skuRaw||null,category,description,price:Math.round(price*100)/100,card_price,card_installments,availability,warranty,pickup_available,is_active}};
+ // Atacado: opcional (só aparece no catálogo de atacado em PDF).
+ const wholesaleRaw=String(formData.get("wholesale_price")??"").trim();
+ let wholesale_price:number|null=null;
+ if(wholesaleRaw){const w=Number(wholesaleRaw.replace(",","."));if(!Number.isFinite(w)||w<=0)return {ok:false,error:"invalid_wholesale_price"};wholesale_price=Math.round(w*100)/100;}
+ return {ok:true,data:{brand,model,slug,sku:skuRaw||null,category,description,price:Math.round(price*100)/100,card_price,card_installments,wholesale_price,availability,warranty,pickup_available,is_active}};
 }
 export function parseColorsInput(formData: FormData): ColorsParseResult {
  let list:unknown; try{list=JSON.parse(String(formData.get("colors_json")??"[]"));}catch{return {ok:false,error:"invalid_colors"}}
