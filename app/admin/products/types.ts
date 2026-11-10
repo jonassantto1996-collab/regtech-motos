@@ -9,6 +9,7 @@ export type Product = {
   price: number;
   card_price: number | null;
   card_installments: number | null;
+  wholesale_price?: number | null;
   availability: string;
   warranty: string;
   pickup_available: boolean;
@@ -48,6 +49,7 @@ export const PRODUCT_ERROR_MESSAGES: Record<string, string> = {
   invalid_price: "Informe um preço à vista válido (número maior ou igual a zero).",
   invalid_card_price: "Informe um valor no cartão válido (maior que zero) ou deixe o campo vazio.",
   invalid_card_installments: "Informe o número de parcelas no cartão (de 1 a 24).",
+  invalid_wholesale_price: "Informe um preço de atacado válido (maior que zero) ou deixe o campo vazio.",
   invalid_slug: "O slug informado não é válido depois de normalizado.",
   duplicate_slug: "Já existe um produto com esse slug. Escolha outro.",
   duplicate_sku: "Já existe um produto com esse SKU. Escolha outro.",
