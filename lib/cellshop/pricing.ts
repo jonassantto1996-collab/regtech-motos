@@ -87,6 +87,28 @@ export function installmentValue(total: number, n: number): number {
   return Math.round((total / n) * 100) / 100;
 }
 
+/**
+ * Chave "Preços no site" da loja (painel → Loja completa). Desligada, o
+ * cliente final vê "Consulte o valor" em tudo; o lojista aprovado continua
+ * vendo o atacado.
+ */
+export function hidesRetailPrices(mode: PriceMode, showRetailPrices: boolean): boolean {
+  return mode === "retail" && !showRetailPrices;
+}
+
+/** Tira os preços de varejo (produto, cartão e versões) antes de mandar para a página. */
+export function stripRetailPrices<T extends PricedProduct & { store_product_variants?: PricedVariant[] }>(product: T): T {
+  return {
+    ...product,
+    price: null,
+    card_price: null,
+    card_installments: null,
+    ...(product.store_product_variants
+      ? { store_product_variants: product.store_product_variants.map((v) => ({ ...v, price: null })) }
+      : {}),
+  };
+}
+
 export function priceLabel(mode: PriceMode): string {
   return mode === "wholesale" ? "no atacado" : "à vista";
 }
