@@ -239,6 +239,7 @@
 
 /* Produto só atacado (selo) */
 .store-badge-wholesale{margin-left:8px;background:#e8f0ff;color:#0a4fc4;font-style:normal;font-weight:700;vertical-align:middle}
+.store-badge-retail{margin-left:8px;background:#fff1e6;color:#b45309;font-style:normal;font-weight:700;vertical-align:middle}
 
 /* Lista para WhatsApp */
 .wa-list{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:16px;align-items:start}

@@ -25,7 +25,7 @@ export default async function StoreAdminPage({
   const admin = createAdminClient();
   const [{ data: categories }, { data: products }, { data: overviewRaw, error: overviewError }, { count: pendingResellers }] = await Promise.all([
     admin.from("store_categories").select("id,name,slug,is_active,sort_order").order("sort_order"),
-    admin.from("store_products").select("id,category_id,brand,name,sku,price,wholesale_price,availability,is_active,wholesale_only,created_at,store_product_variants(name)").order("created_at",{ascending:false}).limit(500),
+    admin.from("store_products").select("id,category_id,brand,name,sku,price,wholesale_price,availability,is_active,wholesale_only,retail_only,created_at,store_product_variants(name)").order("created_at",{ascending:false}).limit(500),
     admin.rpc("get_store_admin_overview",{p_alert_limit:4}),
     admin.from("store_resellers").select("id",{count:"exact",head:true}).eq("status","pending"),
   ]);

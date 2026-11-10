@@ -54,6 +54,7 @@ type ProductRow = PricedProduct & {
   slug: string;
   is_active: boolean;
   wholesale_only: boolean;
+  retail_only: boolean;
   store_product_variants: { id: string; name: string; price: number | string | null; wholesale_price: number | string | null }[];
 };
 
@@ -88,7 +89,7 @@ export async function syncCart(input: SyncInput): Promise<SyncResult> {
 
   const { data: products } = await admin
     .from("store_products")
-    .select("id,brand,name,slug,price,wholesale_price,card_price,card_installments,is_active,wholesale_only,store_product_variants(id,name,price,wholesale_price)")
+    .select("id,brand,name,slug,price,wholesale_price,card_price,card_installments,is_active,wholesale_only,retail_only,store_product_variants(id,name,price,wholesale_price)")
     .in("id", [...new Set(items.map((i) => i.productId))]);
   const byId = new Map(((products ?? []) as ProductRow[]).map((p) => [p.id, p]));
 
@@ -98,7 +99,7 @@ export async function syncCart(input: SyncInput): Promise<SyncResult> {
   let hasUnpriced = false;
   for (const item of items) {
     const product = byId.get(item.productId);
-    if (!product || !product.is_active || (product.wholesale_only && mode !== "wholesale")) continue;
+    if (!product || !product.is_active || (product.wholesale_only && mode !== "wholesale") || (product.retail_only && mode === "wholesale")) continue;
     const variant = item.variantId ? product.store_product_variants.find((v) => v.id === item.variantId) ?? null : null;
     const raw = variantPrice(product, variant, mode);
     const price = raw !== null && raw > 0 ? raw : null;
