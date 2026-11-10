@@ -2,7 +2,7 @@ import Link from "next/link";
 
 type Category={id:string;name:string};
 type Money=number|string|null;
-type Product={category_id:string;brand:string;name:string;slug:string;sku:string|null;description:string;price:Money;wholesale_price:Money;card_price:Money;card_installments:number|null;warranty:string;availability:string;is_active:boolean;wholesale_note?:string|null;wholesale_only?:boolean};
+type Product={category_id:string;brand:string;name:string;slug:string;sku:string|null;description:string;price:Money;wholesale_price:Money;card_price:Money;card_installments:number|null;warranty:string;availability:string;is_active:boolean;wholesale_note?:string|null;wholesale_only?:boolean;retail_only?:boolean};
 
 /** Mostra o valor no campo no formato brasileiro (1299.9 → "1299,90"). */
 function money(value:Money|undefined){
@@ -52,6 +52,11 @@ export function StoreProductForm({action,categories,product,errorMessage,mode}:{
     <input type="checkbox" name="wholesale_only" defaultChecked={product?.wholesale_only??false}/>
     <span className="store-toggle" aria-hidden="true"></span>
     <span><strong>Só atacado</strong><small>Não aparece no site para o cliente final. Só lojistas aprovados veem (na vitrine, na busca e no link do produto).</small></span>
+   </label>
+   <label className="store-toggle-row">
+    <input type="checkbox" name="retail_only" defaultChecked={product?.retail_only??false}/>
+    <span className="store-toggle" aria-hidden="true"></span>
+    <span><strong>Só varejo</strong><small>Aparece normalmente para o cliente final, mas não aparece para os lojistas na Área do Lojista (nem na vitrine, nem na busca, nem no link do produto).</small></span>
    </label>
   </div>
 
