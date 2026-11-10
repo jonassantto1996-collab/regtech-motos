@@ -177,6 +177,19 @@ export function ProductForm({
         />
       </Field>
 
+      <Field label="Preço de atacado (R$) — opcional" htmlFor="wholesale_price">
+        <input
+          id="wholesale_price"
+          name="wholesale_price"
+          type="number"
+          step="0.01"
+          min="0.01"
+          placeholder="Só aparece no catálogo de atacado"
+          defaultValue={defaultValues?.wholesale_price ?? undefined}
+          className="admin-control"
+        />
+      </Field>
+
       <Field label="Disponibilidade" htmlFor="availability" required>
         <input
           id="availability"
