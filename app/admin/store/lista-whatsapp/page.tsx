@@ -37,6 +37,8 @@ export default async function WhatsAppListPage() {
       .from("store_products")
       .select("id,brand,name,slug,category_id,wholesale_price,wholesale_only,store_product_variants(wholesale_price,is_active)")
       .eq("is_active", true)
+      // Produto "só varejo" não vai para o grupo de lojistas.
+      .eq("retail_only", false)
       .order("brand")
       .order("name")
       .limit(1000),
