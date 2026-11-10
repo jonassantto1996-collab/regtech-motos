@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isRecoverySession, recoveryAllowedPath } from "@/lib/admin/recovery-session";
 
 /**
  * Atualiza a sessão do Supabase a cada requisição e protege a área /admin.
@@ -53,6 +54,24 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";
     return NextResponse.redirect(url);
+  }
+
+  // Entrou pelo link de recuperação de senha: só libera o painel depois de
+  // criar a senha nova (o updatePassword encerra essa sessão). Só GET, para
+  // não quebrar envios de formulário (server actions).
+  if (
+    isAdminArea &&
+    isAuthenticated &&
+    request.method === "GET" &&
+    !recoveryAllowedPath(pathname) &&
+    isRecoverySession(data?.claims)
+  ) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/admin/reset-password";
+    url.search = "";
+    const redirect = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    return redirect;
   }
 
   // Simetria com a regra acima: um admin já autenticado não precisa ver o
