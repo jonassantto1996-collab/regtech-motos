@@ -47,7 +47,7 @@ export default async function ProductsPage({
   searchParams: Promise<SearchParamsShape>;
 }) {
   const sp = await searchParams;
-  const { showPrices } = await getCatalogSettings();
+  const { showPrices, priceDisplay } = await getCatalogSettings();
 
   // Com os preços ocultos, ordenação e filtros por preço são ignorados —
   // assim ninguém consegue deduzir os valores pela ordem da lista.
@@ -172,7 +172,7 @@ export default async function ProductsPage({
           ) : (
             <div className="grid grid-cols-1 gap-x-8 gap-y-11 sm:gap-y-14 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-16">
               {result.products.map((product) => (
-                <ProductCard key={product.id} product={product} showPrice={showPrices} />
+                <ProductCard key={product.id} product={product} showPrice={showPrices} installmentsOnly={priceDisplay === "installments"} />
               ))}
             </div>
           )}
