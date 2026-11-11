@@ -8,6 +8,7 @@ import { parseProductForm, parseColorsInput, parseSpecsInput } from "@/lib/produ
 import { isAuthorizedAdmin } from "@/lib/admin/authorization";
 import { notifySearchEngines } from "@/lib/seo/indexnow";
 import type { PriceDisplay } from "@/lib/catalog/format";
+import { nextFeaturedRank } from "@/lib/catalog/featured";
 
 /**
  * Confere se existe uma sessão de admin válida. Nunca confiar em informação
@@ -145,7 +146,8 @@ export async function toggleProductActive(id: string, nextValue: boolean) {
   const admin = createAdminClient();
   const { data: toggled, error } = await admin
     .from("products")
-    .update({ is_active: nextValue })
+    // Moto desativada sai do destaque (libera a vaga).
+    .update(nextValue ? { is_active: true } : { is_active: false, featured_rank: null })
     .eq("id", id)
     .select("slug")
     .maybeSingle();
@@ -181,6 +183,32 @@ export async function setPriceDisplay(mode: PriceDisplay) {
   await logAdminAction(adminUserId, `catalog.price_display.${mode}`, "catalog_settings");
 
   revalidatePath("/", "layout");
+  redirect("/admin/products");
+}
+
+/** Coloca (ou tira) a moto entre as 4 em destaque, que aparecem primeiro na Home e no catálogo. */
+export async function setFeatured(id: string, featured: boolean) {
+  const adminUserId = await requireAdminSession();
+  const admin = createAdminClient();
+
+  let rank: number | null = null;
+  if (featured) {
+    const { data: taken } = await admin.from("products").select("featured_rank").not("featured_rank", "is", null);
+    rank = nextFeaturedRank((taken ?? []).map((r) => r.featured_rank as number));
+    if (rank === null) redirect("/admin/products?error=featured_full");
+  }
+
+  const { data: updated, error } = await admin
+    .from("products")
+    .update({ featured_rank: rank })
+    .eq("id", id)
+    .select("slug")
+    .maybeSingle();
+  if (error) redirect("/admin/products?error=server_error");
+
+  await logAdminAction(adminUserId, featured ? "product.feature" : "product.unfeature", "product", id, { rank });
+  revalidatePath("/", "layout");
+  if (updated?.slug) notifySearchEngines(["/", "/products"]);
   redirect("/admin/products");
 }
 
