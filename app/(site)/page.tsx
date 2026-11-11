@@ -78,7 +78,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const { showPrices } = await getCatalogSettings();
+  const { showPrices, priceDisplay } = await getCatalogSettings();
   // Mesma consulta usada pelo catálogo público (lib/catalog/queries.ts) —
   // sem criar uma consulta nova. Página 1, ordenado pelos mais recentes.
   const { products } = await listProducts({
@@ -286,7 +286,7 @@ export default async function Home() {
             <>
               <div className={`mobile-snap-row mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 sm:mt-8 sm:gap-7 lg:grid lg:overflow-visible lg:pb-0 ${featuredGridClass}`}>
                 {featuredProducts.map((product) => (
-                  <HomeProductCard key={product.id} product={product} showPrice={showPrices} />
+                  <HomeProductCard key={product.id} product={product} showPrice={showPrices} installmentsOnly={priceDisplay === "installments"} />
                 ))}
               </div>
 
