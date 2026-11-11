@@ -154,7 +154,10 @@ export async function listProducts(
       break;
     case "recent":
     default:
-      query = query.order("created_at", { ascending: false });
+      // As motos em destaque (painel → Motos → Destacar) vêm primeiro, na ordem escolhida.
+      query = query
+        .order("featured_rank", { ascending: true, nullsFirst: false })
+        .order("created_at", { ascending: false });
       break;
   }
 
