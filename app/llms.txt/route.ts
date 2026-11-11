@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/site-url";
-import { formatPriceBRL } from "@/lib/catalog/format";
+import { formatCardInstallments, formatPriceBRL } from "@/lib/catalog/format";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
 import { getCatalogSettings } from "@/lib/catalog/settings";
 
@@ -9,18 +9,18 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const siteUrl = getSiteUrl();
   const supabase = await createClient();
-  const { showPrices } = await getCatalogSettings();
+  const { showPrices, priceDisplay } = await getCatalogSettings();
 
   const { data } = await supabase
     .from("products")
-    .select("brand,model,slug,category,price,availability")
+    .select("brand,model,slug,category,price,card_price,card_installments,availability")
     .eq("is_active", true)
     .order("updated_at", { ascending: false });
 
   const products = (data ?? [])
     .map(
       (product) =>
-        `- ${product.brand} ${product.model} — ${product.category} — ${showPrices ? formatPriceBRL(product.price) : "Consulte o valor"} — ${product.availability ?? "Consulte disponibilidade"} — ${siteUrl}/products/${product.slug}`
+        `- ${product.brand} ${product.model} — ${product.category} — ${showPrices ? formatPriceBRL(product.price) : (priceDisplay === "installments" && formatCardInstallments(product.card_price, product.card_installments)) || "Consulte o valor"} — ${product.availability ?? "Consulte disponibilidade"} — ${siteUrl}/products/${product.slug}`
     )
     .join("\n");
 
