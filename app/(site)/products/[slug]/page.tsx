@@ -5,7 +5,7 @@ import ProductGallery from "@/components/catalog/ProductGallery";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { getProductBySlug } from "@/lib/catalog/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
-import { formatCardInstallments, formatPriceBRL } from "@/lib/catalog/format";
+import { formatCardInstallments, formatFinancing, formatPriceBRL } from "@/lib/catalog/format";
 import { getSiteUrl } from "@/lib/site-url";
 import { getCatalogSettings } from "@/lib/catalog/settings";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
@@ -27,14 +27,16 @@ export async function generateMetadata({
   }
 
   const { showPrices, priceDisplay } = await getCatalogSettings();
-  const metaCard = formatCardInstallments(product.card_price, product.card_installments);
+  const metaCard =
+    formatFinancing(product.financing_installments) ??
+    formatCardInstallments(product.card_price, product.card_installments);
   const title = `${product.brand} ${product.model} — Regtech Motors`;
   const description =
     (product.description ? product.description.slice(0, 160) : "") ||
     (showPrices
       ? `${product.brand} ${product.model} por ${formatPriceBRL(product.price)} à vista.`
       : priceDisplay === "installments" && metaCard
-        ? `${product.brand} ${product.model} em ${metaCard}.`
+        ? `${product.brand} ${product.model}: ${metaCard}.`
         : `${product.brand} ${product.model} na Regtech Motors. Consulte o valor.`);
 
   const mainImage =
@@ -68,7 +70,8 @@ export default async function ProductPage({
 
   const siteUrl = getSiteUrl();
   const { showPrices, priceDisplay } = await getCatalogSettings();
-  const cardText = formatCardInstallments(product.card_price, product.card_installments);
+  const financingText = formatFinancing(product.financing_installments);
+  const cardText = financingText ?? formatCardInstallments(product.card_price, product.card_installments);
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
     product.product_images[0];
@@ -156,7 +159,11 @@ export default async function ProductPage({
                 {formatPriceBRL(product.price)}
                 <span className="ml-2 text-sm font-medium tracking-normal text-gray-500 sm:text-base">à vista</span>
               </p>
-              {cardText && product.card_price && (
+              {financingText ? (
+                <p className="mt-2 text-sm text-gray-600 sm:text-base">
+                  ou <strong className="font-semibold text-gray-900">financie em até {product.financing_installments}x pelo banco</strong>
+                </p>
+              ) : cardText && product.card_price && (
                 <p className="mt-2 text-sm text-gray-600 sm:text-base">
                   ou <strong className="font-semibold text-gray-900">{cardText}</strong>{" "}
                   <span className="text-gray-500">(total {formatPriceBRL(product.card_price)})</span>
