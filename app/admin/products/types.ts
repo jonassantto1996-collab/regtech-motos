@@ -10,6 +10,8 @@ export type Product = {
   card_price: number | null;
   card_installments: number | null;
   wholesale_price?: number | null;
+  /** Posição no destaque do site (1º a 4º) ou null. */
+  featured_rank?: number | null;
   availability: string;
   warranty: string;
   pickup_available: boolean;
@@ -46,6 +48,7 @@ export type ProductImage = {
 
 export const PRODUCT_ERROR_MESSAGES: Record<string, string> = {
   missing_fields: "Preencha todos os campos obrigatórios.",
+  featured_full: "Já existem 4 motos em destaque. Tire uma do destaque antes de escolher outra.",
   invalid_price: "Informe um preço à vista válido (número maior ou igual a zero).",
   invalid_card_price: "Informe um valor no cartão válido (maior que zero) ou deixe o campo vazio.",
   invalid_card_installments: "Informe o número de parcelas no cartão (de 1 a 24).",
