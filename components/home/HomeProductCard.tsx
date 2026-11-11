@@ -7,9 +7,12 @@ import type { CatalogProductListItem } from "@/lib/catalog/queries";
 export default function HomeProductCard({
   product,
   showPrice = true,
+  installmentsOnly = false,
 }: {
   product: CatalogProductListItem;
   showPrice?: boolean;
+  /** Só o parcelado no cartão (sem à vista); sem cartão cadastrado vira "Consulte o valor". */
+  installmentsOnly?: boolean;
 }) {
   const mainImage = product.product_images[0];
   const imageUrl = mainImage ? getPublicImageUrl(mainImage.storage_path) : null;
@@ -57,6 +60,8 @@ export default function HomeProductCard({
             </p>
             {cardText && <p className="mt-0.5 text-xs text-gray-600 lg:text-sm">ou {cardText}</p>}
           </>
+        ) : installmentsOnly && cardText ? (
+          <p className="mt-2 text-sm font-semibold text-gray-700 lg:text-base">{cardText}</p>
         ) : (
           <p className="mt-2 text-sm font-semibold text-gray-700 lg:text-base">Consulte o valor</p>
         )}
