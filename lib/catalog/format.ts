@@ -20,3 +20,11 @@ export function formatCardInstallments(
   const parcela = Math.round((cardPrice / installments) * 100) / 100;
   return `${installments}x de ${formatPriceBRL(parcela)} no cartão`;
 }
+
+export type PriceDisplay = "full" | "installments" | "hidden";
+
+/** Chave "mostrar preços" + modo escolhido no painel → como o site mostra o preço. */
+export function resolvePriceDisplay(showPrices: boolean | null | undefined, mode: string | null | undefined): PriceDisplay {
+  if (showPrices === false) return "hidden";
+  return mode === "installments" ? "installments" : "full";
+}

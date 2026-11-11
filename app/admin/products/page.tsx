@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminSession, setShowPrices, toggleProductActive } from "./actions";
+import { requireAdminSession, setPriceDisplay, toggleProductActive } from "./actions";
+import { resolvePriceDisplay, type PriceDisplay } from "@/lib/catalog/format";
 import { PRODUCT_ERROR_MESSAGES, type Product } from "./types";
 import { AdminShell } from "../AdminShell";
 import "../admin.css";
@@ -39,10 +40,17 @@ export default async function ProductsPage({
 
   const { data: catalogSettings } = await admin
     .from("catalog_settings")
-    .select("show_prices")
+    .select("*")
     .eq("id", true)
     .maybeSingle();
-  const showPrices = catalogSettings?.show_prices ?? true;
+  const settingsRow = catalogSettings as { show_prices?: boolean; moto_price_display?: string } | null;
+  const priceDisplay = resolvePriceDisplay(settingsRow?.show_prices, settingsRow?.moto_price_display);
+  const PRICE_OPTIONS: { value: PriceDisplay; label: string; badge: string; help: string }[] = [
+    { value: "full", label: "Preço completo", badge: "Completos", help: "Os clientes veem o preço à vista e o parcelado no cartão." },
+    { value: "installments", label: "Só parcelado", badge: "Só parcelado", help: "O site mostra só o parcelado no cartão (ex.: “12x de R$ 908,33 no cartão”), sem o à vista e sem o total. Moto sem valor no cartão aparece como “Consulte o valor”." },
+    { value: "hidden", label: "Ocultar preços", badge: "Ocultos", help: "Os preços estão escondidos. No lugar, o site mostra “Consulte o valor”." },
+  ];
+  const currentOption = PRICE_OPTIONS.find((o) => o.value === priceDisplay) ?? PRICE_OPTIONS[0];
 
   return (
     <AdminShell active="products" email={claims.claims.email}>
@@ -58,18 +66,16 @@ export default async function ProductsPage({
         <div className="panel price-visibility-card">
           <div>
             <strong>Preços no site</strong>
-            <span className={showPrices ? "status-badge active" : "status-badge"}>{showPrices ? "Visíveis" : "Ocultos"}</span>
-            <p>
-              {showPrices
-                ? "Os clientes veem os preços das motos no site."
-                : "Os preços estão escondidos. No lugar, o site mostra “Consulte o valor”."}
-            </p>
+            <span className={priceDisplay === "hidden" ? "status-badge" : "status-badge active"}>{currentOption.badge}</span>
+            <p>{currentOption.help}</p>
           </div>
-          <form action={setShowPrices.bind(null, !showPrices)}>
-            <button type="submit" className={showPrices ? "admin-secondary-button" : "admin-primary-button"}>
-              {showPrices ? "Ocultar preços" : "Mostrar preços"}
-            </button>
-          </form>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {PRICE_OPTIONS.filter((o) => o.value !== priceDisplay).map((o) => (
+              <form key={o.value} action={setPriceDisplay.bind(null, o.value)}>
+                <button type="submit" className="admin-secondary-button">{o.label}</button>
+              </form>
+            ))}
+          </div>
         </div>
 
         {errorMessage && <p className="admin-alert error" role="alert">{errorMessage}</p>}

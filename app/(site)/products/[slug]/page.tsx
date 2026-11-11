@@ -26,13 +26,16 @@ export async function generateMetadata({
     return { title: "Produto não encontrado — Regtech Motors" };
   }
 
-  const { showPrices } = await getCatalogSettings();
+  const { showPrices, priceDisplay } = await getCatalogSettings();
+  const metaCard = formatCardInstallments(product.card_price, product.card_installments);
   const title = `${product.brand} ${product.model} — Regtech Motors`;
   const description =
     (product.description ? product.description.slice(0, 160) : "") ||
     (showPrices
       ? `${product.brand} ${product.model} por ${formatPriceBRL(product.price)} à vista.`
-      : `${product.brand} ${product.model} na Regtech Motors. Consulte o valor.`);
+      : priceDisplay === "installments" && metaCard
+        ? `${product.brand} ${product.model} em ${metaCard}.`
+        : `${product.brand} ${product.model} na Regtech Motors. Consulte o valor.`);
 
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
@@ -64,7 +67,7 @@ export default async function ProductPage({
   if (!product) notFound();
 
   const siteUrl = getSiteUrl();
-  const { showPrices } = await getCatalogSettings();
+  const { showPrices, priceDisplay } = await getCatalogSettings();
   const cardText = formatCardInstallments(product.card_price, product.card_installments);
   const mainImage =
     product.product_images.find((img) => img.is_main) ??
@@ -160,6 +163,11 @@ export default async function ProductPage({
                 </p>
               )}
             </div>
+            ) : priceDisplay === "installments" && cardText ? (
+              // Só o parcelado: sem à vista e sem o total no cartão (o à vista é negociado na loja).
+              <p className="mt-4 text-2xl font-semibold tracking-tight text-gray-900 sm:mt-5 sm:text-3xl">
+                {cardText}
+              </p>
             ) : (
               <p className="mt-4 text-2xl font-semibold tracking-tight text-gray-900 sm:mt-5 sm:text-3xl">
                 Consulte o valor
