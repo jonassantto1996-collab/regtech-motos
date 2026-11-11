@@ -28,3 +28,9 @@ export function resolvePriceDisplay(showPrices: boolean | null | undefined, mode
   if (showPrices === false) return "hidden";
   return mode === "installments" ? "installments" : "full";
 }
+
+/** Texto do financiamento pelo banco, ex.: "Financie em até 48x pelo banco". */
+export function formatFinancing(installments: number | null | undefined): string | null {
+  if (!installments || installments < 2) return null;
+  return `Financie em até ${installments}x pelo banco`;
+}
