@@ -2,7 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdminSession, setPriceDisplay, toggleProductActive } from "./actions";
+import { requireAdminSession, setFeatured, setPriceDisplay, toggleProductActive } from "./actions";
+import { MAX_FEATURED } from "@/lib/catalog/featured";
 import { resolvePriceDisplay, type PriceDisplay } from "@/lib/catalog/format";
 import { PRODUCT_ERROR_MESSAGES, type Product } from "./types";
 import { AdminShell } from "../AdminShell";
@@ -34,9 +35,12 @@ export default async function ProductsPage({
   const { data: products, error } = await admin
     .from("products")
     .select(
-      "id, brand, model, slug, sku, category, description, price, card_price, card_installments, availability, warranty, pickup_available, is_active, created_at, updated_at"
+      "id, brand, model, slug, sku, category, description, price, card_price, card_installments, availability, warranty, pickup_available, is_active, featured_rank, created_at, updated_at"
     )
     .order("created_at", { ascending: false });
+  const featured = ((products ?? []) as Product[])
+    .filter((p) => p.featured_rank)
+    .sort((a, b) => (a.featured_rank ?? 0) - (b.featured_rank ?? 0));
 
   const { data: catalogSettings } = await admin
     .from("catalog_settings")
@@ -78,6 +82,19 @@ export default async function ProductsPage({
           </div>
         </div>
 
+        <div className="panel price-visibility-card">
+          <div>
+            <strong>Motos em destaque</strong>
+            <span className={featured.length ? "status-badge active" : "status-badge"}>{featured.length}/{MAX_FEATURED}</span>
+            <p>
+              {featured.length
+                ? featured.map((p) => `${p.featured_rank}º ${p.brand} ${p.model}`).join(" · ")
+                : "Nenhuma escolhida: a Home mostra as motos mais recentes."}
+            </p>
+            <p className="form-muted">As motos em destaque aparecem primeiro na Home e no catálogo, nessa ordem. Use “Destacar” na lista abaixo.</p>
+          </div>
+        </div>
+
         {errorMessage && <p className="admin-alert error" role="alert">{errorMessage}</p>}
         {error && <p className="admin-alert error" role="alert">Não foi possível carregar os produtos.</p>}
         {!error && products && products.length === 0 && <div className="panel empty-state">Nenhum produto cadastrado ainda.</div>}
@@ -85,13 +102,29 @@ export default async function ProductsPage({
         {!error && products && products.length > 0 && (
           <div className="panel admin-table-wrap">
             <table className="admin-table">
-              <thead><tr><th>Marca</th><th>Modelo</th><th>SKU</th><th>Categoria</th><th>Preço</th><th>Disponibilidade</th><th>Status</th><th>Ações</th></tr></thead>
+              <thead><tr><th>Marca</th><th>Modelo</th><th>SKU</th><th>Categoria</th><th>Preço</th><th>Disponibilidade</th><th>Status</th><th>Destaque</th><th>Ações</th></tr></thead>
               <tbody>
                 {(products as Product[]).map((product) => (
                   <tr key={product.id}>
                     <td>{product.brand}</td><td><strong>{product.model}</strong></td><td>{product.sku ?? "—"}</td><td>{product.category}</td>
                     <td>{currencyFormatter.format(product.price)}</td><td>{product.availability}</td>
                     <td><span className={product.is_active ? "status-badge active" : "status-badge"}>{product.is_active ? "Ativo" : "Inativo"}</span></td>
+                    <td className="table-actions">
+                      {product.featured_rank ? (
+                        <>
+                          <span className="status-badge active">★ {product.featured_rank}º</span>
+                          <form action={setFeatured.bind(null, product.id, false)}>
+                            <button type="submit">Tirar</button>
+                          </form>
+                        </>
+                      ) : product.is_active && featured.length < MAX_FEATURED ? (
+                        <form action={setFeatured.bind(null, product.id, true)}>
+                          <button type="submit">Destacar</button>
+                        </form>
+                      ) : (
+                        <span className="form-muted">—</span>
+                      )}
+                    </td>
                     <td className="table-actions">
                       <Link href={`/admin/products/${product.id}/edit`}>Editar</Link>
                       <form action={toggleProductActive.bind(null, product.id, !product.is_active)}>
