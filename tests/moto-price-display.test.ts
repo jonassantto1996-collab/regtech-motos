@@ -15,3 +15,10 @@ test("só parcelado: texto do cartão, sem total", () => {
   assert.equal(text, "12x de R$ 908,33 no cartão");
   assert.equal(formatCardInstallments(null, 12), null);
 });
+
+test("financiamento pelo banco", async () => {
+  const { formatFinancing } = await import("../lib/catalog/format.ts");
+  assert.equal(formatFinancing(48), "Financie em até 48x pelo banco");
+  assert.equal(formatFinancing(null), null);
+  assert.equal(formatFinancing(1), null);
+});
