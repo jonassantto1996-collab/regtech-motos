@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { parseProductForm, parseColorsInput, parseSpecsInput } from "@/lib/products/validation";
 import { isAuthorizedAdmin } from "@/lib/admin/authorization";
 import { notifySearchEngines } from "@/lib/seo/indexnow";
+import type { PriceDisplay } from "@/lib/catalog/format";
 
 /**
  * Confere se existe uma sessão de admin válida. Nunca confiar em informação
@@ -155,6 +156,31 @@ export async function toggleProductActive(id: string, nextValue: boolean) {
   await logAdminAction(adminUserId, nextValue ? "product.activate" : "product.deactivate", "product", id);
   if (toggled?.slug) notifySearchEngines([`/products/${toggled.slug}`, "/products", "/"]);
 
+  redirect("/admin/products");
+}
+
+/**
+ * Como o site das motos mostra os preços: completo, só o parcelado no cartão ou oculto.
+ * (Grava as duas chaves: show_prices e moto_price_display.)
+ */
+export async function setPriceDisplay(mode: PriceDisplay) {
+  const adminUserId = await requireAdminSession();
+  if (mode !== "full" && mode !== "installments" && mode !== "hidden") redirect("/admin/products?error=server_error");
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("catalog_settings")
+    .upsert(
+      { id: true, show_prices: mode !== "hidden", ...(mode === "hidden" ? {} : { moto_price_display: mode }) },
+      { onConflict: "id" },
+    );
+
+  if (error) {
+    redirect("/admin/products?error=server_error");
+  }
+  await logAdminAction(adminUserId, `catalog.price_display.${mode}`, "catalog_settings");
+
+  revalidatePath("/", "layout");
   redirect("/admin/products");
 }
 
