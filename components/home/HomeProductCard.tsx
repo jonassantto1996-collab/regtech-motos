@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
-import { formatCardInstallments, formatPriceBRL } from "@/lib/catalog/format";
+import { formatCardInstallments, formatFinancing, formatPriceBRL } from "@/lib/catalog/format";
 import type { CatalogProductListItem } from "@/lib/catalog/queries";
 
 export default function HomeProductCard({
@@ -16,7 +16,10 @@ export default function HomeProductCard({
 }) {
   const mainImage = product.product_images[0];
   const imageUrl = mainImage ? getPublicImageUrl(mainImage.storage_path) : null;
-  const cardText = formatCardInstallments(product.card_price, product.card_installments);
+  // Financiamento pelo banco (ex.: 48x) vale no lugar do parcelado no cartão.
+  const cardText =
+    formatFinancing(product.financing_installments) ??
+    formatCardInstallments(product.card_price, product.card_installments);
 
   return (
     <Link
@@ -58,7 +61,7 @@ export default function HomeProductCard({
               {formatPriceBRL(product.price)}
               <span className="ml-1.5 text-xs font-medium text-gray-500">à vista</span>
             </p>
-            {cardText && <p className="mt-0.5 text-xs text-gray-600 lg:text-sm">ou {cardText}</p>}
+            {cardText && <p className="mt-0.5 text-xs text-gray-600 lg:text-sm">ou {cardText.charAt(0).toLowerCase() + cardText.slice(1)}</p>}
           </>
         ) : installmentsOnly && cardText ? (
           <p className="mt-2 text-sm font-semibold text-gray-700 lg:text-base">{cardText}</p>

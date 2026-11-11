@@ -24,6 +24,8 @@ export type CatalogProduct = {
   card_price: number | null;
   /** Parcelas no cartão (opcional, junto com card_price). */
   card_installments: number | null;
+  /** Financiamento pelo banco em até N vezes (opcional; substitui o cartão no site). */
+  financing_installments: number | null;
   availability: string;
   warranty: string;
   pickup_available: boolean;
@@ -115,7 +117,7 @@ export async function listProducts(
   let query = supabase
     .from("products")
     .select(
-      `id, brand, model, slug, category, description, price, card_price, card_installments, availability, warranty, pickup_available,
+      `id, brand, model, slug, category, description, price, card_price, card_installments, financing_installments, availability, warranty, pickup_available,
        product_images(id, storage_path, display_order, is_main, alt_text)`,
       { count: "exact" }
     )
@@ -189,7 +191,7 @@ export async function getProductBySlug(
   const { data, error } = await supabase
     .from("products")
     .select(
-      `id, brand, model, slug, category, description, price, card_price, card_installments, availability, warranty, pickup_available,
+      `id, brand, model, slug, category, description, price, card_price, card_installments, financing_installments, availability, warranty, pickup_available,
        product_colors(id, color),
        product_specs(id, spec_key, spec_value),
        product_images(id, storage_path, display_order, is_main, alt_text)`
@@ -288,7 +290,7 @@ export async function getActiveProductListItemById(
   const { data, error } = await supabase
     .from("products")
     .select(
-      `id, brand, model, slug, category, description, price, card_price, card_installments, availability, warranty, pickup_available,
+      `id, brand, model, slug, category, description, price, card_price, card_installments, financing_installments, availability, warranty, pickup_available,
        product_images(id, storage_path, display_order, is_main, alt_text)`
     )
     .eq("id", id)
