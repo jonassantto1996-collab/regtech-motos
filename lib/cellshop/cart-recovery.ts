@@ -8,6 +8,8 @@
 import { formatBRL } from "./pricing.ts";
 
 export const STALE_HOURS = 24;
+/** Quem deixa o WhatsApp recebe o valor e o pedido fica reservado por 24 horas. */
+export const RESERVE_HOURS = 24;
 /** Carrinhos guardados por no máximo 90 dias. */
 export const RETENTION_DAYS = 90;
 export const MAX_SYNC_ITEMS = 50;
@@ -76,6 +78,34 @@ export function isStaleCart(cart: { status: string; item_count: number; updated_
   return cart.status === "open" && cart.item_count > 0 && now - new Date(cart.updated_at).getTime() >= STALE_HOURS * 3_600_000;
 }
 
+/**
+ * Para chamar: o cliente deixou o WhatsApp (com autorização) e o carrinho está aberto.
+ * Entra na hora, sem esperar 24h, porque a loja prometeu o valor e a reserva.
+ * Lojista do atacado (contato do cadastro) só depois de parado.
+ */
+export function needsCall(
+  cart: { status: string; item_count: number; updated_at: string; whatsapp: string | null },
+  hasResellerContact = false,
+  now = Date.now(),
+): boolean {
+  if (cart.status !== "open" || cart.item_count <= 0) return false;
+  if (cart.whatsapp) return true;
+  return hasResellerContact && isStaleCart(cart, now);
+}
+
+/** Fim da reserva de 24h, contada a partir da autorização. */
+export function reservationEndsAt(consentAt: string | null): Date | null {
+  if (!consentAt) return null;
+  const start = new Date(consentAt).getTime();
+  return Number.isFinite(start) ? new Date(start + RESERVE_HOURS * 3_600_000) : null;
+}
+
+/** Reserva ainda valendo? */
+export function isReservationActive(consentAt: string | null, now = Date.now()): boolean {
+  const end = reservationEndsAt(consentAt);
+  return !!end && end.getTime() > now;
+}
+
 /** Data limite: carrinhos sem mexer desde antes dela estão parados. */
 export function staleCutoffIso(now = Date.now()): string {
   return new Date(now - STALE_HOURS * 3_600_000).toISOString();
@@ -94,7 +124,7 @@ export function timeAgo(iso: string, now = Date.now()): string {
 export type StoredCartItem = { title: string; variantName: string | null; qty: number; price: number | null };
 
 /** Mensagem pronta para a loja chamar o cliente no WhatsApp. */
-export function recoveryMessage(name: string | null, items: StoredCartItem[], total: number): string {
+export function recoveryMessage(name: string | null, items: StoredCartItem[], total: number, reserved = false): string {
   const first = name ? name.split(" ")[0] : "";
   const list = items
     .slice(0, 5)
@@ -102,6 +132,12 @@ export function recoveryMessage(name: string | null, items: StoredCartItem[], to
     .join("\n");
   const more = items.length > 5 ? `\n• e mais ${items.length - 5} ${items.length - 5 === 1 ? "item" : "itens"}` : "";
   const value = total > 0 ? `\n\nTotal: ${formatBRL(total)} à vista.` : "";
+  if (reserved) {
+    return (
+      `Olá${first ? `, ${first}` : ""}! Aqui é da Regtech Cell Shop. Você pediu o valor destes itens no nosso site:\n${list}${more}${value}\n\n` +
+      `Já deixei o seu pedido reservado por ${RESERVE_HOURS}h. Quer que eu te passe as condições de pagamento para fechar?`
+    ).replace(/\u00a0/g, " ");
+  }
   return (
     `Olá${first ? `, ${first}` : ""}! Aqui é da Regtech Cell Shop. Vi que você deixou estes itens no carrinho do nosso site:\n${list}${more}${value}\n\n` +
     "Ficou alguma dúvida? Posso te ajudar a fechar o pedido ou ver a melhor condição para você."

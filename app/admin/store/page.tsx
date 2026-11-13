@@ -8,7 +8,6 @@ import { setStoreShowPrices } from "./actions";
 import { InventoryAlerts } from "./components/InventoryAlerts";
 import { InventoryMetrics } from "./components/InventoryMetrics";
 import { StoreProductTable } from "./components/StoreProductTable";
-import { staleCutoffIso } from "@/lib/cellshop/cart-recovery";
 import type { StoreAdminOverview } from "@/lib/store/admin-overview";
 import "../admin.css";
 import "./store.css";
@@ -32,10 +31,9 @@ export default async function StoreAdminPage({
     admin.from("catalog_settings").select("store_show_prices").eq("id",true).maybeSingle(),
   ]);
   const showPrices=(settings as {store_show_prices?:boolean}|null)?.store_show_prices!==false;
-  // Carrinhos parados há mais de 24h com WhatsApp do cliente (para a equipe chamar).
+  // Carrinhos abertos em que o cliente deixou o WhatsApp: a loja prometeu o valor e a reserva de 24h, então entram na hora.
   const { count: cartsToCall } = await admin.from("store_carts").select("id",{count:"exact",head:true})
-    .eq("status","open").gt("item_count",0).not("whatsapp","is",null)
-    .lt("updated_at",staleCutoffIso());
+    .eq("status","open").gt("item_count",0).not("whatsapp","is",null);
 
   if(overviewError) throw new Error("Não foi possível carregar o resumo operacional da loja.");
   const overview=overviewRaw as unknown as StoreAdminOverview;
