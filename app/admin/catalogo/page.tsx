@@ -40,7 +40,7 @@ export default async function CatalogBrochurePage() {
           <Link href="/admin/products" className="secondary-action">← Voltar para as motos</Link>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <article className="panel">
             <h2>Varejo</h2>
             <p className="form-muted">Para clientes e grupos: “10x sem juros” (preço à vista dividido por 10) e o valor final.</p>
@@ -50,6 +50,11 @@ export default async function CatalogBrochurePage() {
             <h2>Atacado</h2>
             <p className="form-muted">Para lojistas: mostra o preço de atacado de cada moto (cadastrado na tela da moto).</p>
             <Link href="/admin/catalogo/pdf?tipo=atacado" target="_blank" className="admin-primary-button">Abrir catálogo de atacado</Link>
+          </article>
+          <article className="panel">
+            <h2>Sem preços</h2>
+            <p className="form-muted">Para apresentar as motos: fotos, cores e ficha técnica, com “Consulte valores” no lugar do preço.</p>
+            <Link href="/admin/catalogo/pdf?tipo=consulta" target="_blank" className="admin-primary-button">Abrir catálogo sem preços</Link>
           </article>
         </div>
 
