@@ -41,7 +41,9 @@ function PriceBlock({ mode, row }: { mode: BrochureMode; row: BrochureRow }) {
     return (
       <>
         <p className="cat-price-label">{mode === "atacado" ? "PREÇO DE ATACADO" : "CONDIÇÃO ESPECIAL"}</p>
-        <div className="cat-price-pill cat-price-pill-text">Consulte</div>
+        <div className={mode === "consulta" ? "cat-price-pill cat-price-pill-text cat-price-pill-long" : "cat-price-pill cat-price-pill-text"}>
+          {mode === "consulta" ? "Consulte valores" : "Consulte"}
+        </div>
       </>
     );
   }
