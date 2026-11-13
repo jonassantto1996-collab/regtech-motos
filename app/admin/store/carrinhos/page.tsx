@@ -8,8 +8,12 @@ import { DEVICE_LABELS, TRAFFIC_SOURCE_LABELS, type Device, type TrafficSource }
 import {
   CART_STATUS_LABEL,
   formatPhone,
+  isReservationActive,
   isStaleCart,
+  needsCall,
   recoveryMessage,
+  reservationEndsAt,
+  RESERVE_HOURS,
   STALE_HOURS,
   timeAgo,
   type CartStatus,
@@ -30,6 +34,7 @@ type CartRow = {
   has_unpriced: boolean;
   contact_name: string | null;
   whatsapp: string | null;
+  consent_at: string | null;
   status: CartStatus;
   checked_out_at: string | null;
   admin_note: string | null;
@@ -78,11 +83,11 @@ function matches(cart: CartRow, filter: FilterKey) {
   const contact = contactOf(cart);
   switch (filter) {
     case "chamar":
-      return stale && !!contact;
+      return needsCall(cart, !!contact);
     case "anonimos":
       return stale && !contact;
     case "abertos":
-      return cart.status === "open" && !stale;
+      return cart.status === "open" && !stale && !needsCall(cart, !!contact);
     case "chamados":
       return cart.status === "contacted";
     case "enviados":
@@ -105,7 +110,7 @@ export default async function StoreCartsPage({ searchParams }: { searchParams: P
   const { data: rows } = await admin
     .from("store_carts")
     .select(
-      "id,mode,items,item_count,total,has_unpriced,contact_name,whatsapp,status,checked_out_at,admin_note,device,traffic_source,city,created_at,updated_at,store_resellers(store_name,contact_name,whatsapp)",
+      "id,mode,items,item_count,total,has_unpriced,contact_name,whatsapp,consent_at,status,checked_out_at,admin_note,device,traffic_source,city,created_at,updated_at,store_resellers(store_name,contact_name,whatsapp)",
     )
     .order("updated_at", { ascending: false })
     .limit(1000);
@@ -123,8 +128,9 @@ export default async function StoreCartsPage({ searchParams }: { searchParams: P
             <span>REGTECH CELL SHOP</span>
             <h1>Carrinhos parados</h1>
             <p>
-              Carrinhos montados no site que ficaram mais de {STALE_HOURS} horas sem ser enviados. Quem deixou o WhatsApp (com autorização)
-              aparece em “Para chamar”, com a mensagem pronta.
+              Carrinhos montados no site que não foram enviados. Quem deixou o WhatsApp (com autorização) aparece na hora em “Para chamar”,
+              com a mensagem pronta: a loja prometeu passar o valor e guardar o pedido por {RESERVE_HOURS}h. Sem contato, o carrinho entra em
+              “Parados sem contato” depois de {STALE_HOURS}h.
               {staleValue > 0 ? ` Valor parado agora: ${brl(staleValue)} à vista.` : ""}
             </p>
           </div>
@@ -159,7 +165,8 @@ export default async function StoreCartsPage({ searchParams }: { searchParams: P
               {list.map((cart) => {
                 const contact = contactOf(cart);
                 const total = Number(cart.total ?? 0);
-                const message = recoveryMessage(contact?.name ?? null, cart.items, total);
+                const reserveEnd = cart.whatsapp && cart.status === "open" ? reservationEndsAt(cart.consent_at) : null;
+                const message = recoveryMessage(contact?.name ?? null, cart.items, total, !!cart.whatsapp);
                 const title =
                   cart.mode === "wholesale" && cart.store_resellers
                     ? `${cart.store_resellers.store_name} (lojista)`
@@ -177,7 +184,13 @@ export default async function StoreCartsPage({ searchParams }: { searchParams: P
                         </small>
                       </div>
                       <span className={`reseller-status cart-status is-${cart.status}`}>
-                        {isStaleCart(cart) ? `Parado há mais de ${STALE_HOURS}h` : CART_STATUS_LABEL[cart.status]}
+                        {reserveEnd
+                          ? isReservationActive(cart.consent_at)
+                            ? `Reservado até ${dateTime.format(reserveEnd)}`
+                            : "Reserva de 24h vencida"
+                          : isStaleCart(cart)
+                            ? `Parado há mais de ${STALE_HOURS}h`
+                            : CART_STATUS_LABEL[cart.status]}
                       </span>
                     </div>
 
