@@ -8,6 +8,7 @@ import { addItem, buildCartMessage, cartTotals, parseStoredCart, removeItem, set
 import { cardPlan, formatBRL, MAX_INSTALLMENTS, type PriceMode } from "@/lib/cellshop/pricing";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import { formatPhone } from "@/lib/cellshop/cart-recovery";
+import { cameBack, canOfferSave, isExitIntent, OFFER, savedText } from "@/lib/cellshop/save-prompt";
 import { forgetCartContact, markCartCheckedOut, syncCart } from "@/app/cellshop/cart-actions";
 import { getDevice, getTrafficSource } from "@/components/analytics/SiteTracker";
 import { trackStoreEvent } from "@/components/cellshop/CellshopTracker";
@@ -100,7 +101,9 @@ export function CartProvider({
   const tokenKey = `${storageKey}-id`;
   const syncKey = `${storageKey}-sync`;
   const contactKey = `${storageKey}-contato`;
+  const promptKey = `${storageKey}-convite`;
   const [contact, setContact] = useState<SavedContact | null>(null);
+  const [promptOpen, setPromptOpen] = useState(false);
 
   // Lê o carrinho guardado (depois de abrir a página, para não dar diferença com o servidor).
   useEffect(() => {
@@ -134,15 +137,16 @@ export function CartProvider({
           if (!result.ok) return;
           writeLocal(syncKey, items.length ? signature : null);
           if (!items.length) {
-            // Carrinho vazio: a cópia e o contato saem do painel.
+            // Carrinho vazio: a cópia e o contato saem do painel; o convite pode voltar no próximo carrinho.
             writeLocal(contactKey, null);
+            writeLocal(promptKey, null);
             setContact(null);
           }
         })
         .catch(() => {});
     }, 1500);
     return () => window.clearTimeout(timer);
-  }, [items, loaded, syncKey, tokenKey, contactKey]);
+  }, [items, loaded, syncKey, tokenKey, contactKey, promptKey]);
 
   const saveContact = useCallback(
     async (name: string, whatsapp: string, consent: boolean) => {
@@ -182,6 +186,38 @@ export function CartProvider({
   }, [stored, loaded, storageKey]);
 
   const totals = useMemo(() => cartTotals(items, mode), [items, mode]);
+
+  // Convite para guardar o pedido, uma vez por carrinho: no computador quando o mouse
+  // sai pelo topo; no celular quando a pessoa sai do app/aba e volta.
+  useEffect(() => {
+    const state = {
+      itemCount: items.length,
+      hasContact: !!contact,
+      wholesale: mode === "wholesale",
+      cartOpen: isOpen,
+      done: !!readLocal(promptKey),
+    };
+    if (!loaded || !canOfferSave(state)) return;
+    let hiddenAt = 0;
+    const show = () => {
+      if (readLocal(promptKey)) return;
+      writeLocal(promptKey, "visto");
+      setPromptOpen(true);
+    };
+    const onMouseOut = (e: MouseEvent) => {
+      if (isExitIntent(e)) show();
+    };
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") hiddenAt = Date.now();
+      else if (cameBack(hiddenAt, Date.now())) show();
+    };
+    document.addEventListener("mouseout", onMouseOut);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      document.removeEventListener("mouseout", onMouseOut);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [loaded, items.length, contact, mode, isOpen, promptKey]);
 
   const open = useCallback(() => {
     triggerRef.current = document.activeElement as HTMLElement | null;
@@ -377,6 +413,8 @@ export function CartProvider({
                   onClick={() => {
                     const token = readLocal(tokenKey);
                     if (token) markCartCheckedOut(token).catch(() => {});
+                    // Pedido enviado: o convite não aparece mais para este carrinho.
+                    writeLocal(promptKey, "enviado");
                   }}
                   className="mt-4 inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-xl bg-[#15803d] px-6 text-center text-sm font-semibold uppercase tracking-[0.14em] text-white transition-colors hover:bg-[#166534] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#15803d] focus-visible:ring-offset-2"
                 >
@@ -401,6 +439,16 @@ export function CartProvider({
           )}
         </aside>
       </div>
+
+      {promptOpen && (
+        <SavePrompt
+          count={totals.count}
+          contact={contact}
+          onSave={saveContact}
+          onRemove={removeContact}
+          onClose={() => setPromptOpen(false)}
+        />
+      )}
     </CartContext.Provider>
   );
 }
@@ -422,13 +470,18 @@ function CartContactBox({
   isOpen,
   onSave,
   onRemove,
+  bare = false,
+  onDismiss,
 }: {
   contact: SavedContact | null;
   isOpen: boolean;
   onSave: (name: string, whatsapp: string, consent: boolean) => Promise<{ ok: boolean; error?: string }>;
   onRemove: () => void;
+  /** Dentro do convite: formulário já aberto, sem título próprio. */
+  bare?: boolean;
+  onDismiss?: () => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(bare);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const tab = isOpen ? 0 : -1;
@@ -437,7 +490,7 @@ function CartContactBox({
     return (
       <p className="mb-3 flex items-start justify-between gap-3 rounded-xl bg-emerald-50 px-3.5 py-2.5 text-xs leading-5 text-emerald-900">
         <span>
-          <strong className="font-semibold">Contato salvo.</strong> A loja pode te chamar no {formatPhone(contact.whatsapp)} sobre este pedido.
+          <strong className="font-semibold">Contato salvo.</strong> {savedText(formatPhone(contact.whatsapp))}
         </span>
         <button type="button" tabIndex={tab} onClick={onRemove} className="shrink-0 font-semibold underline underline-offset-2 hover:text-emerald-700">
           Remover
@@ -455,7 +508,7 @@ function CartContactBox({
         className="mb-3 flex w-full items-center justify-between gap-3 rounded-xl border border-slate-200 px-3.5 py-2.5 text-left text-xs leading-5 text-slate-700 transition-colors hover:border-[#0a6cff] hover:text-slate-950"
       >
         <span>
-          <strong className="font-semibold text-slate-950">Quer ajuda com o pedido?</strong> Deixe o seu WhatsApp e a loja te chama.
+          <strong className="font-semibold text-slate-950">{OFFER.title}.</strong> {OFFER.text}
         </span>
         <span aria-hidden className="text-base text-[#0a5cff]">+</span>
       </button>
@@ -464,7 +517,7 @@ function CartContactBox({
 
   return (
     <form
-      className="mb-3 rounded-xl border border-slate-200 p-3.5"
+      className={bare ? "" : "mb-3 rounded-xl border border-slate-200 p-3.5"}
       onSubmit={async (event) => {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
@@ -475,7 +528,7 @@ function CartContactBox({
         if (!result.ok) setError(CONTACT_ERRORS[result.error ?? "server_error"] ?? CONTACT_ERRORS.server_error);
       }}
     >
-      <p className="text-xs font-semibold text-slate-950">Deixe o seu contato (opcional)</p>
+      {!bare && <p className="text-xs font-semibold text-slate-950">Deixe o seu contato (opcional)</p>}
       <div className="mt-2 grid grid-cols-2 gap-2">
         <label className="text-xs text-slate-600">
           Nome
@@ -488,11 +541,11 @@ function CartContactBox({
       </div>
       <label className="mt-2.5 flex items-start gap-2 text-[0.6875rem] leading-4 text-slate-600">
         <input name="consent" type="checkbox" tabIndex={tab} required className="mt-0.5 h-4 w-4 shrink-0 accent-[#0a5cff]" />
-        <span>Autorizo a Regtech Cell Shop a me chamar no WhatsApp sobre este pedido. Os dados não são usados para mais nada e posso remover quando quiser.</span>
+        <span>{OFFER.consent}</span>
       </label>
       {error && <p role="alert" className="mt-2 text-xs font-semibold text-red-600">{error}</p>}
       <div className="mt-2.5 flex items-center justify-end gap-3">
-        <button type="button" tabIndex={tab} onClick={() => setExpanded(false)} className="text-xs font-semibold text-slate-500 hover:text-slate-950">
+        <button type="button" tabIndex={tab} onClick={() => (onDismiss ? onDismiss() : setExpanded(false))} className="text-xs font-semibold text-slate-500 hover:text-slate-950">
           Agora não
         </button>
         <button type="submit" tabIndex={tab} disabled={saving} className="inline-flex min-h-9 items-center rounded-lg bg-[#070a12] px-4 text-xs font-semibold text-white hover:bg-[#151b2b] disabled:opacity-60">
@@ -500,6 +553,83 @@ function CartContactBox({
         </button>
       </div>
     </form>
+  );
+}
+
+/**
+ * Convite que aparece uma vez fora do carrinho (saindo da página ou voltando a ela).
+ * Fecha no X, no "Agora não", no Esc ou clicando fora.
+ */
+function SavePrompt({
+  count,
+  contact,
+  onSave,
+  onRemove,
+  onClose,
+}: {
+  count: number;
+  contact: SavedContact | null;
+  onSave: (name: string, whatsapp: string, consent: boolean) => Promise<{ ok: boolean; error?: string }>;
+  onRemove: () => void;
+  onClose: () => void;
+}) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center sm:p-4">
+      <button type="button" tabIndex={-1} aria-label="Fechar" onClick={onClose} className="absolute inset-0 bg-[#070a12]/55" />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="convite-titulo"
+        className="relative w-full max-w-md rounded-t-2xl bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:rounded-2xl sm:pb-5"
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h2 id="convite-titulo" className="text-lg font-bold tracking-tight text-slate-950">
+              {contact ? "Pedido guardado" : OFFER.promptTitle}
+            </h2>
+            <p className="mt-1 text-sm leading-6 text-slate-600">
+              {contact
+                ? savedText(formatPhone(contact.whatsapp))
+                : `Você tem ${count} ${count === 1 ? "item" : "itens"} no carrinho. ${OFFER.text}`}
+            </p>
+          </div>
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0a6cff]"
+          >
+            <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M6 6l12 12M18 6 6 18" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+        <div className="mt-4">
+          {contact ? (
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#070a12] px-5 text-sm font-semibold text-white hover:bg-[#151b2b]"
+            >
+              Continuar navegando
+            </button>
+          ) : (
+            <CartContactBox contact={contact} isOpen onSave={onSave} onRemove={onRemove} bare onDismiss={onClose} />
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
