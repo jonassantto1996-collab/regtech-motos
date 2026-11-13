@@ -25,7 +25,8 @@ export default function CellshopGallery({ images, productName }: { images: Cells
   const current = Math.min(index, Math.max(0, count - 1));
   const trackRef = useRef<HTMLDivElement>(null);
   // Enquanto a caixa anda sozinha (miniatura, seta ou cor), a rolagem não muda a foto escolhida.
-  const target = useRef<number | null>(null);
+  // Vale no máximo 900 ms: depois disso (ou se a pessoa mexer), manda o que está na caixa.
+  const target = useRef<{ i: number; until: number } | null>(null);
   const placed = useRef(false);
 
   // Foto escolhida por fora (miniatura, seta, cor): leva a caixa grande até ela.
@@ -36,7 +37,7 @@ export default function CellshopGallery({ images, productName }: { images: Cells
       placed.current = true;
       return;
     }
-    target.current = current;
+    target.current = { i: current, until: Date.now() + 900 };
     el.scrollTo({ left: current * el.clientWidth, behavior: placed.current ? "smooth" : "auto" });
     placed.current = true;
   }, [current, count]);
@@ -46,15 +47,33 @@ export default function CellshopGallery({ images, productName }: { images: Cells
     const el = trackRef.current;
     if (!el || !el.clientWidth) return;
     const at = slideFromScroll(el.scrollLeft, el.clientWidth, count);
-    if (target.current !== null) {
-      if (Math.abs(el.scrollLeft - target.current * el.clientWidth) < 2) target.current = null;
-      return;
+    const t = target.current;
+    if (t) {
+      const reached = Math.abs(el.scrollLeft - t.i * el.clientWidth) < 2;
+      if (!reached && Date.now() < t.until) return;
+      target.current = null;
     }
     if (at !== current) setIndex(at);
   }, [count, current]);
 
-  // O dedo voltou a mexer: vale o que a pessoa está fazendo, não a animação.
-  const onTouchStart = useCallback(() => {
+  // Parou de rolar: a foto que ficou na caixa é a escolhida (garante o final do deslize).
+  const onScrollEnd = useCallback(() => {
+    const el = trackRef.current;
+    if (!el || !el.clientWidth) return;
+    target.current = null;
+    const at = slideFromScroll(el.scrollLeft, el.clientWidth, count);
+    if (at !== current) setIndex(at);
+  }, [count, current]);
+
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.addEventListener("scrollend", onScrollEnd);
+    return () => el.removeEventListener("scrollend", onScrollEnd);
+  }, [onScrollEnd]);
+
+  // A pessoa mexeu (dedo, trackpad, mouse): vale o que ela está fazendo, não a animação.
+  const releaseTarget = useCallback(() => {
     target.current = null;
   }, []);
 
@@ -74,7 +93,9 @@ export default function CellshopGallery({ images, productName }: { images: Cells
           <div
             ref={trackRef}
             onScroll={onScroll}
-            onTouchStart={onTouchStart}
+            onTouchStart={releaseTarget}
+            onWheel={releaseTarget}
+            onPointerDown={releaseTarget}
             className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
             {images.map((img, i) => (
