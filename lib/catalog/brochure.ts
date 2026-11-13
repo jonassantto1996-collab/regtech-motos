@@ -1,19 +1,20 @@
 /**
  * Catálogo em PDF da Regtech Motors (gerado no painel).
  *
- * Duas versões:
+ * Três versões:
  * - Varejo: "10x sem juros" (preço à vista dividido por 10) e o valor final.
  * - Atacado: preço de atacado da moto (campo só do painel).
+ * - Sem preços ("consulta"): só fotos, cores e ficha, com "Consulte valores".
  *
  * Funções puras: a página só monta o layout com o que sai daqui.
  */
-export type BrochureMode = "varejo" | "atacado";
+export type BrochureMode = "varejo" | "atacado" | "consulta";
 
 export const BROCHURE_INSTALLMENTS = 10;
 export const PRODUCTS_PER_PAGE = 3;
 
 export function parseBrochureMode(value: unknown): BrochureMode {
-  return value === "atacado" ? "atacado" : "varejo";
+  return value === "atacado" || value === "consulta" ? value : "varejo";
 }
 
 export type BrochurePrice =
@@ -30,6 +31,7 @@ export function brochurePrice(
   mode: BrochureMode,
   product: { price: number | string | null; wholesale_price?: number | string | null },
 ): BrochurePrice {
+  if (mode === "consulta") return { kind: "consulte" };
   if (mode === "atacado") {
     const price = positive(product.wholesale_price);
     return price === null ? { kind: "consulte" } : { kind: "atacado", price };
