@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdminSession } from "@/app/admin/products/actions";
-import { CART_STATUS_LABEL, formatPhone, isStaleCart, type CartStatus } from "@/lib/cellshop/cart-recovery";
+import { CART_STATUS_LABEL, formatPhone, isStaleCart, reservationEndsAt, type CartStatus } from "@/lib/cellshop/cart-recovery";
 import { DEVICE_LABELS, TRAFFIC_SOURCE_LABELS, type Device, type TrafficSource } from "@/lib/analytics/sources";
 
 /** Exporta os carrinhos para planilha (CSV com ponto e vírgula, padrão do Excel em português). */
@@ -19,14 +19,14 @@ export async function GET() {
   const admin = createAdminClient();
   const { data } = await admin
     .from("store_carts")
-    .select("mode,items,item_count,total,has_unpriced,contact_name,whatsapp,status,admin_note,device,traffic_source,city,created_at,updated_at,store_resellers(store_name)")
+    .select("mode,items,item_count,total,has_unpriced,contact_name,whatsapp,consent_at,status,admin_note,device,traffic_source,city,created_at,updated_at,store_resellers(store_name)")
     .order("updated_at", { ascending: false })
     .limit(5000);
 
   const date = (v: string | null) => (v ? new Date(v).toLocaleString("pt-BR", { timeZone: "America/Belem" }) : "");
   const money = (v: number) => v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const rows = [
-    ["Situação", "Cliente", "WhatsApp", "Tipo", "Itens", "Qtd. de unidades", "Total (R$)", "Itens a consultar", "Origem", "Aparelho", "Cidade", "Criado em", "Última mudança", "Observação"].join(";"),
+    ["Situação", "Cliente", "WhatsApp", "Reserva até", "Tipo", "Itens", "Qtd. de unidades", "Total (R$)", "Itens a consultar", "Origem", "Aparelho", "Cidade", "Criado em", "Última mudança", "Observação"].join(";"),
   ];
   for (const r of data ?? []) {
     const reseller = r.store_resellers as unknown as { store_name: string } | null;
@@ -37,6 +37,7 @@ export async function GET() {
         cell(status),
         cell(r.contact_name ?? (reseller ? `${reseller.store_name} (lojista)` : "")),
         cell(r.whatsapp ? formatPhone(r.whatsapp) : ""),
+        cell(r.whatsapp ? date(reservationEndsAt(r.consent_at)?.toISOString() ?? null) : ""),
         cell(r.mode === "wholesale" ? "Atacado" : "Varejo"),
         cell(items.map((i) => `${i.qty}x ${i.title}${i.variantName ? ` (${i.variantName})` : ""}`).join(" | ")),
         cell(r.item_count),
