@@ -211,11 +211,18 @@ export function CartProvider({
       if (document.visibilityState === "hidden") hiddenAt = Date.now();
       else if (cameBack(hiddenAt, Date.now())) show();
     };
+    // Foi para o WhatsApp por qualquer botão do site: já falou com a loja, sem convite.
+    const onClick = (e: MouseEvent) => {
+      const link = (e.target as Element | null)?.closest?.("a[href]");
+      if (link && /wa\.me|whatsapp\.com/i.test(link.getAttribute("href") ?? "")) writeLocal(promptKey, "enviado");
+    };
     document.addEventListener("mouseout", onMouseOut);
     document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener("click", onClick, true);
     return () => {
       document.removeEventListener("mouseout", onMouseOut);
       document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("click", onClick, true);
     };
   }, [loaded, items.length, contact, mode, isOpen, promptKey]);
 
@@ -529,7 +536,7 @@ function CartContactBox({
       }}
     >
       {!bare && <p className="text-xs font-semibold text-slate-950">Deixe o seu contato (opcional)</p>}
-      <div className="mt-2 grid grid-cols-2 gap-2">
+      <div className="mt-2 grid grid-cols-1 gap-2 min-[360px]:grid-cols-2">
         <label className="text-xs text-slate-600">
           Nome
           <input name="name" tabIndex={tab} autoComplete="given-name" maxLength={80} required className="mt-1 h-10 w-full rounded-lg border border-slate-300 px-3 text-sm text-slate-950 focus:border-[#0a6cff] focus:outline-none focus:ring-2 focus:ring-[#0a6cff]/20" />
