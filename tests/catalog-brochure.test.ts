@@ -43,3 +43,8 @@ test("páginas de 3 motos, elétricas primeiro", () => {
   ]);
   assert.equal(categoryTitle("Elétrica"), "Motos Elétricas");
 });
+
+test("sem preços: nenhuma moto mostra valor", () => {
+  assert.equal(parseBrochureMode("consulta"), "consulta");
+  assert.deepEqual(brochurePrice("consulta", { price: 9900, wholesale_price: 8200 }), { kind: "consulte" });
+});
