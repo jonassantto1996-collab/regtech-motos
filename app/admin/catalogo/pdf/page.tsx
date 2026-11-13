@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 
 const poppins = Poppins({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800", "900"], display: "swap" });
 
-const MODE_LABEL: Record<BrochureMode, string> = { varejo: "Varejo", atacado: "Atacado" };
+const MODE_LABEL: Record<BrochureMode, string> = { varejo: "Varejo", atacado: "Atacado", consulta: "Sem preços" };
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ tipo?: string }> }): Promise<Metadata> {
   const mode = parseBrochureMode((await searchParams).tipo);
@@ -37,7 +37,7 @@ export default async function CatalogPdfPage({ searchParams }: { searchParams: P
   const rows = (data ?? []) as unknown as BrochureRow[];
   const pages = paginate(rows);
   const missingWholesale = mode === "atacado" ? rows.filter((r) => brochurePrice("atacado", r).kind === "consulte").length : 0;
-  const otherMode: BrochureMode = mode === "varejo" ? "atacado" : "varejo";
+  const otherModes = (["varejo", "atacado", "consulta"] as BrochureMode[]).filter((m) => m !== mode);
 
   return (
     <div className={`cat-root ${poppins.className}`}>
@@ -53,7 +53,9 @@ export default async function CatalogPdfPage({ searchParams }: { searchParams: P
           </span>
         </div>
         <div className="cat-toolbar-actions">
-          <Link href={`/admin/catalogo/pdf?tipo=${otherMode}`}>Ver {MODE_LABEL[otherMode].toLowerCase()}</Link>
+          {otherModes.map((m) => (
+            <Link key={m} href={`/admin/catalogo/pdf?tipo=${m}`}>Ver {MODE_LABEL[m].toLowerCase()}</Link>
+          ))}
           <Link href="/admin/catalogo">Voltar</Link>
           <PrintButton />
         </div>
