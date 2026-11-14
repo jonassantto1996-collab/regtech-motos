@@ -51,11 +51,15 @@ export function normalizeSearch(text: string): string {
     .trim();
 }
 
+const GENERIC_VARIANT = new Set(["unico", "unica", "padrao"]);
+
 /**
  * Nome de um grupo de versões com o mesmo preço:
  * ["Preto", "Branco"] -> "Preto, Branco"; ["256 GB · Prata", "256 GB · Preto"] -> "256 GB · Prata, Preto".
  */
 export function groupLabel(names: string[]): string | null {
+  // "Único" / "Padrão" é a versão padrão do cadastro: não ajuda o vendedor, fica de fora.
+  names = names.filter((n) => !GENERIC_VARIANT.has(normalizeSearch(n)));
   if (names.length === 0) return null;
   if (names.length === 1) return names[0];
   const parts = names.map((n) => n.split(" · "));
