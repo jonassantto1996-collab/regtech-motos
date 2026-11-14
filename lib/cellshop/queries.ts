@@ -172,6 +172,22 @@ export async function isWholesaleOnlySlug(slug: string): Promise<boolean> {
   return Boolean(data);
 }
 
+/**
+ * Produto desativado (ou que saiu da loja): a categoria dele, para levar o cliente
+ * à página da categoria em vez de um erro. Null se o produto não existe.
+ */
+export async function getInactiveProductCategory(slug: string): Promise<{ slug: string; name: string; is_active: boolean } | null> {
+  if (!/^[a-z0-9-]{1,180}$/.test(slug)) return null;
+  const { data } = await createAdminClient()
+    .from("store_products")
+    .select("is_active,store_categories(slug,name,is_active)")
+    .eq("slug", slug)
+    .eq("is_active", false)
+    .maybeSingle();
+  const category = (data as { store_categories: { slug: string; name: string; is_active: boolean } | null } | null)?.store_categories;
+  return category ?? null;
+}
+
 export async function getCellshopProducts(): Promise<CellshopProduct[]> {
   const supabase = await createClient();
   const mode = await getPriceMode();
