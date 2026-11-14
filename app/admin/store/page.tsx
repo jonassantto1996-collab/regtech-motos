@@ -49,6 +49,7 @@ export default async function StoreAdminPage({
           <Link href="/admin/store/lojistas" className="secondary-action">Lojistas{pendingResellers?` (${pendingResellers} novo${pendingResellers===1?"":"s"})`:""}</Link>
           <Link href="/admin/store/banners" className="secondary-action">Banners do topo</Link>
           <Link href="/admin/store/fotos" className="secondary-action">Enviar fotos em lote</Link>
+          <Link href="/admin/store/tabela-atacado" className="secondary-action">Tabela do vendedor</Link>
           <Link href="/admin/store/lista-whatsapp" className="secondary-action">Lista para WhatsApp</Link>
           <a href="/admin/store/export" className="secondary-action">Exportar planilha</a>
           <Link href="/admin/store/new" className="primary-action">+ Cadastrar produto</Link>

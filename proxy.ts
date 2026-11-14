@@ -33,6 +33,8 @@ export async function proxy(request: NextRequest) {
     if (pathname === "/robots.txt" || pathname === "/sitemap.xml" || pathname.endsWith(".txt")) {
       return NextResponse.next();
     }
+    // Tabela de atacado do vendedor: página própria (sem o cabeçalho da loja), fora de app/cellshop.
+    if (pathname.startsWith("/tabela/")) return NextResponse.next();
     // Evita endereço duplicado: /cellshop/x vira /x neste domínio.
     if (pathname === "/cellshop" || pathname.startsWith("/cellshop/")) {
       const url = request.nextUrl.clone();

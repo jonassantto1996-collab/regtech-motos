@@ -1,5 +1,6 @@
 "use server";
 import {redirect} from "next/navigation";
+import {randomBytes} from "node:crypto";
 import {revalidatePath} from "next/cache";
 import {createAdminClient} from "@/lib/supabase/admin";
 import {requireAdminSession,logAdminAction} from "@/app/admin/products/actions";
@@ -63,4 +64,13 @@ export async function setStorePriceMode(formData:FormData){
  revalidatePath("/","layout");
  notifyAllStoreProducts();
  redirect("/admin/store?saved=price_mode");
+}
+/** Tabela de atacado do vendedor: gera um link secreto novo; o anterior para de funcionar na hora. */
+export async function rotatePriceTableLink(){
+ const user=await requireAdminSession();
+ const admin=createAdminClient();
+ const {error}=await admin.from("store_price_table").upsert({id:true,token:randomBytes(32).toString("hex"),created_at:new Date().toISOString()});
+ if(error)redirect("/admin/store/tabela-atacado?error=server_error");
+ await logAdminAction(user,"store_price_table.rotate","store_price_table");
+ redirect("/admin/store/tabela-atacado?saved=novo");
 }
