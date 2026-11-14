@@ -8,6 +8,7 @@ import CellshopHeroCarousel, { type HeroBanner } from "@/components/cellshop/Cel
 import { getCellshopBanners, getCellshopCategories, getCellshopProducts, getPriceMode, withWholesalePrices, type CellshopBanner } from "@/lib/cellshop/queries";
 import { bannerHref, commonRatio } from "@/lib/store/banners";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
+import { storeJsonLd } from "@/lib/cellshop/store-schema";
 
 export const dynamic = "force-dynamic";
 
@@ -59,12 +60,13 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
         className="pointer-events-none absolute -right-40 -top-40 -z-10 h-[34rem] w-[34rem] rounded-full bg-[radial-gradient(circle,rgba(10,108,255,0.35),transparent_65%)]"
       />
       <div className={`mx-auto w-full max-w-7xl px-4 sm:px-6 sm:pt-16 lg:px-8 ${rawBanners.length ? "pb-16 pt-8 sm:pb-20" : "pb-14 pt-12 sm:pb-20 lg:pb-24"}`}>
-        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#22d3ee]">Regtech Cell Shop · Tucumã, PA</p>
-        <h1 className="mt-4 max-w-3xl text-[2.125rem] font-bold leading-[1.05] tracking-tight sm:text-6xl">
+        {/* Título principal para o Google: o nome da loja, o que ela vende e a cidade. */}
+        <h1 className="text-xs font-semibold uppercase tracking-[0.28em] text-[#22d3ee]">Regtech Cell Shop · Celulares em Tucumã, PA</h1>
+        <p className="mt-4 max-w-3xl text-[2.125rem] font-bold leading-[1.05] tracking-tight sm:text-6xl">
           Tecnologia de verdade, com atendimento de perto.
-        </h1>
+        </p>
         <p className="mt-5 max-w-2xl text-[0.9375rem] leading-6 text-slate-300 sm:mt-6 sm:text-lg sm:leading-7">
-          Smartphones, tablets, carregadores, Bombox, Starlink e acessórios. Escolha o produto, simule as parcelas e fale com a loja no WhatsApp com a mensagem pronta.
+          Celulares, iPhone, tablets, carregadores, caixas de som JBL, Starlink e acessórios. Escolha o produto, simule as parcelas e fale com a loja no WhatsApp com a mensagem pronta.
         </p>
         <div className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row">
           <a
@@ -88,6 +90,8 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
 
   return (
     <main>
+      {/* Endereço, telefone e horário da loja para o Google (iguais ao perfil da loja no Google). */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(storeJsonLd()) }} />
       {banners.length ? (
         <CellshopHeroCarousel intro={intro} banners={banners} ratios={ratios} />
       ) : (
