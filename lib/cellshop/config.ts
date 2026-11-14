@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
+import { CELLSHOP_HOURS } from "./seo";
 
 /**
  * Regtech Cell Shop — loja de tecnologia da Regtech (celulares, tablets,
@@ -25,7 +26,8 @@ export const CELLSHOP = {
   addressRegion: "PA",
   postalCode: REGTECH_MOTORS.postalCode,
   mapUrl: "https://www.google.com/maps/search/?api=1&query=Av.%20dos%20Estados%2C%20241%2C%20Centro%2C%20Tucum%C3%A3%20-%20PA",
-  openingHours: REGTECH_MOTORS.openingHours,
+  // Horário próprio da Cell Shop (igual ao perfil no Google), diferente da loja de motos.
+  openingHours: CELLSHOP_HOURS,
 } as const;
 
 /** true quando a página está sendo aberta pelo domínio da Cell Shop. */
