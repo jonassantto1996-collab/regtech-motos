@@ -10,7 +10,7 @@
  * - Referência digitada pela metade: "FN-18" acha o "FN-A18" (mesmas letras
  *   iniciais, mesmo número; a letra do meio pode faltar). Não confunde com FN-B31.
  * - Alguns apelidos comuns: "apple" acha iPhone e iPad; "tablet" acha iPad;
- *   "celular" acha smartphones e iPhone; "caixa de som" acha Bombox.
+ *   "celular" acha smartphones e iPhone; "caixa de som" e "bombox" acham as caixas JBL.
  */
 export type SearchableProduct = {
   brand: string;
@@ -36,14 +36,19 @@ const ALIASES: Record<string, string[]> = {
   celular: ["smartphone", "smartphones", "iphone"],
   celulares: ["smartphone", "smartphones", "iphone"],
   telefone: ["smartphone", "smartphones", "iphone"],
-  som: ["bombox", "jbl", "caixa"],
-  caixinha: ["bombox", "caixa"],
+  som: ["bombox", "boombox", "jbl", "caixa"],
+  caixinha: ["bombox", "boombox", "caixa"],
+  // A categoria agora se chama "Boombox e caixas JBL"; quem digita "bombox" continua achando.
+  bombox: ["boombox", "jbl", "caixa"],
   carregador: ["carregadores", "fonte", "adaptador"],
   fone: ["fones", "headphone", "earbuds"],
   cabo: ["cabos"],
   internet: ["starlink"],
   antena: ["starlink"],
 };
+
+/** Palavras de ligação que a busca ignora quando há outras palavras. */
+const FILLER = new Set(["de", "da", "do", "das", "dos", "e", "para", "pra", "com", "em"]);
 
 /** Só letras e números: "NCB-6504" → "ncb6504". */
 const compact = (text: string) => text.replace(/[^a-z0-9]/g, "");
@@ -73,7 +78,9 @@ function matchesReference(term: string, words: string[]): boolean {
 }
 
 export function matchesSearch(product: SearchableProduct, query: string, categoryName = ""): boolean {
-  const terms = normalizeSearch(query).split(/\s+/).filter(Boolean);
+  const all = normalizeSearch(query).split(/\s+/).filter(Boolean);
+  // "caixa de som", "capa para iphone": palavras de ligação não precisam aparecer no produto.
+  const terms = all.some((t) => !FILLER.has(t)) ? all.filter((t) => !FILLER.has(t)) : all;
   if (!terms.length) return true;
   const haystack = normalizeSearch(
     [product.brand, product.name, product.sku ?? "", categoryName, ...product.store_product_variants.map((v) => v.name)].join(" "),
