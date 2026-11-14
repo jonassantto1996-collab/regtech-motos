@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import CellshopGallery from "@/components/cellshop/CellshopGallery";
 import CellshopProductCard from "@/components/cellshop/CellshopProductCard";
 import ProductBuyBox from "@/components/cellshop/ProductBuyBox";
@@ -13,11 +13,13 @@ import {
   getCellshopProduct,
   getCellshopProducts,
   getCellshopViewer,
+  getInactiveProductCategory,
   getPriceMode,
   isWholesaleOnlySlug,
   withWholesalePrices,
 } from "@/lib/cellshop/queries";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
+import { categoryPage } from "@/lib/cellshop/seo";
 
 export const dynamic = "force-dynamic";
 
@@ -27,13 +29,15 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params;
   const product = await getCellshopProduct(slug);
   if (!product) return { title: "Produto não encontrado" };
-  const title = `${product.brand} ${product.name}`;
+  const name = `${product.brand} ${product.name}`;
+  // A cidade no título ajuda quem busca "<produto> em Tucumã".
+  const title = `${name} em Tucumã-PA`;
   const image = product.store_product_images[0];
   return {
     title,
     description:
       product.description.slice(0, 155) ||
-      `${title} na Regtech Cell Shop, em Tucumã, PA. Simule as parcelas e compre pelo WhatsApp.`,
+      `${name} na Regtech Cell Shop, em Tucumã, PA. Simule as parcelas e compre pelo WhatsApp.`,
     alternates: { canonical: `/produto/${product.slug}` },
     // Produto "só atacado" fica fora do Google (só lojista logado vê).
     ...(product.wholesale_only ? { robots: { index: false, follow: false } } : {}),
@@ -61,6 +65,9 @@ export default async function CellshopProductPage({ params }: { params: Params }
   if (!publicProduct) {
     // Produto exclusivo para lojistas: quem não entrou vai para a Área do Lojista e volta depois.
     if (await isWholesaleOnlySlug(slug)) redirect(`${base}/lojista?produto=${encodeURIComponent(slug)}`);
+    // Produto desativado: leva para a categoria dele (o cliente não cai num erro e o Google troca o endereço velho).
+    const old = await getInactiveProductCategory(slug);
+    if (old) permanentRedirect(old.is_active ? `${base}/${categoryPage(old).path}` : base || "/");
     notFound();
   }
   // Lojista aprovado vê o atacado; o cliente final, o varejo.
@@ -123,7 +130,7 @@ export default async function CellshopProductPage({ params }: { params: Params }
           {category && (
             <>
               <span aria-hidden>/</span>
-              <Link href={`${home}?categoria=${category.slug}#vitrine`} className="inline-flex min-h-10 items-center hover:text-[#0a6cff]">
+              <Link href={`${base}/${categoryPage(category).path}`} className="inline-flex min-h-10 items-center hover:text-[#0a6cff]">
                 {category.name}
               </Link>
             </>
