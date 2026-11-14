@@ -77,6 +77,9 @@ test("tabela: busca sem acento, em qualquer ordem", () => {
 test("tabela: versões de mesmo preço juntas, sem repetir o armazenamento", () => {
   assert.equal(groupLabel([]), null);
   assert.equal(groupLabel(["128 GB"]), "128 GB");
+  assert.equal(groupLabel(["Único"]), null);
+  assert.equal(groupLabel(["Padrão", "Preto"]), "Preto");
+  assert.equal(groupLabel(["Único · Branco"]), "Único · Branco");
   assert.equal(groupLabel(["256 GB · Prateado", "256 GB · Preto"]), "256 GB · Prateado, Preto");
   assert.equal(groupLabel(["128 GB · Preto", "256 GB · Preto"]), "128 GB · Preto, 256 GB · Preto");
   assert.deepEqual(
