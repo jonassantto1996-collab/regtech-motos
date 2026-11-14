@@ -15,6 +15,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Tabela de atacado | Regtech Cell Shop",
+  description: "Preços de atacado da Regtech Cell Shop. Uso interno da loja.",
   robots: { index: false, follow: false, nocache: true },
   referrer: "no-referrer",
   formatDetection: { telephone: false },
