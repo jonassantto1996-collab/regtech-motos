@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { WhatsAppIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 import { CELLSHOP, CELLSHOP_URL, MOTORS_URL, getCellshopBase, isCellshopHost } from "@/lib/cellshop/config";
-import { getCellshopViewer, getHideRetailPrices } from "@/lib/cellshop/queries";
+import { getCellshopCategories, getCellshopViewer, getHideRetailPrices } from "@/lib/cellshop/queries";
+import { categoryPage } from "@/lib/cellshop/seo";
 import { CartButton, CartProvider } from "@/components/cellshop/Cart";
 import { OutsideResellerLogin } from "@/components/cellshop/ResellerLoginAware";
 import CellshopTracker from "@/components/cellshop/CellshopTracker";
@@ -41,7 +42,7 @@ const NAV_LINK =
   "inline-flex min-h-11 items-center text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-slate-300 transition-colors hover:text-[#22d3ee] focus-visible:outline-none focus-visible:text-[#22d3ee] sm:text-xs";
 
 export default async function CellshopLayout({ children }: { children: ReactNode }) {
-  const [base, viewer, hidePrices] = await Promise.all([getCellshopBase(), getCellshopViewer(), getHideRetailPrices()]);
+  const [base, viewer, hidePrices, categories] = await Promise.all([getCellshopBase(), getCellshopViewer(), getHideRetailPrices(), getCellshopCategories()]);
   const home = base || "/";
   const approved = viewer?.status === "approved";
   // Lojista aprovado fala com o atendimento do atacado; o cliente final, com a loja.
@@ -143,12 +144,24 @@ export default async function CellshopLayout({ children }: { children: ReactNode
       {children}
 
       <footer className="border-t border-white/10 bg-[#070a12] text-white">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr] lg:px-8 lg:py-16">
+        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.3fr_1fr_1fr_1fr] lg:px-8 lg:py-16">
           <div>
             <Image src="/cellshop-logo.svg" alt="Regtech Cell Shop" width={1439} height={418} unoptimized className="h-11 w-auto" />
             <p className="mt-5 max-w-sm text-sm leading-6 text-slate-400">
-              Smartphones, tablets, carregadores, Bombox, Starlink e acessórios em Tucumã, Pará. Uma loja Regtech, com mais de 14 anos de mercado.
+              Celulares, iPhone, tablets, carregadores, caixas de som JBL, Starlink e acessórios em Tucumã, Pará. Uma loja Regtech, com mais de 14 anos de mercado.
             </p>
+          </div>
+          <div>
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-slate-500">Categorias</p>
+            <ul className="mt-4 space-y-1.5 text-sm">
+              {categories.map((c) => (
+                <li key={c.id}>
+                  <Link href={`${base}/${categoryPage(c).path}`} className="text-slate-300 hover:text-[#22d3ee]">
+                    {c.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
           <div>
             <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.2em] text-slate-500">Atendimento</p>
