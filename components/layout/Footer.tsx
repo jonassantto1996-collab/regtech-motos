@@ -3,6 +3,7 @@ import BrandLogo from "@/components/layout/BrandLogo";
 import { InstagramIcon } from "@/components/icons/InstagramIcon";
 import { ExternalLinkIcon, MapPinIcon, WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
+import { MOTORS_SITE_MESSAGE, withWhatsappMessage } from "@/lib/analytics/whatsapp-message";
 
 const STORE_MAP_URL = REGTECH_MOTORS.mapUrl;
 
@@ -46,7 +47,7 @@ export default function Footer() {
               Canais oficiais
             </p>
             <a
-              href={REGTECH_MOTORS.whatsapp}
+              href={withWhatsappMessage(REGTECH_MOTORS.whatsapp, MOTORS_SITE_MESSAGE)}
               target="_blank"
               rel="noreferrer"
               className="group mt-5 inline-flex items-center gap-3 text-sm font-semibold text-white transition-colors hover:text-cyan-300"
