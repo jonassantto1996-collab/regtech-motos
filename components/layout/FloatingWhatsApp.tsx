@@ -3,9 +3,9 @@
 import { usePathname } from "next/navigation";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
+import { MOTORS_SITE_MESSAGE, withWhatsappMessage } from "@/lib/analytics/whatsapp-message";
 
-const MESSAGE = "Olá! Vim pelo site da Regtech Motors e quero mais informações.";
-const HREF = `${REGTECH_MOTORS.whatsapp}?text=${encodeURIComponent(MESSAGE)}`;
+const HREF = withWhatsappMessage(REGTECH_MOTORS.whatsapp, MOTORS_SITE_MESSAGE);
 
 /**
  * Botão flutuante do WhatsApp (Regtech Motors).
