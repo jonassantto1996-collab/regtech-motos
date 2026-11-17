@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
+import { MOTORS_SITE_MESSAGE, withWhatsappMessage } from "@/lib/analytics/whatsapp-message";
 
 export const metadata: Metadata = {
   title: "Loja de motos em Tucumã, PA | Regtech Motors",
@@ -63,7 +64,7 @@ export default function LojaPage() {
                 <dd>
                   <a
                     className="text-sm font-semibold text-blue-700 underline underline-offset-4"
-                    href={REGTECH_MOTORS.whatsapp}
+                    href={withWhatsappMessage(REGTECH_MOTORS.whatsapp, MOTORS_SITE_MESSAGE)}
                     target="_blank"
                     rel="noreferrer"
                   >

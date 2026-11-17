@@ -202,7 +202,7 @@ export default function CellshopCatalog({
   const q = deferredQuery.trim();
   const title = active ? active.name : searching ? "Resultados da busca" : "Nossos produtos";
   const summary = `${list.length} ${list.length === 1 ? "produto" : "produtos"}${q ? ` para “${q}”` : ""}${active && q ? ` em ${active.name}` : ""}`;
-  const askMessage = `Olá! Procurei "${q}" no site e não achei. Vocês têm?`;
+  const askMessage = `Olá! Procurei "${q}" no site da Regtech Cell Shop e não achei. Vocês têm?`;
 
   return (
     <section id="vitrine" aria-labelledby="vitrine-titulo" className="scroll-mt-20 bg-[#f6f8fb]">

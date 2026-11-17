@@ -10,17 +10,18 @@ import { getActiveProductListItemById, listProducts } from "@/lib/catalog/querie
 import { getCatalogSettings } from "@/lib/catalog/settings";
 import { createClient } from "@/lib/supabase/server";
 import { getHomeMediaUrl, getPublicImageUrl } from "@/lib/supabase/storage";
+import { CELLSHOP_SITE_MESSAGE, MOTORS_SITE_MESSAGE, withWhatsappMessage } from "@/lib/analytics/whatsapp-message";
 
 const STORE_WHATSAPP_CONTACTS = [
   {
     label: "Atendimento Regtech Motors",
     phone: "+55 94 99208-6088",
-    href: "https://wa.me/5594992086088",
+    href: withWhatsappMessage("https://wa.me/5594992086088", MOTORS_SITE_MESSAGE),
   },
   {
     label: "Atendimento Regtech Cell Shop",
     phone: "+55 94 99298-9833",
-    href: "https://wa.me/5594992989833",
+    href: withWhatsappMessage("https://wa.me/5594992989833", CELLSHOP_SITE_MESSAGE),
   },
 ] as const;
 

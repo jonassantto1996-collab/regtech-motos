@@ -32,8 +32,10 @@ type Stats = {
   page_views: number;
   visits: number;
   whatsapp_clicks: number;
+  // Pessoas que abriram o WhatsApp (uma por visita). Antes desta atualização não existia.
+  whatsapp_people?: number;
   add_to_cart: number;
-  daily: { day: string; views: number; clicks: number }[];
+  daily: { day: string; views: number; clicks: number; people?: number }[];
   products: { id: string; brand: string; name: string; slug: string; views: number; carts: number; clicks: number }[];
   sources: { source: string; clicks: number }[];
   origins?: { origin: string; visits: number; clicks: number }[];
@@ -119,14 +121,15 @@ export default async function StoreResultsPage({
       key,
       label: `${key.slice(8, 10)}/${key.slice(5, 7)}`,
       views: row?.views ?? 0,
-      clicks: row?.clicks ?? 0,
+      clicks: row?.people ?? row?.clicks ?? 0,
     });
   }
   const maxDaily = Math.max(1, ...days.map((day) => day.views));
   const labelEvery = days.length <= 7 ? 1 : days.length <= 16 ? 2 : 5;
 
   const visits = stats?.visits ?? 0;
-  const clicks = stats?.whatsapp_clicks ?? 0;
+  // Pessoas, não toques: quem toca 3 vezes no botão conta 1.
+  const clicks = stats?.whatsapp_people ?? stats?.whatsapp_clicks ?? 0;
   const addedToCart = stats?.add_to_cart ?? 0;
   const contactRate = visits > 0 ? (clicks / visits) * 100 : 0;
   const products = stats?.products ?? [];
@@ -208,7 +211,7 @@ export default async function StoreResultsPage({
           </article>
           <article>
             <em className="green"><WhatsAppIcon /></em>
-            <div><strong>{numberFormatter.format(clicks)}</strong><span>Cliques no WhatsApp</span></div>
+            <div><strong>{numberFormatter.format(clicks)}</strong><span>Pessoas que chamaram no WhatsApp</span></div>
           </article>
           <article>
             <em className="green"><ChartIcon /></em>
@@ -219,17 +222,22 @@ export default async function StoreResultsPage({
           </article>
         </div>
 
+        <p className="results-note">
+          &ldquo;Pessoas que chamaram&rdquo; conta quem abriu o WhatsApp pelo site. Para saber quantas mandaram mensagem de verdade,
+          procure &ldquo;site da Regtech Cell Shop&rdquo; nas conversas do WhatsApp da loja: toda mensagem que sai do site vem com essa frase.
+        </p>
+
         <article className="panel results-chart-panel">
           <div className="panel-title">
             <h2>Páginas vistas por dia · {periodLabel}</h2>
             <div className="results-legend" aria-hidden>
               <span><i className="views" />Páginas vistas</span>
-              <span><i className="clicks" />Cliques no WhatsApp</span>
+              <span><i className="clicks" />Pessoas que chamaram no WhatsApp</span>
             </div>
           </div>
-          <div className="results-chart" role="img" aria-label={`Páginas vistas e cliques no WhatsApp por dia, ${periodLabel.toLowerCase()}`}>
+          <div className="results-chart" role="img" aria-label={`Páginas vistas e pessoas que chamaram no WhatsApp por dia, ${periodLabel.toLowerCase()}`}>
             {days.map((day, index) => (
-              <div className="results-day" key={day.key} title={`${day.label}: ${day.views} páginas vistas, ${day.clicks} cliques no WhatsApp`}>
+              <div className="results-day" key={day.key} title={`${day.label}: ${day.views} páginas vistas, ${day.clicks} chamaram no WhatsApp`}>
                 <div className="results-bars">
                   <span className="views" style={{ height: `${day.views === 0 ? 0 : Math.max(4, (day.views / maxDaily) * 100)}%` }} />
                   <span className="clicks" style={{ height: `${day.clicks === 0 ? 0 : Math.max(4, (day.clicks / maxDaily) * 100)}%` }} />
@@ -252,7 +260,7 @@ export default async function StoreResultsPage({
                     <th>Produto</th>
                     <th>Visualizações</th>
                     <th>No carrinho</th>
-                    <th>WhatsApp</th>
+                    <th>Chamaram no WhatsApp</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -274,9 +282,9 @@ export default async function StoreResultsPage({
           </article>
 
           <article className="panel">
-            <h2>De onde vieram os cliques no WhatsApp</h2>
+            <h2>Em qual botão as pessoas chamaram no WhatsApp</h2>
             {sources.length === 0 ? (
-              <p className="results-empty">Nenhum clique no WhatsApp neste período ainda.</p>
+              <p className="results-empty">Ninguém chamou no WhatsApp neste período ainda.</p>
             ) : (
               <ul className="results-sources">
                 {sources.map((item) => (

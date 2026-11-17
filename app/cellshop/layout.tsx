@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { WhatsAppIcon, MapPinIcon } from "@/components/icons/SiteIcons";
-import { CELLSHOP, CELLSHOP_URL, MOTORS_URL, getCellshopBase, isCellshopHost } from "@/lib/cellshop/config";
+import { CELLSHOP, CELLSHOP_URL, MOTORS_URL, cellshopWhatsappLink, getCellshopBase, isCellshopHost } from "@/lib/cellshop/config";
 import { getCellshopCategories, getCellshopViewer, getHideRetailPrices } from "@/lib/cellshop/queries";
 import { categoryPage } from "@/lib/cellshop/seo";
 import { CartButton, CartProvider } from "@/components/cellshop/Cart";
@@ -55,9 +55,11 @@ export default async function CellshopLayout({ children }: { children: ReactNode
       <Image src="/cellshop-logo.svg" alt="Regtech Cell Shop" width={1439} height={418} priority unoptimized className="h-9 w-auto sm:h-11" />
     </Link>
   );
+  // Botões gerais: abrem o WhatsApp com "Vim pelo site da Regtech Cell Shop" já escrito.
+  const general = (link: string) => cellshopWhatsappLink(link === CELLSHOP.wholesaleWhatsapp);
   const headerWhatsapp = (link: string) => (
     <a
-      href={link}
+      href={general(link)}
       target="_blank"
       rel="noreferrer"
       className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:border-[#22d3ee] hover:text-[#22d3ee]"
@@ -67,13 +69,13 @@ export default async function CellshopLayout({ children }: { children: ReactNode
     </a>
   );
   const footerWhatsapp = (link: string, phone: string) => (
-    <a href={link} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#22d3ee]">
+    <a href={general(link)} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-[#22d3ee]">
       <WhatsAppIcon className="h-4 w-4" /> {phone}
     </a>
   );
   const floatingWhatsapp = (link: string) => (
     <a
-      href={link}
+      href={general(link)}
       target="_blank"
       rel="noreferrer"
       aria-label="Falar com a Regtech Cell Shop no WhatsApp"
