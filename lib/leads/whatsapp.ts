@@ -14,7 +14,7 @@ export function buildWhatsappLink(params: {
 }): string {
   const message = [
     `Olá! Meu nome é ${params.leadName}.`,
-    `Tive interesse no modelo ${params.brand} ${params.model} e gostaria de saber mais informações sobre esse produto.`,
+    `Vi no site da Regtech Motors e tive interesse no modelo ${params.brand} ${params.model}. Gostaria de saber mais informações sobre esse produto.`,
     "Aguardo o atendimento. Obrigado!",
   ].join("\n\n");
 
