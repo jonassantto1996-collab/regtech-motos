@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
 import { CELLSHOP_HOURS } from "./seo";
+import { CELLSHOP_RESELLER_SITE_MESSAGE, CELLSHOP_SITE_MESSAGE, withWhatsappMessage } from "@/lib/analytics/whatsapp-message";
 
 /**
  * Regtech Cell Shop — loja de tecnologia da Regtech (celulares, tablets,
@@ -29,6 +30,16 @@ export const CELLSHOP = {
   // Horário próprio da Cell Shop (igual ao perfil no Google), diferente da loja de motos.
   openingHours: CELLSHOP_HOURS,
 } as const;
+
+/**
+ * Botões gerais de WhatsApp (topo, rodapé, flutuante, "Falar com a loja"): já abrem
+ * com "Vim pelo site da Regtech Cell Shop", para a loja conferir as conversas que vieram do site.
+ */
+export function cellshopWhatsappLink(wholesale = false): string {
+  return wholesale
+    ? withWhatsappMessage(CELLSHOP.wholesaleWhatsapp, CELLSHOP_RESELLER_SITE_MESSAGE)
+    : withWhatsappMessage(CELLSHOP.whatsapp, CELLSHOP_SITE_MESSAGE);
+}
 
 /** true quando a página está sendo aberta pelo domínio da Cell Shop. */
 export async function isCellshopHost(): Promise<boolean> {
