@@ -3,7 +3,7 @@ import Link from "next/link";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import CellshopCatalog from "@/components/cellshop/CellshopCatalog";
 import BrandMarquee from "@/components/cellshop/BrandMarquee";
-import { CELLSHOP, getCellshopBase } from "@/lib/cellshop/config";
+import { CELLSHOP, cellshopWhatsappLink, getCellshopBase } from "@/lib/cellshop/config";
 import CellshopHeroCarousel, { type HeroBanner } from "@/components/cellshop/CellshopHeroCarousel";
 import { getCellshopBanners, getCellshopCategories, getCellshopProducts, getPriceMode, withWholesalePrices, type CellshopBanner } from "@/lib/cellshop/queries";
 import { bannerHref, commonRatio } from "@/lib/store/banners";
@@ -76,7 +76,7 @@ export default async function CellshopHome({ searchParams }: { searchParams: Sea
             Ver produtos
           </a>
           <a
-            href={mode === "wholesale" ? CELLSHOP.wholesaleWhatsapp : CELLSHOP.whatsapp}
+            href={cellshopWhatsappLink(mode === "wholesale")}
             target="_blank"
             rel="noreferrer"
             className="inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl border border-white/20 px-7 text-sm font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:border-[#22d3ee] hover:text-[#22d3ee]"
