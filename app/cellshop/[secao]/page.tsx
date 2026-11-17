@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { WhatsAppIcon, MapPinIcon } from "@/components/icons/SiteIcons";
 import CellshopProductCard from "@/components/cellshop/CellshopProductCard";
-import { CELLSHOP, CELLSHOP_URL, getCellshopBase } from "@/lib/cellshop/config";
+import { CELLSHOP, CELLSHOP_URL, cellshopWhatsappLink, getCellshopBase } from "@/lib/cellshop/config";
 import { categoryFromPath, categoryPage } from "@/lib/cellshop/seo";
 import { getCellshopCategories, getCellshopProducts, getPriceMode, withWholesalePrices } from "@/lib/cellshop/queries";
 
@@ -80,7 +80,7 @@ export default async function CellshopCategoryPage({ params }: { params: Params 
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <a
-              href={mode === "wholesale" ? CELLSHOP.wholesaleWhatsapp : CELLSHOP.whatsapp}
+              href={cellshopWhatsappLink(mode === "wholesale")}
               target="_blank"
               rel="noreferrer"
               className="inline-flex min-h-12 items-center justify-center gap-2.5 rounded-xl bg-[#15803d] px-6 text-sm font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-[#166534]"
