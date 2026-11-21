@@ -3,10 +3,12 @@ import assert from "node:assert/strict";
 import {
   colorOptions,
   defaultVariant,
+  initialVariant,
   initialPhotoIndex,
   photoIndexForColor,
   sameColor,
   variantColor,
+  variantForColor,
 } from "../lib/cellshop/variant-photo.ts";
 
 test("cor da versão a partir do nome", () => {
@@ -56,4 +58,38 @@ test("versão marcada e cores para o painel", () => {
   assert.equal(defaultVariant([]), null);
   assert.deepEqual(colorOptions(variants.map((v) => v.name)), ["Preto", "Glacial"]);
   assert.deepEqual(colorOptions(["128 GB", "256 GB"]), []);
+});
+
+test("foto de outra cor na galeria escolhe a versão daquela cor", () => {
+  const caixas = [
+    { name: "Marrom", stock_quantity: 1 },
+    { name: "Preta", stock_quantity: 1 },
+    { name: "Laranja", stock_quantity: 1 },
+  ];
+  assert.equal(variantForColor(caixas, "laranja")?.name, "Laranja");
+  assert.equal(variantForColor(caixas, "Azul"), null);
+  assert.equal(variantForColor(caixas, null), null);
+
+  // Mantém o armazenamento da versão atual e prefere a que tem estoque.
+  const celulares = [
+    { name: "128 GB · Preto", stock_quantity: 1 },
+    { name: "128 GB · Branco", stock_quantity: 0 },
+    { name: "256 GB · Branco", stock_quantity: 2 },
+    { name: "256 GB · Preto", stock_quantity: 1 },
+  ];
+  assert.equal(variantForColor(celulares, "Branco", celulares[3])?.name, "256 GB · Branco");
+  assert.equal(variantForColor(celulares, "Preto", celulares[2])?.name, "256 GB · Preto");
+  assert.equal(variantForColor(celulares, "Branco", celulares[0])?.name, "128 GB · Branco");
+});
+
+test("abre na versão da cor da foto principal", () => {
+  const variants = [
+    { name: "Marrom", stock_quantity: 1 },
+    { name: "Laranja", stock_quantity: 1 },
+  ];
+  assert.equal(initialVariant(variants, [{ storage_path: "a", color: "Laranja" }, { storage_path: "b", color: "Marrom" }])?.name, "Laranja");
+  // Foto principal sem cor (ex.: a caixa) ou cor sem estoque: primeira com estoque.
+  assert.equal(initialVariant(variants, [{ storage_path: "a", color: null }])?.name, "Marrom");
+  assert.equal(initialVariant([{ name: "Marrom", stock_quantity: 1 }, { name: "Laranja", stock_quantity: 0 }], [{ storage_path: "a", color: "Laranja" }])?.name, "Marrom");
+  assert.equal(initialVariant(variants)?.name, "Marrom");
 });
