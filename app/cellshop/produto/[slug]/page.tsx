@@ -5,7 +5,7 @@ import CellshopGallery from "@/components/cellshop/CellshopGallery";
 import CellshopProductCard from "@/components/cellshop/CellshopProductCard";
 import ProductBuyBox from "@/components/cellshop/ProductBuyBox";
 import { VariantColorProvider } from "@/components/cellshop/VariantColor";
-import { defaultVariant, variantColor } from "@/lib/cellshop/variant-photo";
+import { initialVariant, variantColor } from "@/lib/cellshop/variant-photo";
 import { CELLSHOP, CELLSHOP_URL, getCellshopBase } from "@/lib/cellshop/config";
 import { productPrice, variantPrice } from "@/lib/cellshop/pricing";
 import {
@@ -137,7 +137,7 @@ export default async function CellshopProductPage({ params }: { params: Params }
           )}
         </nav>
 
-        <VariantColorProvider initialColor={variantColor(defaultVariant(variants)?.name)}>
+        <VariantColorProvider initialColor={variantColor(initialVariant(variants, product.store_product_images)?.name)}>
         <div className="mt-3 grid gap-8 sm:mt-5 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
           <div className="lg:sticky lg:top-28 lg:self-start">
             <CellshopGallery images={product.store_product_images} productName={title} />
