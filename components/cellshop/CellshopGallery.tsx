@@ -5,13 +5,14 @@ import Image from "next/image";
 import { getPublicImageUrl } from "@/lib/supabase/storage";
 import type { CellshopImage } from "@/lib/cellshop/queries";
 import { slideFromScroll, stepSlide } from "@/lib/cellshop/gallery";
-import { initialPhotoIndex, photoIndexForColor } from "@/lib/cellshop/variant-photo";
+import { initialPhotoIndex, photoIndexForColor, sameColor } from "@/lib/cellshop/variant-photo";
 import { ProductPlaceholder } from "./CellshopProductCard";
 import { useVariantColor } from "./VariantColor";
 
 export default function CellshopGallery({ images, productName }: { images: CellshopImage[]; productName: string }) {
   // Cor da versão escolhida no bloco de compra (quando a foto tem cor cadastrada).
-  const color = useVariantColor()?.color ?? null;
+  const colorState = useVariantColor();
+  const color = colorState?.color ?? null;
   const [index, setIndex] = useState(() => initialPhotoIndex(images, color));
   const [shownColor, setShownColor] = useState(color);
   if (color !== shownColor) {
@@ -28,6 +29,8 @@ export default function CellshopGallery({ images, productName }: { images: Cells
   // Vale no máximo 900 ms: depois disso (ou se a pessoa mexer), manda o que está na caixa.
   const target = useRef<{ i: number; until: number } | null>(null);
   const placed = useRef(false);
+  // Foto escolhida deslizando: passa pela mesma escolha da miniatura (atualizada a cada render).
+  const chooseRef = useRef<(i: number) => void>(() => {});
 
   // Foto escolhida por fora (miniatura, seta, cor): leva a caixa grande até ela.
   useEffect(() => {
@@ -53,7 +56,7 @@ export default function CellshopGallery({ images, productName }: { images: Cells
       if (!reached && Date.now() < t.until) return;
       target.current = null;
     }
-    if (at !== current) setIndex(at);
+    if (at !== current) chooseRef.current(at);
   }, [count, current]);
 
   // Parou de rolar: a foto que ficou na caixa é a escolhida (garante o final do deslize).
@@ -62,7 +65,7 @@ export default function CellshopGallery({ images, productName }: { images: Cells
     if (!el || !el.clientWidth) return;
     target.current = null;
     const at = slideFromScroll(el.scrollLeft, el.clientWidth, count);
-    if (at !== current) setIndex(at);
+    if (at !== current) chooseRef.current(at);
   }, [count, current]);
 
   useEffect(() => {
@@ -77,7 +80,21 @@ export default function CellshopGallery({ images, productName }: { images: Cells
     target.current = null;
   }, []);
 
-  const go = (delta: number) => setIndex(stepSlide(current, delta, count));
+  // A pessoa escolheu a foto (miniatura, seta ou deslizando): se a foto tem cor,
+  // a versão lá em cima passa para essa cor também.
+  function choose(i: number) {
+    setIndex(i);
+    const photoColor = images[i]?.color;
+    if (colorState && photoColor && !sameColor(photoColor, colorState.color)) {
+      setShownColor(photoColor);
+      colorState.setColor(photoColor);
+    }
+  }
+
+  const go = (delta: number) => choose(stepSlide(current, delta, count));
+  useEffect(() => {
+    chooseRef.current = choose;
+  });
 
   return (
     <div>
@@ -162,7 +179,7 @@ export default function CellshopGallery({ images, productName }: { images: Cells
             <button
               key={img.id}
               type="button"
-              onClick={() => setIndex(i)}
+              onClick={() => choose(i)}
               aria-label={`Ver foto ${i + 1} de ${productName}`}
               aria-pressed={i === current}
               className={`relative isolate aspect-square w-20 flex-shrink-0 snap-start overflow-hidden rounded-xl border-2 bg-[#f3f5f8] transition-colors sm:w-24 ${
