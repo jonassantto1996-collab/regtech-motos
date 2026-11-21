@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { WhatsAppIcon } from "@/components/icons/SiteIcons";
 import { useCart } from "@/components/cellshop/Cart";
 import { useVariantColor } from "@/components/cellshop/VariantColor";
-import { defaultVariant, photoIndexForColor, variantColor, type ColoredPhoto } from "@/lib/cellshop/variant-photo";
+import { initialVariant, photoIndexForColor, sameColor, variantColor, variantForColor, type ColoredPhoto } from "@/lib/cellshop/variant-photo";
 import {
   cardCondition,
   cardPlan,
@@ -50,9 +50,21 @@ export default function ProductBuyBox({
   /** Lojista aprovado: a mensagem do WhatsApp já sai como pedido de atacado. */
   resellerName?: string | null;
 }) {
-  const firstAvailable = defaultVariant(variants);
+  // Abre na versão da cor da foto principal (foto e versão sempre batendo).
+  const firstAvailable = initialVariant(variants, photos);
   const variantColorState = useVariantColor();
   const [variantId, setVariantId] = useState<string | null>(firstAvailable?.id ?? null);
+  const pickedColor = variantColorState?.color ?? null;
+  const [seenColor, setSeenColor] = useState(pickedColor);
+  if (pickedColor !== seenColor) {
+    // Passou para a foto de outra cor na galeria: a versão vai junto.
+    setSeenColor(pickedColor);
+    const current = variants.find((v) => v.id === variantId) ?? null;
+    if (!sameColor(variantColor(current?.name), pickedColor)) {
+      const match = variantForColor(variants, pickedColor, current);
+      if (match) setVariantId(match.id);
+    }
+  }
   const variant = variants.find((v) => v.id === variantId) ?? null;
 
   const price = variantPrice(product, variant, mode);
