@@ -27,11 +27,6 @@ export default function ProductCard({
       className="group flex min-w-0 flex-col border-t border-gray-200 pt-4 outline-none transition-colors duration-300 hover:border-blue-300 focus-visible:border-blue-700 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-4 sm:pt-5"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-[#f4f6f8] transition-colors duration-500 group-hover:bg-[#eef3f8]">
-        <div className="absolute left-3 top-3 z-20 inline-flex min-h-7 items-center rounded-full border border-emerald-200 bg-white/95 px-3 text-[0.625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm backdrop-blur sm:left-4 sm:top-4">
-          <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
-          <span className="capitalize">{product.availability}</span>
-        </div>
-
         {mainImage && imageUrl ? (
           <Image
             src={imageUrl}
@@ -77,6 +72,10 @@ export default function ProductCard({
         ) : (
           <p className="mt-3 text-base font-semibold text-gray-800 sm:text-lg">Consulte o valor</p>
         )}
+        <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-emerald-700">
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
+          <span className="capitalize">{product.availability}</span>
+        </p>
 
         <span className="mt-5 inline-flex min-h-11 items-center justify-between border-b border-gray-300 pb-3 text-xs font-semibold uppercase tracking-[0.16em] text-gray-900 transition-colors group-hover:border-blue-700 group-hover:text-blue-700">
           Ver detalhes

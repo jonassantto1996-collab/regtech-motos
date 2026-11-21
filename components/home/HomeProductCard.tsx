@@ -27,11 +27,6 @@ export default function HomeProductCard({
       className="group min-w-[84vw] snap-center border-r border-gray-200 pr-4 outline-none last:border-r-0 focus-visible:ring-2 focus-visible:ring-blue-700 sm:min-w-[18rem] sm:snap-start sm:pr-7 lg:min-w-0 lg:border-r-0 lg:pr-0"
     >
       <div className="relative aspect-square overflow-hidden bg-[#f4f6f8]">
-        <span className="absolute left-3 top-3 z-20 inline-flex min-h-6 items-center rounded-full border border-emerald-200 bg-white/95 px-2.5 text-[0.5625rem] font-bold uppercase tracking-[0.12em] text-emerald-700 shadow-sm">
-          <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
-          <span className="capitalize">{product.availability}</span>
-        </span>
-
         {mainImage && imageUrl ? (
           <Image
             src={imageUrl}
@@ -68,6 +63,10 @@ export default function HomeProductCard({
         ) : (
           <p className="mt-2 text-sm font-semibold text-gray-700 lg:text-base">Consulte o valor</p>
         )}
+        <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-emerald-700">
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" aria-hidden />
+          <span className="capitalize">{product.availability}</span>
+        </p>
       </div>
     </Link>
   );
