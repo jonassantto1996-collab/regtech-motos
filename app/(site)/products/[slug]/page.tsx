@@ -9,6 +9,7 @@ import { formatCardInstallments, formatFinancing, formatPriceBRL } from "@/lib/c
 import { getSiteUrl } from "@/lib/site-url";
 import { getCatalogSettings } from "@/lib/catalog/settings";
 import { REGTECH_MOTORS } from "@/lib/seo/business";
+import { motoProductJsonLd } from "@/lib/seo/product-jsonld";
 
 export const dynamic = "force-dynamic";
 
@@ -83,43 +84,18 @@ export default async function ProductPage({
   const whatsappMessage = `Olá! Vi a ${product.brand} ${product.model} no site da Regtech Motors e tenho interesse. Pode me passar mais informações?\n${siteUrl}/products/${product.slug}`;
   const whatsappHref = `${REGTECH_MOTORS.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`;
 
-  const normalizedAvailability = product.availability?.trim().toLowerCase() ?? "";
-  const availabilitySchema = normalizedAvailability.includes("indispon")
-    ? "https://schema.org/OutOfStock"
-    : normalizedAvailability.includes("dispon")
-      ? "https://schema.org/InStock"
-      : undefined;
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: `${product.brand} ${product.model}`,
-    description: product.description || undefined,
-    ...(imageUrl ? { image: [imageUrl] } : {}),
-    brand: { "@type": "Brand", name: product.brand },
-    category: product.category,
-    seller: { "@id": `${siteUrl}/#motorcycle-dealer` },
-    // Com os preços ocultos no site, o preço também sai dos dados para o Google.
-    ...(showPrices
-      ? {
-          offers: {
-            "@type": "Offer",
-            priceCurrency: "BRL",
-            price: product.price,
-            url: `${siteUrl}/products/${product.slug}`,
-            ...(availabilitySchema ? { availability: availabilitySchema } : {}),
-            seller: { "@id": `${siteUrl}/#motorcycle-dealer` },
-          },
-        }
-      : {}),
-  };
+  // Com os preços ocultos (ou sem preço), não sai bloco "Product": o Google
+  // exige "offers" nele e acusaria erro crítico no Search Console.
+  const jsonLd = motoProductJsonLd(product, { siteUrl, showPrices, imageUrl });
 
   return (
     <main className="bg-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
 
       <div className="mx-auto max-w-7xl px-4 pb-14 pt-4 sm:px-6 sm:pb-20 sm:pt-8 lg:px-8 lg:pb-28">
         <Link
